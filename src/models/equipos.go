@@ -1,11 +1,11 @@
 package models
 
 type Equipos struct {
-	Foto []byte `gorm:"column:foto"; json:"foto"`
-	//Habilitado `gorm:"column:habilitado"`
+	Foto []byte `json:"foto"; gorm:"column:foto"`
+	//Habilitado    `gorm:"column:habilitado"`
 	IDEquipo int    `json:"idEquipo"; gorm:"column:id_equipo;primary_key"`
-	IDLiga   int    `gorm:"column:id_liga"`
-	Nombre   string `gorm:"column:nombre"`
+	IDLiga   int    `json:"idLiga"; gorm:"column:id_liga"`
+	Nombre   string `json:"nombre"; gorm:"column:nombre"`
 }
 
 // TableName sets the insert table name for this struct type

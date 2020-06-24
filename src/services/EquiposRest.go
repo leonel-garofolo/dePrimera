@@ -25,17 +25,20 @@ func GetEquipos(w http.ResponseWriter, r *http.Request) {
 
 func SaveEquipos(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	equipos := &models.Equipos{}
 	json.NewDecoder(r.Body).Decode(equipos)
 
 	log.Println(equipos)
-
-	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("insertado"))
 }
 
 func Info(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
 	equipos := &models.Equipos{}
 	json.NewDecoder(r.Body).Decode(equipos)
 
@@ -46,6 +49,4 @@ func Info(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		log.Println(string(j))
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 }
