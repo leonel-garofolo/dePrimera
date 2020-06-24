@@ -1,6 +1,3 @@
-# dePrimera
-
-python manage.py inspectdb > app/models.py
+install package: go get -u github.com/go-sql-driver/mysql
 
 
-python manage.py runserver
