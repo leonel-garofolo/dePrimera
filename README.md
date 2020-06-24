@@ -5,3 +5,6 @@ https://gorm.io/es_ES/docs/index.html
 
 #crear modulo
 go mod init deprimera
+
+#start server
+go run main.go
