@@ -9,13 +9,13 @@ import (
 	"net/http"
 )
 
-func GetEquipos(w http.ResponseWriter, r *http.Request) {
+func GetLigas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	equipos := models.NewEquipo(1, 1, "leonel", nil)
+	ligas := models.Ligas{}
 
-	j, err := json.Marshal(equipos)
+	j, err := json.Marshal(ligas)
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -24,34 +24,40 @@ func GetEquipos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SaveEquipos(w http.ResponseWriter, r *http.Request) {
+func SaveLiga(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	equipos := &models.Equipos{}
-	json.NewDecoder(r.Body).Decode(equipos)
+	ligas := &models.Ligas{}
+	json.NewDecoder(r.Body).Decode(ligas)
 
 	db, err := application.GetDB()
 	defer db.Close()
+
 	if err != nil {
 		log.Println(err.Error())
-
 	}
-	db.Create(equipos)
 
-	log.Println(equipos)
+	ligaDB := db.Find(ligas.IDLiga)
+	if ligaDB != nil {
+		db.Create(ligas)
+	} else {
+		db.Update(ligas)
+	}
+
+	log.Println(ligas)
 	w.Write([]byte("insertado"))
 }
 
-func InfoEquipo(w http.ResponseWriter, r *http.Request) {
+func InfoLigas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	equipos := &models.Equipos{}
-	json.NewDecoder(r.Body).Decode(equipos)
+	ligas := &models.Ligas{}
+	json.NewDecoder(r.Body).Decode(ligas)
 
-	j, err := json.Marshal(equipos)
+	j, err := json.Marshal(ligas)
 	if err != nil {
 		fmt.Println(err)
 	} else {
