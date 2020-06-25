@@ -1,6 +1,7 @@
 package services
 
 import (
+	"deprimera/src/application"
 	"deprimera/src/models"
 	"encoding/json"
 	"fmt"
@@ -30,6 +31,13 @@ func SaveEquipos(w http.ResponseWriter, r *http.Request) {
 
 	equipos := &models.Equipos{}
 	json.NewDecoder(r.Body).Decode(equipos)
+
+	app, err := application.Get()
+	if err != nil {
+		log.Println(err.Error())
+	}
+	app.DB.Client.Create(equipos)
+	defer app.DB.Close()
 
 	log.Println(equipos)
 	w.Write([]byte("insertado"))
