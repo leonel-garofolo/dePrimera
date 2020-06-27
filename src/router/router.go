@@ -1,31 +1,17 @@
 package router
 
 import (
-	"log"
+	"deprimera/src/services"
 	"net/http"
 
-	"deprimera/src/services"
-
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "hello world 3"}`))
-	log.Println("Paso por aca")
+func home(c echo.Context) error {
+	return c.String(http.StatusOK, "Mi Home")
 }
 
-func NewRouter() *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", home)
-
-	router.HandleFunc("/equipos", services.GetEquipos).Methods("GET")
-	router.HandleFunc("/equipos", services.SaveEquipos).Methods("POST")
-	router.HandleFunc("/equipos/info", services.InfoEquipo).Methods("GET")
-
-	router.HandleFunc("/ligas", services.GetLigas).Methods("GET")
-	router.HandleFunc("/ligas", services.SaveLiga).Methods("POST")
-	router.HandleFunc("/ligas/info", services.InfoLigas).Methods("GET")
-	return router
+func NewRouter(e *echo.Echo) {
+	services.RouterEquipos(e)
+	e.GET("/home", home)
 }

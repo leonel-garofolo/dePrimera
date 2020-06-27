@@ -1,14 +1,23 @@
 package main
 
 import (
-	"log"
+	"deprimera/src/router"
 	"net/http"
 
-	"deprimera/src/router"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	r := router.NewRouter()
-	log.Fatal(http.ListenAndServe(":8081", r))
-	log.Println("Server started on: http://localhost:8081")
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.CORS()) //permite cualquier dominio
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World2!")
+	})
+
+	router.NewRouter(e)
+	e.Logger.Fatal(e.Start(":8081"))
 }
