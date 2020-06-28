@@ -21,6 +21,7 @@ func main() {
 
 	dbSelect(db)
 	dbSelectOne(db)
+	dbInsert(db)
 
 }
 
@@ -52,4 +53,19 @@ func dbSelectOne(db *sql.DB) {
 	}
 
 	log.Println(nombre)
+}
+
+func dbInsert(db *sql.DB) {
+	nombre := "leonel"
+	domicilio := "colombia 396"
+	telefono := "3413553810"
+
+	idLiga := 0
+	_, error = db.Exec("insert into ligas(nombre, domicilio, telefono) values(?,?,?)", nombre, domicilio, telefono)
+
+	if error != nil {
+		panic(error)
+	}
+	fmt.Println("New record ID is:", idLiga)
+
 }
