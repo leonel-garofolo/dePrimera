@@ -18,7 +18,7 @@ type partidos struct {
 	Observacion        sql.NullString `gorm:"column:observacion"`
 	ResultadoLocal     sql.NullInt64  `gorm:"column:resultado_local"`
 	ResultadoVisitante sql.NullInt64  `gorm:"column:resultado_visitante"`
-	Suspendido         `gorm:"column:suspendido"`
+	Suspendido         bool           `gorm:"column:suspendido"`
 }
 
 // TableName sets the insert table name for this struct type

@@ -1,8 +1,12 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"deprimera/api/application"
+	"log"
+)
 
-type ligas struct {
+type Ligas struct {
 	Cuit              sql.NullString `gorm:"column:cuit"`
 	Domicilio         string         `gorm:"column:domicilio"`
 	IDLiga            int            `gorm:"column:id_liga;primary_key"`
@@ -14,6 +18,23 @@ type ligas struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (l *ligas) TableName() string {
+func (l *Ligas) TableName() string {
 	return "ligas"
+}
+
+func (l *Ligas) SaveLigas() int {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+
+	}
+
+	ligaDB := db.Find(&l)
+	if ligaDB == nil {
+		db.Create(&l)
+	} else {
+		db.Update(&l)
+	}
+	return l.IDLiga
 }

@@ -1,6 +1,6 @@
 package models
 
-type equipos struct {
+type Equipos struct {
 	Foto       []byte `gorm:"column:foto"`
 	Habilitado bool   `gorm:"column:habilitado"`
 	IDEquipo   int    `gorm:"column:id_equipo;primary_key"`
@@ -9,6 +9,6 @@ type equipos struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (e *equipos) TableName() string {
+func (e *Equipos) TableName() string {
 	return "equipos"
 }

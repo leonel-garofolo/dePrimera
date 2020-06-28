@@ -13,5 +13,6 @@ func home(c echo.Context) error {
 
 func NewRouter(e *echo.Echo) {
 	services.RouterEquipos(e)
-	e.GET("/home", home)
+	services.RouterLigas(e)
+	e.GET("/api/home", home)
 }

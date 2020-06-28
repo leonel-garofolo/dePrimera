@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"go/format"
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/Shelnutt2/db2struct"
 	"github.com/jinzhu/gorm"
@@ -39,19 +37,11 @@ func main() {
 			return
 		}
 		// Generate struct string based on columnDataTypes
-		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, true, true, true)
+		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, true, true, false)
 		if err != nil {
 			fmt.Println("Error in creating struct from json: " + err.Error())
 			return
 		}
-
-		tableUpper := strings.ToUpper(string(struc[0]))
-		tableNameFunc := "// TableName sets the insert table name for this struct type\n" +
-			"func (" + tableUpper + " *" + table + ") Get" + tableUpper + "() string {\n" +
-			"	return \"" + table + "\"" +
-			"}"
-		struc, err = format.Source([]byte(fmt.Sprintf("%s\n%s", string(struc), tableNameFunc)))
-
 		file, err := os.Create(packagename + "/" + table + ".go")
 		if err != nil {
 			log.Printf("exist: " + table)

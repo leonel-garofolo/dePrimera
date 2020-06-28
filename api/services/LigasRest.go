@@ -1,67 +1,57 @@
 package services
 
 import (
-	"deprimera/api/application"
+	"database/sql"
 	"deprimera/api/models"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
-func GetLigas(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+func RouterLigas(e *echo.Echo) {
+	e.GET("/api/ligas", GetLigas)
+	e.POST("/api/ligas", SaveLiga)
+	e.GET("/api/ligas/info", InfoLigas)
+}
 
+func GetLigas(c echo.Context) error {
 	ligas := models.Ligas{}
+	return c.JSON(http.StatusOK, ligas)
+}
+
+func SaveLiga(c echo.Context) error {
+	m := echo.Map{}
+	if err := c.Bind(&m); err != nil {
+		return err
+	}
+
+	ligas := &models.Ligas{
+		Cuit: sql.NullString{
+			String: m["cuit"].(string),
+			Valid:  false,
+		},
+		Nombre: m["nombre"].(string),
+	}
+
+	ligas.SaveLigas()
+	log.Println("ligas id : " + string(ligas.IDLiga))
+	return c.String(http.StatusOK, "insertado")
+}
+
+func InfoLigas(c echo.Context) error {
+	ligas := &models.Ligas{}
+	c.Bind(ligas)
 
 	j, err := json.Marshal(ligas)
 	if err != nil {
 		fmt.Println(err)
+		return c.String(http.StatusInternalServerError, "error al obtener la info")
 	} else {
-		w.Write(j)
 		log.Println(string(j))
-	}
-}
 
-func SaveLiga(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	ligas := &models.Ligas{}
-	json.NewDecoder(r.Body).Decode(ligas)
-
-	db, err := application.GetDB()
-	defer db.Close()
-
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	ligaDB := db.Find(ligas.IDLiga)
-	if ligaDB != nil {
-		db.Create(ligas)
-	} else {
-		db.Update(ligas)
-	}
-
-	log.Println(ligas)
-	w.Write([]byte("insertado"))
-}
-
-func InfoLigas(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	ligas := &models.Ligas{}
-	json.NewDecoder(r.Body).Decode(ligas)
-
-	j, err := json.Marshal(ligas)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		w.Write(j)
-		log.Println(string(j))
+		return c.JSON(http.StatusOK, ligas)
 	}
 }

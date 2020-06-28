@@ -12,13 +12,17 @@ import (
 )
 
 func RouterEquipos(e *echo.Echo) {
-	e.GET("/equipos", GetEquipos)
-	e.POST("/equipos", SaveEquipos)
-	e.GET("/equipos/info", InfoEquipo)
+	e.GET("/api/equipos", GetEquipos)
+	e.POST("/api/equipos", SaveEquipos)
+	e.GET("/api/equipos/info", InfoEquipo)
 }
 
 func GetEquipos(c echo.Context) error {
-	equipos := models.NewEquipo(1, 1, "leonel", nil)
+	equipos := models.Equipos{
+		IDEquipo: 1,
+		IDLiga:   1,
+		Nombre:   "Humo",
+	}
 	return c.JSON(http.StatusOK, equipos)
 }
 
