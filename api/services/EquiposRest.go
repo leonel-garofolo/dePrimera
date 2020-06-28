@@ -1,8 +1,8 @@
 package services
 
 import (
-	"deprimera/src/application"
-	"deprimera/src/models"
+	"deprimera/api/application"
+	"deprimera/api/models"
 	"encoding/json"
 	"fmt"
 	"log"

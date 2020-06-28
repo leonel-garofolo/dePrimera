@@ -1,8 +1,6 @@
 package models
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type zonas struct {
 	IDCampeonato int            `gorm:"column:id_campeonato"`

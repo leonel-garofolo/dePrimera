@@ -37,14 +37,16 @@ func main() {
 			return
 		}
 		// Generate struct string based on columnDataTypes
-		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, false, true, false)
+		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, true, true, false)
 		if err != nil {
 			fmt.Println("Error in creating struct from json: " + err.Error())
 			return
 		}
 		file, err := os.Create(packagename + "/" + table + ".go")
 		if err != nil {
-			log.Fatal("Cannot create file", err)
+			log.Printf("exist: " + table)
+			log.Fatal("exception", err)
+			continue
 		}
 		defer file.Close()
 		fmt.Fprintf(file, string(struc))

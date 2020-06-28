@@ -1,8 +1,6 @@
 package models
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type app_users_grupos struct {
 	IDGrupo sql.NullInt64 `gorm:"column:id_grupo"`

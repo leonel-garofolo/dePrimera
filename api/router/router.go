@@ -1,7 +1,7 @@
 package router
 
 import (
-	"deprimera/src/services"
+	"deprimera/api/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

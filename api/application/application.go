@@ -1,8 +1,8 @@
 package application
 
 import (
-	"deprimera/src/config"
-	"deprimera/src/db"
+	"deprimera/api/config"
+	"deprimera/api/db"
 	"fmt"
 
 	"github.com/jinzhu/gorm"

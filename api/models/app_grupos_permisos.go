@@ -1,8 +1,6 @@
 package models
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type app_grupos_permisos struct {
 	IDGrupo   int           `gorm:"column:id_grupo;primary_key"`

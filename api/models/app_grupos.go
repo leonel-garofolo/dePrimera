@@ -1,8 +1,6 @@
 package models
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type app_grupos struct {
 	Descripcion sql.NullString `gorm:"column:descripcion"`

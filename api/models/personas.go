@@ -1,8 +1,6 @@
 package models
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type personas struct {
 	ApellidoNombre string         `gorm:"column:apellido_nombre"`
