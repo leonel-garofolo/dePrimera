@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"deprimera/api/application"
+	"deprimera/api/models"
 	"fmt"
 	"log"
 
@@ -11,44 +12,39 @@ import (
 )
 
 func main() {
-	user := "root"
-	pass := "root"
-	database := "de_primera_app"
-
 	db, err := application.GetDB()
 	if err != nil {
 		log.Fatalln("fail to database connection")
 	}
 	defer db.Close()
 
-	dbSelect(db)
+	//dbSelect(db)
 	//dbSelectOne(db)
-	//dbInsert(db)(
+	//dbInsert(db)
 	//dbInsertRecord(db)
-	//dbUpdate(db)
+	dbUpdate(db)
 	//dbDelete(db)
 
 }
 
 func dbSelect(db *gorm.DB) {
 	//Get all the tables from Database
-	rows, err := db.que("SHOW TABLES")
+	ligas := &models.Ligas{
+		IDLiga: 1,
+	}
+	err := db.First(ligas)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		panic(err)
 	}
-	for rows.Next() {
-		var tables string
-		rows.Scan(&tables)
-		log.Println(tables)
-	}
+	log.Println(ligas)
 }
 
-func dbSelectOne(db *sql.DB) {
+func dbSelectOne(db *gorm.DB) {
 	//Get all the tables from Database
-	id := 6
-	row := db.QueryRow("select nombre from ligas where id_liga = ?", id)
+	id := 2
+	rows, err := db.Raw("select nombre from ligas where id_liga = ?", id).Rows()
+	defer rows.Close()
 	var nombre string
-	err := row.Scan(&nombre)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Println("Zero rows found")
@@ -57,20 +53,20 @@ func dbSelectOne(db *sql.DB) {
 		}
 	}
 
+	for rows.Next() {
+		rows.Scan(&nombre)
+	}
+
 	log.Println(nombre)
 }
 
-func dbInsert(db *sql.DB) {
-	nombre := "leonel"
-	domicilio := "colombia 396"
-	telefono := "3413553810"
-
-	idLiga := 2
-	_, error := db.Exec("insert into ligas(id_liga, nombre, domicilio, telefono) values(?, ?,?,?)", idLiga, nombre, domicilio, telefono)
-	if error != nil {
-		panic(error)
+func dbInsert(db *gorm.DB) { //verificar como atrapar el error del insert
+	equipo := models.Equipos{
+		IDLiga: 2,
+		Nombre: "test",
 	}
-	fmt.Println("New record ID is:", idLiga)
+
+	db.Create(&equipo)
 }
 
 func dbInsertRecord(db *sql.DB) {
@@ -87,15 +83,14 @@ func dbInsertRecord(db *sql.DB) {
 	fmt.Println("New record equipo ID is:", idEquipo)
 }
 
-func dbUpdate(db *sql.DB) {
-	nombre := "leonel 2"
-	cuit := "31631073"
-	idLiga := 2
-	_, error := db.Exec("update ligas set nombre = ?, cuit = ?  where id_liga = ?", nombre, cuit, idLiga)
-	if error != nil {
-		panic(error)
+func dbUpdate(db *gorm.DB) {
+	equipo := models.Equipos{
+		IDEquipo: 5,
+		IDLiga:   2,
+		Nombre:   "test 2",
 	}
-	fmt.Println("New record ID is:", idLiga)
+
+	db.Save(&equipo)
 }
 
 func dbDelete(db *sql.DB) {

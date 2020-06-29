@@ -34,7 +34,7 @@ func (l *Ligas) SaveLigas() int {
 	if ligaDB == nil {
 		db.Create(&l)
 	} else {
-		db.Update(&l)
+		db.Save(&l)
 	}
 	return l.IDLiga
 }
