@@ -1,8 +1,7 @@
-package main
+package gorm
 
 import (
 	"database/sql"
-	"deprimera/api/application"
 	"deprimera/api/models"
 	"fmt"
 	"log"
@@ -10,22 +9,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
-
-func main() {
-	db, err := application.GetDB()
-	if err != nil {
-		log.Fatalln("fail to database connection")
-	}
-	defer db.Close()
-
-	//dbSelect(db)
-	//dbSelectOne(db)
-	//dbInsert(db)
-	dbInsertRecord(db)
-	//dbUpdate(db)
-	//dbDelete(db)
-
-}
 
 func dbSelect(db *gorm.DB) {
 	//Get all the tables from Database

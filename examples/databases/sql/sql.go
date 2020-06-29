@@ -1,4 +1,4 @@
-package main
+package sql
 
 import (
 	"database/sql"
@@ -7,26 +7,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 )
-
-func main() {
-	user := "root"
-	pass := "root"
-	database := "de_primera_app"
-
-	db, err := sql.Open("mysql", user+":"+pass+"@/"+database+"?charset=utf8&parseTime=True&loc=Local")
-	if err != nil {
-		log.Fatalln("Failed to connect database")
-	}
-	defer db.Close()
-
-	//dbSelect(db)
-	//dbSelectOne(db)
-	//dbInsert(db)(
-	//dbInsertRecord(db)
-	//dbUpdate(db)
-	dbDelete(db)
-
-}
 
 func dbSelect(db *sql.DB) {
 	//Get all the tables from Database
