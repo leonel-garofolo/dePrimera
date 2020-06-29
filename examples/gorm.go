@@ -21,21 +21,17 @@ func main() {
 	//dbSelect(db)
 	//dbSelectOne(db)
 	//dbInsert(db)
-	//dbInsertRecord(db)
-	dbUpdate(db)
+	dbInsertRecord(db)
+	//dbUpdate(db)
 	//dbDelete(db)
 
 }
 
 func dbSelect(db *gorm.DB) {
 	//Get all the tables from Database
-	ligas := &models.Ligas{
-		IDLiga: 1,
-	}
-	err := db.First(ligas)
-	if err != nil {
-		panic(err)
-	}
+	idLiga := 2
+	ligas := &models.Ligas{}
+	db.First(ligas, idLiga)
 	log.Println(ligas)
 }
 
@@ -69,18 +65,15 @@ func dbInsert(db *gorm.DB) { //verificar como atrapar el error del insert
 	db.Create(&equipo)
 }
 
-func dbInsertRecord(db *sql.DB) {
-	idLiga := 2
-	nombre := "leonel"
-
-	stmt, error := db.Prepare("insert into equipos(id_liga, nombre) values(?,?)")
-	res, error := stmt.Exec(idLiga, nombre)
-	idEquipo, error := res.LastInsertId()
-
-	if error != nil {
-		panic(error)
+func dbInsertRecord(db *gorm.DB) {
+	equipo := models.Equipos{
+		IDLiga:     2,
+		Nombre:     "test 2 ",
+		Habilitado: true,
 	}
-	fmt.Println("New record equipo ID is:", idEquipo)
+
+	db.Create(&equipo).Last(&equipo)
+	fmt.Println("New record equipo ID is:", equipo.IDEquipo)
 }
 
 func dbUpdate(db *gorm.DB) {
@@ -93,11 +86,15 @@ func dbUpdate(db *gorm.DB) {
 	db.Save(&equipo)
 }
 
-func dbDelete(db *sql.DB) {
-	idEquipo := 3
-	_, error := db.Exec("delete from equipos where id_equipo = ?", idEquipo)
-	if error != nil {
-		panic(error)
+func dbDelete(db *gorm.DB) {
+	idEquipo := 2
+	equipo := models.Equipos{}
+	db.Where("id_equipo = ?", idEquipo).First(&equipo)
+	if equipo.IDLiga > 0 {
+		db.Where("id_equipo=?", idEquipo).Delete(&models.Equipos{})
+		fmt.Println("delete ID is:", idEquipo)
+	} else {
+		fmt.Println("no exist ID:", idEquipo)
 	}
-	fmt.Println("New record ID is:", idEquipo)
+
 }
