@@ -18,11 +18,7 @@ func RouterEquipos(e *echo.Echo) {
 }
 
 func GetEquipos(c echo.Context) error {
-	equipos := models.Equipos{
-		IDEquipo: 1,
-		IDLiga:   1,
-		Nombre:   "Humo",
-	}
+	equipos := models.GetAllEquipo()
 	return c.JSON(http.StatusOK, equipos)
 }
 

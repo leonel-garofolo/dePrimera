@@ -27,14 +27,35 @@ func (l *Ligas) SaveLigas() int {
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
-
 	}
 
 	ligaDB := db.Find(&l)
 	if ligaDB == nil {
-		db.Create(&l)
+		db.Create(&l).Last(&l)
 	} else {
 		db.Save(&l)
 	}
 	return l.IDLiga
+}
+
+func (l *Ligas) GetLiga() {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	db.Find(&l, l.IDLiga)
+}
+
+func GetAllLigas() []Ligas {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	ligas := []Ligas{}
+	db.Find(&ligas)
+	return ligas
 }
