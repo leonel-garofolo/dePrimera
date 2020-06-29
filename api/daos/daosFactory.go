@@ -1,19 +1,25 @@
 package daos
 
-type EntityDao interface {
-	GetAll()
-	Get(id int)
-	Save() int
-	Delete(id int) bool
-	Query(filter string)
-}
+import "deprimera/api/models"
 
 type DaosFactory interface {
-	GetEquiposDao() EntityDao
+	GetEquiposDao() *EquiposDao
 }
 
 type DePrimeraDaos struct{}
 
-func (dao *DePrimeraDaos) GetEquiposDao() EntityDao {
-	return &EquiposDao{}
+type EquiposDao interface {
+	GetAll() []models.Equipos
+	Get(id int) *models.Equipos
+	Save() int
+	Delete(id int) bool
+	Query(filter string) []models.Equipos
+}
+
+func NewDePrimeraDaos() *DePrimeraDaos {
+	return &DePrimeraDaos{}
+}
+
+func (dao *DePrimeraDaos) GetEquiposDao() *EquiposDaoImpl {
+	return &EquiposDaoImpl{}
 }

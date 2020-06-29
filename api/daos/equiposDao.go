@@ -7,9 +7,9 @@ import (
 	"log"
 )
 
-type EquiposDao struct{}
+type EquiposDaoImpl struct{}
 
-func (ed *EquiposDao) GetAll() {
+func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,7 +21,7 @@ func (ed *EquiposDao) GetAll() {
 	return equipos
 }
 
-func (ed *EquiposDao) Get(id int) {
+func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -33,7 +33,7 @@ func (ed *EquiposDao) Get(id int) {
 	return equipo
 }
 
-func (ed *EquiposDao) Save(e models.Equipos) int {
+func (ed *EquiposDaoImpl) Save(e models.Equipos) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -49,7 +49,7 @@ func (ed *EquiposDao) Save(e models.Equipos) int {
 	return e.IDEquipo
 }
 
-func (ed *EquiposDao) Delete(id int) bool {
+func (ed *EquiposDaoImpl) Delete(id int) bool {
 	equipo := models.Equipos{}
 
 	db, err := application.GetDB()
@@ -68,8 +68,8 @@ func (ed *EquiposDao) Delete(id int) bool {
 	}
 }
 
-func (ed *EquiposDao) Query(sql string) {
-	equipos := &models.Equipos{}
+func (ed *EquiposDaoImpl) Query(sql string) []models.Equipos {
+	equipos := []models.Equipos{}
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
