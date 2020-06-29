@@ -9,7 +9,7 @@ import (
 
 type EquiposDao struct{}
 
-func (ed *EquiposDao) GetAll() []models.Equipos {
+func (ed *EquiposDao) GetAll() {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,7 +21,7 @@ func (ed *EquiposDao) GetAll() []models.Equipos {
 	return equipos
 }
 
-func (ed *EquiposDao) Get(id int) models.Equipos {
+func (ed *EquiposDao) Get(id int) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -68,7 +68,7 @@ func (ed *EquiposDao) Delete(id int) bool {
 	}
 }
 
-func (ed *EquiposDao) Query(sql string) *models.Equipos {
+func (ed *EquiposDao) Query(sql string) {
 	equipos := &models.Equipos{}
 	db, err := application.GetDB()
 	defer db.Close()

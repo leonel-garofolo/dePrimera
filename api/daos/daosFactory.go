@@ -12,8 +12,8 @@ type DaosFactory interface {
 	GetEquiposDao() EntityDao
 }
 
-type DAOs struct{}
+type DePrimeraDaos struct{}
 
-func GetEquiposDao() *EquiposDao {
+func (dao *DePrimeraDaos) GetEquiposDao() EntityDao {
 	return &EquiposDao{}
 }

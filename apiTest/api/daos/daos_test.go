@@ -7,6 +7,7 @@ import (
 )
 
 func Test(t *testing.T) {
-	equipos := daos.GetEquiposDao().GetAll()
+	myDao := &daos.DePrimeraDaos{}
+	equipos := myDao.GetEquiposDao().GetAll()
 	log.Println(len(equipos))
 }
