@@ -2,10 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"deprimera/api/application"
 	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
@@ -13,24 +15,24 @@ func main() {
 	pass := "root"
 	database := "de_primera_app"
 
-	db, err := sql.Open("mysql", user+":"+pass+"@/"+database+"?charset=utf8&parseTime=True&loc=Local")
+	db, err := application.GetDB()
 	if err != nil {
-		log.Fatalln("Failed to connect database")
+		log.Fatalln("fail to database connection")
 	}
 	defer db.Close()
 
-	//dbSelect(db)
+	dbSelect(db)
 	//dbSelectOne(db)
 	//dbInsert(db)(
 	//dbInsertRecord(db)
 	//dbUpdate(db)
-	dbDelete(db)
+	//dbDelete(db)
 
 }
 
-func dbSelect(db *sql.DB) {
+func dbSelect(db *gorm.DB) {
 	//Get all the tables from Database
-	rows, err := db.Query("SHOW TABLES")
+	rows, err := db.que("SHOW TABLES")
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
