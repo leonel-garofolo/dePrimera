@@ -33,7 +33,7 @@ func (ed *ArbitrosDaoImpl) Get(id int) models.Arbitros {
 	return arbitro
 }
 
-func (ed *ArbitrosDaoImpl) Save(e models.Arbitros) int {
+func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

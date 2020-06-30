@@ -33,7 +33,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 	return campeonato
 }
 
-func (ed *CampeonatosDaoImpl) Save(e models.Campeonatos) int {
+func (ed *CampeonatosDaoImpl) Save(e *models.Campeonatos) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

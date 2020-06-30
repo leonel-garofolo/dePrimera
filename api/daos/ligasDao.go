@@ -33,7 +33,7 @@ func (ed *LigasDaoImpl) Get(id int) models.Ligas {
 	return liga
 }
 
-func (ed *LigasDaoImpl) Save(e models.Ligas) int {
+func (ed *LigasDaoImpl) Save(e *models.Ligas) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

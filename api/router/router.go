@@ -12,7 +12,16 @@ func home(c echo.Context) error {
 }
 
 func NewRouter(e *echo.Echo) {
+	services.RouterArbitros(e)
+	services.RouterAsistentes(e)
+	services.RouterCampeonatos(e)
+	services.RouterEliminatorias(e)
 	services.RouterEquipos(e)
 	services.RouterLigas(e)
+	services.RouterPartidos(e)
+	services.RouterPersonas(e)
+	services.RouterSanciones(e)
+	services.RouterZonas(e)
+
 	e.GET("/api/home", home)
 }

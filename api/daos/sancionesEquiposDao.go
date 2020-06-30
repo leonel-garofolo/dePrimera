@@ -46,7 +46,7 @@ func (ed *SancionesEquiposDaoImpl) Save(e models.SancionesEquipos) int {
 	} else {
 		db.Save(&e)
 	}
-	return e.IDSancionesEquipos
+	return e.IDSanciones
 }
 
 func (ed *SancionesEquiposDaoImpl) Delete(id int) bool {

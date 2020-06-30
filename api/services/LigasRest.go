@@ -1,44 +1,63 @@
 package services
 
 import (
-	"database/sql"
+	"deprimera/api/daos"
 	"deprimera/api/models"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 func RouterLigas(e *echo.Echo) {
 	e.GET("/api/ligas", GetLigas)
+	e.GET("/api/ligas/:id", GetLiga)
 	e.POST("/api/ligas", SaveLiga)
+	e.DELETE("/api/ligas", DeleteLiga)
 	e.GET("/api/ligas/info", InfoLigas)
 }
 
 func GetLigas(c echo.Context) error {
-	ligas := models.Ligas{}
+	daos := daos.NewDePrimeraDaos()
+	ligas := daos.GetLigasDao().GetAll()
 	return c.JSON(http.StatusOK, ligas)
 }
 
+func GetLiga(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	liga := daos.GetLigasDao().Get(id)
+	return c.JSON(http.StatusOK, liga)
+}
+
 func SaveLiga(c echo.Context) error {
-	m := echo.Map{}
-	if err := c.Bind(&m); err != nil {
-		return err
-	}
+	ligas := &models.Ligas{}
+	c.Bind(ligas)
 
-	ligas := &models.Ligas{
-		Cuit: sql.NullString{
-			String: m["cuit"].(string),
-			Valid:  false,
-		},
-		Nombre: m["nombre"].(string),
-	}
+	daos := daos.NewDePrimeraDaos()
+	id := daos.GetLigasDao().Save(ligas)
 
-	ligas.SaveLigas()
-	log.Println("ligas id : " + string(ligas.IDLiga))
+	log.Println(id)
 	return c.String(http.StatusOK, "insertado")
+}
+
+func DeleteLiga(c echo.Context) error {
+	id, err := strconv.Atoi(c.FormValue("id"))
+	if err != nil {
+		log.Panic(err)
+	}
+	daos := daos.NewDePrimeraDaos()
+	daos.GetLigasDao().Delete(id)
+
+	log.Println(id)
+	return c.String(http.StatusOK, "delete")
 }
 
 func InfoLigas(c echo.Context) error {

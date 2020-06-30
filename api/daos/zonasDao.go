@@ -33,7 +33,7 @@ func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
 	return zona
 }
 
-func (ed *ZonasDaoImpl) Save(e models.Zonas) int {
+func (ed *ZonasDaoImpl) Save(e *models.Zonas) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -58,7 +58,7 @@ func (ed *ZonasDaoImpl) Delete(id int) bool {
 		log.Println(err.Error())
 	}
 	db.Where("id_sancion = ?", id).First(&sancion)
-	if sancion.IDZonas > 0 {
+	if sancion.IDZona > 0 {
 		db.Where("id_sancion=?", id).Delete(&models.Zonas{})
 		fmt.Println("delete ID is:", id)
 		return true

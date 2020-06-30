@@ -33,7 +33,7 @@ func (ed *AsistentesDaoImpl) Get(id int) models.Asistentes {
 	return asistente
 }
 
-func (ed *AsistentesDaoImpl) Save(e models.Asistentes) int {
+func (ed *AsistentesDaoImpl) Save(e *models.Asistentes) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

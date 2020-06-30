@@ -33,7 +33,7 @@ func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
 	return sancion
 }
 
-func (ed *SancionesDaoImpl) Save(e models.Sanciones) int {
+func (ed *SancionesDaoImpl) Save(e *models.Sanciones) int {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
