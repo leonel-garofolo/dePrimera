@@ -72,6 +72,18 @@ func (dao *DePrimeraDaos) GetEquiposDao() *EquiposDaoImpl {
 	return &EquiposDaoImpl{}
 }
 
+type EquiposJugadoresDao interface {
+	GetAll() []models.EquiposJugadores
+	Get(id int) *models.EquiposJugadores
+	Save(e models.EquiposJugadores) int
+	Delete(id int) bool
+	Query(filter string) []models.EquiposJugadores
+}
+
+func (dao *DePrimeraDaos) GetEquiposJugadoresDao() *EquiposJugadoresDaoImpl {
+	return &EquiposJugadoresDaoImpl{}
+}
+
 type LigasDao interface {
 	GetAll() []models.Ligas
 	Get(id int) *models.Ligas
@@ -82,4 +94,28 @@ type LigasDao interface {
 
 func (dao *DePrimeraDaos) GetLigasDao() *LigasDaoImpl {
 	return &LigasDaoImpl{}
+}
+
+type PartidosDao interface {
+	GetAll() []models.Partidos
+	Get(id int) *models.Partidos
+	Save(e models.Partidos) int
+	Delete(id int) bool
+	Query(filter string) []models.Partidos
+}
+
+func (dao *DePrimeraDaos) GetPartidosDao() *PartidosDaoImpl {
+	return &PartidosDaoImpl{}
+}
+
+type PersonasDao interface {
+	GetAll() []models.Personas
+	Get(id int) *models.Personas
+	Save(e models.Personas) int
+	Delete(id int) bool
+	Query(filter string) []models.Personas
+}
+
+func (dao *DePrimeraDaos) GetPersonasDao() *PersonasDaoImpl {
+	return &PersonasDaoImpl{}
 }

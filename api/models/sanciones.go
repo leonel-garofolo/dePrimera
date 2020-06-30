@@ -2,7 +2,7 @@ package models
 
 import "database/sql"
 
-type sanciones struct {
+type Sanciones struct {
 	Descripcion   sql.NullString `gorm:"column:descripcion"`
 	IDLigas       int            `gorm:"column:id_ligas"`
 	IDSanciones   int            `gorm:"column:id_sanciones;primary_key"`
@@ -10,6 +10,6 @@ type sanciones struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (s *sanciones) TableName() string {
+func (s *Sanciones) TableName() string {
 	return "sanciones"
 }

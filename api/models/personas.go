@@ -2,7 +2,7 @@ package models
 
 import "database/sql"
 
-type personas struct {
+type Personas struct {
 	ApellidoNombre string         `gorm:"column:apellido_nombre"`
 	Domicilio      sql.NullString `gorm:"column:domicilio"`
 	Edad           sql.NullInt64  `gorm:"column:edad"`
@@ -16,6 +16,6 @@ type personas struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (p *personas) TableName() string {
+func (p *Personas) TableName() string {
 	return "personas"
 }
