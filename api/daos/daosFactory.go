@@ -119,3 +119,27 @@ type PersonasDao interface {
 func (dao *DePrimeraDaos) GetPersonasDao() *PersonasDaoImpl {
 	return &PersonasDaoImpl{}
 }
+
+type SancionesDao interface {
+	GetAll() []models.Sanciones
+	Get(id int) *models.Sanciones
+	Save(e models.Sanciones) int
+	Delete(id int) bool
+	Query(filter string) []models.Sanciones
+}
+
+func (dao *DePrimeraDaos) GetSancionesDao() *SancionesDaoImpl {
+	return &SancionesDaoImpl{}
+}
+
+type SancionesEquiposDao interface {
+	GetAll() []models.SancionesEquipos
+	Get(id int) *models.SancionesEquipos
+	Save(e models.SancionesEquipos) int
+	Delete(id int) bool
+	Query(filter string) []models.SancionesEquipos
+}
+
+func (dao *DePrimeraDaos) GetSancionesEquiposDao() *SancionesEquiposDaoImpl {
+	return &SancionesEquiposDaoImpl{}
+}
