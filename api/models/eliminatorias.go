@@ -2,7 +2,7 @@ package models
 
 import "database/sql"
 
-type eliminatorias struct {
+type Eliminatorias struct {
 	IDCampeonato   int           `gorm:"column:id_campeonato"`
 	IDEliminatoria int           `gorm:"column:id_eliminatoria;primary_key"`
 	IDPartido      int           `gorm:"column:id_partido"`
@@ -10,6 +10,6 @@ type eliminatorias struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (e *eliminatorias) TableName() string {
+func (e *Eliminatorias) TableName() string {
 	return "eliminatorias"
 }

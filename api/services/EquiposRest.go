@@ -1,7 +1,7 @@
 package services
 
 import (
-	"deprimera/api/application"
+	"deprimera/api/daos"
 	"deprimera/api/models"
 	"encoding/json"
 	"fmt"
@@ -18,7 +18,8 @@ func RouterEquipos(e *echo.Echo) {
 }
 
 func GetEquipos(c echo.Context) error {
-	equipos := models.GetAllEquipo()
+	daos := daos.NewDePrimeraDaos()
+	equipos := daos.GetEquiposDao().GetAll()
 	return c.JSON(http.StatusOK, equipos)
 }
 
@@ -26,15 +27,10 @@ func SaveEquipos(c echo.Context) error {
 	equipos := &models.Equipos{}
 	c.Bind(equipos)
 
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
+	daos := daos.NewDePrimeraDaos()
+	id := daos.GetEquiposDao().Save(equipos)
 
-	}
-	db.Create(equipos)
-
-	log.Println(equipos)
+	log.Println(id)
 	return c.String(http.StatusOK, "insertado")
 }
 

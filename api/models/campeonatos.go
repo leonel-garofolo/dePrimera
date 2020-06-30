@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type campeonatos struct {
+type Campeonatos struct {
 	Descripcion  sql.NullString `gorm:"column:descripcion"`
 	FechaFin     time.Time      `gorm:"column:fecha_fin"`
 	FechaInicio  time.Time      `gorm:"column:fecha_inicio"`
@@ -15,6 +15,6 @@ type campeonatos struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (c *campeonatos) TableName() string {
+func (c *Campeonatos) TableName() string {
 	return "campeonatos"
 }

@@ -1,11 +1,11 @@
 package models
 
-type arbitros struct {
+type Arbitros struct {
 	IDArbitro int `gorm:"column:id_arbitro;primary_key"`
 	IDPersona int `gorm:"column:id_persona"`
 }
 
 // TableName sets the insert table name for this struct type
-func (a *arbitros) TableName() string {
+func (a *Arbitros) TableName() string {
 	return "arbitros"
 }
