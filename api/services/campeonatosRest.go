@@ -49,7 +49,7 @@ func SaveCampeonato(c echo.Context) error {
 }
 
 func DeleteCampeonato(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
 	if err != nil {
 		log.Panic(err)
 	}

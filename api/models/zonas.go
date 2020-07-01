@@ -1,11 +1,9 @@
 package models
 
-import "database/sql"
-
 type Zonas struct {
-	IDCampeonato int            `gorm:"column:id_campeonato"`
-	IDZona       int            `gorm:"column:id_zona;primary_key"`
-	Nombre       sql.NullString `gorm:"column:nombre"`
+	IDCampeonato int    `json:"id_campeonato"`
+	IDZona       int64  `json:"id_zona"`
+	Nombre       string `json:"nombre"`
 }
 
 // TableName sets the insert table name for this struct type

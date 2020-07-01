@@ -73,11 +73,8 @@ func (dao *DePrimeraDaos) GetEquiposDao() *EquiposDaoImpl {
 }
 
 type EquiposJugadoresDao interface {
-	GetAll() []models.EquiposJugadores
-	Get(id int) *models.EquiposJugadores
-	Save(e *models.EquiposJugadores) int
-	Delete(id int) bool
-	Query(filter string) []models.EquiposJugadores
+	Save(e *models.EquiposJugadores) int64
+	Delete(id int64) bool
 }
 
 func (dao *DePrimeraDaos) GetEquiposJugadoresDao() *EquiposJugadoresDaoImpl {
@@ -133,11 +130,8 @@ func (dao *DePrimeraDaos) GetSancionesDao() *SancionesDaoImpl {
 }
 
 type SancionesEquiposDao interface {
-	GetAll() []models.SancionesEquipos
-	Get(id int) *models.SancionesEquipos
-	Save(e *models.SancionesEquipos) int
-	Delete(id int) bool
-	Query(filter string) []models.SancionesEquipos
+	Save(e *models.SancionesEquipos) int64
+	Delete(id int64) bool
 }
 
 func (dao *DePrimeraDaos) GetSancionesEquiposDao() *SancionesEquiposDaoImpl {
@@ -157,11 +151,8 @@ func (dao *DePrimeraDaos) GetZonasDao() *ZonasDaoImpl {
 }
 
 type ZonasEquiposDao interface {
-	GetAll() []models.ZonasEquipos
-	Get(id int) *models.ZonasEquipos
-	Save(e *models.ZonasEquipos) int
-	Delete(id int) bool
-	Query(filter string) []models.ZonasEquipos
+	Save(e *models.ZonasEquipos) int64
+	Delete(id int64) bool
 }
 
 func (dao *DePrimeraDaos) GetZonasEquiposDao() *ZonasEquiposDaoImpl {

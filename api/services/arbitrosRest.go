@@ -14,7 +14,6 @@ import (
 
 func RouterArbitros(e *echo.Echo) {
 	e.GET("/api/arbitros", GetArbitros)
-	e.GET("/api/arbitros/:id", GetArbitro)
 	e.POST("/api/arbitros", SaveArbitro)
 	e.DELETE("/api/arbitros", DeleteArbitro)
 	e.GET("/api/arbitros/info", InfoArbitros)
@@ -24,17 +23,6 @@ func GetArbitros(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
 	arbitros := daos.GetArbitrosDao().GetAll()
 	return c.JSON(http.StatusOK, arbitros)
-}
-
-func GetArbitro(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Panic(err)
-	}
-
-	daos := daos.NewDePrimeraDaos()
-	arbitro := daos.GetArbitrosDao().Get(id)
-	return c.JSON(http.StatusOK, arbitro)
 }
 
 func SaveArbitro(c echo.Context) error {
@@ -49,14 +37,19 @@ func SaveArbitro(c echo.Context) error {
 }
 
 func DeleteArbitro(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
-	if err != nil {
-		log.Panic(err)
+	idArbitro, err1 := strconv.ParseInt(c.FormValue("id_arbitro"), 10, 64)
+	if err1 != nil {
+		log.Panic(err1)
+	}
+
+	idEquipo, err2 := strconv.ParseInt(c.FormValue("id_equipo"), 10, 64)
+	if err2 != nil {
+		log.Panic(err2)
 	}
 	daos := daos.NewDePrimeraDaos()
-	daos.GetArbitrosDao().Delete(id)
+	daos.GetArbitrosDao().Delete(idArbitro, idEquipo)
 
-	log.Println(id)
+	log.Println(idArbitro, idEquipo)
 	return c.String(http.StatusOK, "delete")
 }
 

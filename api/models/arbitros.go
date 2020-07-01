@@ -1,8 +1,8 @@
 package models
 
 type Arbitros struct {
-	IDArbitro int `gorm:"column:id_arbitro;primary_key"`
-	IDPersona int `gorm:"column:id_persona"`
+	IDArbitro int64 `json:"id_arbitro"`
+	IDPersona int64 `json:"id_persona"`
 }
 
 // TableName sets the insert table name for this struct type

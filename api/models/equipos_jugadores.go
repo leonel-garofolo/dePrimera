@@ -1,8 +1,8 @@
 package models
 
 type EquiposJugadores struct {
-	IDEquipos   int `gorm:"column:id_equipos;primary_key"`
-	IDJugadores int `gorm:"column:id_jugadores;primary_key"`
+	IDEquipos   int64 `json:"id_equipos"`
+	IDJugadores int64 `json:"id_jugadores"`
 }
 
 // TableName sets the insert table name for this struct type

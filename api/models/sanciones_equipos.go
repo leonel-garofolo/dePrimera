@@ -1,8 +1,8 @@
 package models
 
 type SancionesEquipos struct {
-	IDEquipo    int `gorm:"column:id_equipo;primary_key"`
-	IDSanciones int `gorm:"column:id_sanciones;primary_key"`
+	IDEquipo    int64 `json:"id_equipo"`
+	IDSanciones int64 `json:"id_sanciones"`
 }
 
 // TableName sets the insert table name for this struct type

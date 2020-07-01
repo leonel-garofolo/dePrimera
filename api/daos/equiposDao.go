@@ -3,7 +3,6 @@ package daos
 import (
 	"deprimera/api/application"
 	"deprimera/api/models"
-	"fmt"
 	"log"
 )
 
@@ -16,8 +15,21 @@ func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 		log.Println(err.Error())
 	}
 
-	equipos := []models.Equipos{}
-	db.Find(&equipos)
+	rows, err := db.Query("select * from equipos")
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var equipos []models.Equipos
+	for rows.Next() {
+		equipo := models.Equipos{}
+		rows.Scan(&equipo.IDEquipo)
+		rows.Scan(&equipo.IDLiga)
+		rows.Scan(&equipo.Nombre)
+		rows.Scan(&equipo.Habilitado)
+		rows.Scan(&equipo.Foto)
+		equipos = append(equipos, equipo)
+	}
 	return equipos
 }
 
@@ -28,54 +40,56 @@ func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
 		log.Println(err.Error())
 	}
 
+	row := db.QueryRow("select * from equipos where id_equipo = ?", id)
 	equipo := models.Equipos{}
-	db.Find(&equipo, id)
+	row.Scan(&equipo.IDEquipo)
+	row.Scan(&equipo.IDLiga)
+	row.Scan(&equipo.Nombre)
+	row.Scan(&equipo.Habilitado)
+	row.Scan(&equipo.Foto)
 	return equipo
 }
 
-func (ed *EquiposDaoImpl) Save(e *models.Equipos) int {
+func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	equipoDB := db.Find(&e)
-	if equipoDB == nil {
-		db.Create(&e).Last(&e)
+	if e.IDEquipo > 0 {
+		_, error := db.Exec("update equipos"+
+			" set id_liga=?, nombre=?, habilitado=?, foto=? "+
+			" where id_equipo = ?", e.IDLiga, e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
+
+		if error != nil {
+			panic(error)
+		}
 	} else {
-		db.Save(&e)
+		res, error := db.Exec("insert into equipos"+
+			" (id_equipo, id_liga, nombre, habilitado, foto) "+
+			" values(?,?,?,?,?)", e.IDEquipo, e.IDLiga, e.Nombre, e.Habilitado, e.Foto)
+
+		idEquipo, error := res.LastInsertId()
+
+		if error != nil {
+			panic(error)
+		}
+		e.IDEquipo = idEquipo
 	}
 	return e.IDEquipo
 }
 
 func (ed *EquiposDaoImpl) Delete(id int) bool {
-	equipo := models.Equipos{}
-
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	db.Where("id_equipo = ?", id).First(&equipo)
-	if equipo.IDLiga > 0 {
-		db.Where("id_equipo=?", id).Delete(&models.Equipos{})
-		fmt.Println("delete ID is:", id)
-		return true
-	} else {
-		fmt.Println("no exist ID:", id)
-		return false
-	}
-}
-
-func (ed *EquiposDaoImpl) Query(sql string) []models.Equipos {
-	equipos := []models.Equipos{}
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	db.First(equipos, 1)
-	return equipos
+	_, error := db.Exec("delete from equipos where id_equipo = ?", id)
+	if error != nil {
+		panic(error)
+	}
+	return true
 }

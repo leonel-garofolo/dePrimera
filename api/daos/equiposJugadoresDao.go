@@ -3,79 +3,39 @@ package daos
 import (
 	"deprimera/api/application"
 	"deprimera/api/models"
-	"fmt"
 	"log"
 )
 
 type EquiposJugadoresDaoImpl struct{}
 
-func (ed *EquiposJugadoresDaoImpl) GetAll() []models.EquiposJugadores {
+func (ed *EquiposJugadoresDaoImpl) Save(e *models.EquiposJugadores) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	equiposJugadores := []models.EquiposJugadores{}
-	db.Find(&equiposJugadores)
-	return equiposJugadores
-}
+	isDelete := ed.Delete(e.IDEquipos, e.IDJugadores)
+	if isDelete == true {
+		_, error := db.Exec("insert into equipos_jugadores (id_equipos, id_jugadores) values(?,?)", e.IDEquipos, e.IDJugadores)
 
-func (ed *EquiposJugadoresDaoImpl) Get(id int) models.EquiposJugadores {
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	equipoJugadores := models.EquiposJugadores{}
-	db.Find(&equipoJugadores, id)
-	return equipoJugadores
-}
-
-func (ed *EquiposJugadoresDaoImpl) Save(e models.EquiposJugadores) int {
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	equipoJugadorDB := db.Find(&e)
-	if equipoJugadorDB == nil {
-		db.Create(&e).Last(&e)
-	} else {
-		db.Save(&e)
+		if error != nil {
+			panic(error)
+		}
 	}
 	return e.IDEquipos
 }
 
-func (ed *EquiposJugadoresDaoImpl) Delete(id int) bool {
-	equipoJugadores := models.EquiposJugadores{}
-
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	db.Where("id_equipo = ?", id).First(&equipoJugadores)
-	if equipoJugadores.IDEquipos > 0 && equipoJugadores.IDJugadores > 0 {
-		db.Where("id_equipo=?", id).Delete(&models.EquiposJugadores{})
-		fmt.Println("delete ID is:", id)
-		return true
-	} else {
-		fmt.Println("no exist ID:", id)
-		return false
-	}
-}
-
-func (ed *EquiposJugadoresDaoImpl) Query(sql string) []models.EquiposJugadores {
-	equiposJugadores := []models.EquiposJugadores{}
+func (ed *EquiposJugadoresDaoImpl) Delete(IDEquipos int64, IDJugadores int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	db.First(equiposJugadores, 1)
-	return equiposJugadores
+	_, error := db.Exec("delete from equipos_jugadores where id_equipos = ? and id_jugadores = ?", IDEquipos, IDJugadores)
+	if error != nil {
+		panic(error)
+	}
+	return true
 }

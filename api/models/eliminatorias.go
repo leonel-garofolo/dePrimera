@@ -3,10 +3,10 @@ package models
 import "database/sql"
 
 type Eliminatorias struct {
-	IDCampeonato   int           `gorm:"column:id_campeonato"`
-	IDEliminatoria int           `gorm:"column:id_eliminatoria;primary_key"`
-	IDPartido      int           `gorm:"column:id_partido"`
-	NroLlave       sql.NullInt64 `gorm:"column:nro_llave"`
+	IDCampeonato   int           `json:"id_campeonato"`
+	IDEliminatoria int64         `json:"id_eliminatoria"`
+	IDPartido      int           `json:"id_partido"`
+	NroLlave       sql.NullInt64 `json:"nro_llave"`
 }
 
 // TableName sets the insert table name for this struct type

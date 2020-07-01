@@ -1,11 +1,10 @@
 package application
 
 import (
+	"database/sql"
 	"deprimera/api/config"
 	"deprimera/api/db"
 	"fmt"
-
-	"github.com/jinzhu/gorm"
 )
 
 // Application holds commonly used app wide data, for ease of DI
@@ -30,8 +29,8 @@ func Get() (*Application, error) {
 	}, nil
 }
 
-func GetDB() (*gorm.DB, error) {
-	db, err := gorm.Open("mysql", fmt.Sprintf(
+func GetDB() (*sql.DB, error) {
+	db, err := sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
 		"root",
 		"root",

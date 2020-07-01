@@ -3,7 +3,6 @@ package daos
 import (
 	"deprimera/api/application"
 	"deprimera/api/models"
-	"fmt"
 	"log"
 )
 
@@ -16,8 +15,19 @@ func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
 		log.Println(err.Error())
 	}
 
-	eliminatorias := []models.Eliminatorias{}
-	db.Find(&eliminatorias)
+	rows, err := db.Query("select * from eliminatorias")
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+	var eliminatorias []models.Eliminatorias
+	for rows.Next() {
+		eliminatoria := models.Eliminatorias{}
+		rows.Scan(&eliminatoria.IDEliminatoria)
+		rows.Scan(&eliminatoria.IDCampeonato)
+		rows.Scan(&eliminatoria.IDPartido)
+		rows.Scan(&eliminatoria.NroLlave)
+		eliminatorias = append(eliminatorias, eliminatoria)
+	}
 	return eliminatorias
 }
 
@@ -28,54 +38,54 @@ func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
 		log.Println(err.Error())
 	}
 
+	row := db.QueryRow("select * from eliminatorias where id_eliminatoria = ?", id)
 	eliminatoria := models.Eliminatorias{}
-	db.Find(&eliminatoria, id)
+	row.Scan(&eliminatoria.IDEliminatoria)
+	row.Scan(&eliminatoria.IDCampeonato)
+	row.Scan(&eliminatoria.IDPartido)
+	row.Scan(&eliminatoria.NroLlave)
 	return eliminatoria
 }
 
-func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int {
+func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	eliminatoriaDB := db.Find(&e)
-	if eliminatoriaDB == nil {
-		db.Create(&e).Last(&e)
+	if e.IDEliminatoria > 0 {
+		_, error := db.Exec("update eliminatorias"+
+			" set id_campeonato=?, id_partido=?, nro_llave=? "+
+			" where id_eliminatoria=?", e.IDCampeonato, e.IDPartido, e.NroLlave, e.IDEliminatoria)
+
+		if error != nil {
+			panic(error)
+		}
 	} else {
-		db.Save(&e)
+		res, error := db.Exec("insert into eliminatorias"+
+			" (id_eliminatoria, id_campeonato, id_partido, nro_llave) "+
+			" values(?,?,?,?)", e.IDEliminatoria, e.IDCampeonato, e.IDPartido, e.NroLlave)
+
+		IDEliminatoria, error := res.LastInsertId()
+
+		if error != nil {
+			panic(error)
+		}
+		e.IDEliminatoria = IDEliminatoria
 	}
 	return e.IDEliminatoria
 }
 
 func (ed *EliminatoriasDaoImpl) Delete(id int) bool {
-	eliminatoria := models.Eliminatorias{}
-
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
-	db.Where("id_eliminatoria = ?", id).First(&eliminatoria)
-	if eliminatoria.IDEliminatoria > 0 {
-		db.Where("id_eliminatoria=?", id).Delete(&models.Eliminatorias{})
-		fmt.Println("delete ID is:", id)
-		return true
-	} else {
-		fmt.Println("no exist ID:", id)
-		return false
+	_, error := db.Exec("delete from eliminatorias where id_eliminatoria = ?", id)
+	if error != nil {
+		panic(error)
 	}
-}
-
-func (ed *EliminatoriasDaoImpl) Query(sql string) []models.Eliminatorias {
-	eliminatorias := []models.Eliminatorias{}
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	db.First(eliminatorias, 1)
-	return eliminatorias
+	return true
 }

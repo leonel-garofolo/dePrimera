@@ -3,79 +3,39 @@ package daos
 import (
 	"deprimera/api/application"
 	"deprimera/api/models"
-	"fmt"
 	"log"
 )
 
 type SancionesEquiposDaoImpl struct{}
 
-func (ed *SancionesEquiposDaoImpl) GetAll() []models.SancionesEquipos {
+func (ed *SancionesEquiposDaoImpl) Save(e *models.SancionesEquipos) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	sancionEquiposes := []models.SancionesEquipos{}
-	db.Find(&sancionEquiposes)
-	return sancionEquiposes
+	isDelete := ed.Delete(e.IDEquipo, e.IDSanciones)
+	if isDelete == true {
+		_, error := db.Exec("insert into sanciones_equipos (id_equipos, id_sanciones) values(?,?)", e.IDEquipo, e.IDSanciones)
+
+		if error != nil {
+			panic(error)
+		}
+	}
+	return e.IDEquipo
 }
 
-func (ed *SancionesEquiposDaoImpl) Get(id int) models.SancionesEquipos {
+func (ed *SancionesEquiposDaoImpl) Delete(IDEquipo int64, IDSanciones int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	sancionEquipos := models.SancionesEquipos{}
-	db.Find(&sancionEquipos, id)
-	return sancionEquipos
-}
-
-func (ed *SancionesEquiposDaoImpl) Save(e models.SancionesEquipos) int {
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
+	_, error := db.Exec("delete from sanciones_equipos where id_equipos = ? and id_sanciones = ?", IDEquipo, IDSanciones)
+	if error != nil {
+		panic(error)
 	}
-
-	sancionEquiposDB := db.Find(&e)
-	if sancionEquiposDB == nil {
-		db.Create(&e).Last(&e)
-	} else {
-		db.Save(&e)
-	}
-	return e.IDSanciones
-}
-
-func (ed *SancionesEquiposDaoImpl) Delete(id int) bool {
-	sancionEquipos := models.SancionesEquipos{}
-
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	db.Where("id_sancionEquipos = ?", id).First(&sancionEquipos)
-	if sancionEquipos.IDSanciones > 0 && sancionEquipos.IDEquipo > 0 {
-		db.Where("id_sancionEquipos=?", id).Delete(&models.SancionesEquipos{})
-		fmt.Println("delete ID is:", id)
-		return true
-	} else {
-		fmt.Println("no exist ID:", id)
-		return false
-	}
-}
-
-func (ed *SancionesEquiposDaoImpl) Query(sql string) []models.SancionesEquipos {
-	sancionEquiposs := []models.SancionesEquipos{}
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	db.First(sancionEquiposs, 1)
-	return sancionEquiposs
+	return true
 }

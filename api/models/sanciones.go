@@ -1,12 +1,10 @@
 package models
 
-import "database/sql"
-
 type Sanciones struct {
-	Descripcion   sql.NullString `gorm:"column:descripcion"`
-	IDLigas       int            `gorm:"column:id_ligas"`
-	IDSanciones   int            `gorm:"column:id_sanciones;primary_key"`
-	Observaciones sql.NullString `gorm:"column:observaciones"`
+	Descripcion   string `json:"descripcion"`
+	IDLigas       int    `json:"id_ligas"`
+	IDSanciones   int64  `json:"id_sanciones"`
+	Observaciones string `json:"observaciones"`
 }
 
 // TableName sets the insert table name for this struct type

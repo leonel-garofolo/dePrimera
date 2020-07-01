@@ -1,18 +1,16 @@
 package models
 
-import "database/sql"
-
 type Personas struct {
-	ApellidoNombre string         `gorm:"column:apellido_nombre"`
-	Domicilio      sql.NullString `gorm:"column:domicilio"`
-	Edad           sql.NullInt64  `gorm:"column:edad"`
-	IDLiga         int            `gorm:"column:id_liga"`
-	IDLocalidad    sql.NullInt64  `gorm:"column:id_localidad"`
-	IDPais         sql.NullInt64  `gorm:"column:id_pais"`
-	IDPersona      int            `gorm:"column:id_persona;primary_key"`
-	IDProvincia    sql.NullInt64  `gorm:"column:id_provincia"`
-	IDTipoDoc      int            `gorm:"column:id_tipo_doc"`
-	NroDoc         int            `gorm:"column:nro_doc"`
+	ApellidoNombre string `json:"apellido_nombre"`
+	Domicilio      string `json:"domicilio"`
+	Edad           int64  `json:"edad"`
+	IDLiga         int    `json:"id_liga"`
+	IDLocalidad    int64  `json:"id_localidad"`
+	IDPais         int64  `json:"id_pais"`
+	IDPersona      int64  `json:"id_persona"`
+	IDProvincia    int64  `json:"id_provincia"`
+	IDTipoDoc      int    `json:"id_tipo_doc"`
+	NroDoc         int    `json:"nro_doc"`
 }
 
 // TableName sets the insert table name for this struct type

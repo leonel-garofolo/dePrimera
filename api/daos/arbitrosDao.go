@@ -3,7 +3,6 @@ package daos
 import (
 	"deprimera/api/application"
 	"deprimera/api/models"
-	"fmt"
 	"log"
 )
 
@@ -16,66 +15,49 @@ func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 		log.Println(err.Error())
 	}
 
-	arbitros := []models.Arbitros{}
-	db.Find(&arbitros)
+	rows, err := db.Query("select * from arbitros")
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var arbitros []models.Arbitros
+	for rows.Next() {
+		arbitro := models.Arbitros{}
+		rows.Scan(&arbitro.IDArbitro)
+		rows.Scan(&arbitro.IDPersona)
+		arbitros = append(arbitros, arbitro)
+	}
 	return arbitros
 }
 
-func (ed *ArbitrosDaoImpl) Get(id int) models.Arbitros {
+func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	arbitro := models.Arbitros{}
-	db.Find(&arbitro, id)
-	return arbitro
-}
+	isDelete := ed.Delete(e.IDArbitro, e.IDPersona)
+	if isDelete == true {
+		_, error := db.Exec("insert into arbitros (id_arbitros, id_personas) values(?,?)", e.IDArbitro, e.IDPersona)
 
-func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int {
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	arbitroDB := db.Find(&e)
-	if arbitroDB == nil {
-		db.Create(&e).Last(&e)
-	} else {
-		db.Save(&e)
+		if error != nil {
+			panic(error)
+		}
 	}
 	return e.IDArbitro
 }
 
-func (ed *ArbitrosDaoImpl) Delete(id int) bool {
-	arbitro := models.Arbitros{}
-
-	db, err := application.GetDB()
-	defer db.Close()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	db.Where("id_arbitro = ?", id).First(&arbitro)
-	if arbitro.IDArbitro > 0 {
-		db.Where("id_arbitro=?", id).Delete(&models.Arbitros{})
-		fmt.Println("delete ID is:", id)
-		return true
-	} else {
-		fmt.Println("no exist ID:", id)
-		return false
-	}
-}
-
-func (ed *ArbitrosDaoImpl) Query(sql string) []models.Arbitros {
-	arbitros := []models.Arbitros{}
+func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	db.First(arbitros, 1)
-	return arbitros
+	_, error := db.Exec("delete from arbitros where id_arbitro = ? and id_equipo = ?", IDArbitro, IDPersona)
+	if error != nil {
+		panic(error)
+	}
+	return true
 }

@@ -1,8 +1,8 @@
 package models
 
 type ZonasEquipos struct {
-	IDEquipo int `gorm:"column:id_equipo;primary_key"`
-	IDZona   int `gorm:"column:id_zona;primary_key"`
+	IDEquipo int64 `json:"id_equipos"`
+	IDZona   int64 `json:"id_zona"`
 }
 
 // TableName sets the insert table name for this struct type

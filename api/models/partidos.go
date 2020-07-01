@@ -1,24 +1,23 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Partidos struct {
-	FechaEncuentro     time.Time      `gorm:"column:fecha_encuentro"`
-	IDArbitro          sql.NullInt64  `gorm:"column:id_arbitro"`
-	IDAsistente        sql.NullInt64  `gorm:"column:id_asistente"`
-	IDCampeonato       int            `gorm:"column:id_campeonato"`
-	IDEquipoLocal      int            `gorm:"column:id_equipo_local"`
-	IDEquipoVisitante  int            `gorm:"column:id_equipo_visitante"`
-	IDLiga             int            `gorm:"column:id_liga"`
-	IDPartidos         int            `gorm:"column:id_partidos;primary_key"`
-	MotivoSuspencion   sql.NullString `gorm:"column:motivo_suspencion"`
-	Observacion        sql.NullString `gorm:"column:observacion"`
-	ResultadoLocal     sql.NullInt64  `gorm:"column:resultado_local"`
-	ResultadoVisitante sql.NullInt64  `gorm:"column:resultado_visitante"`
-	Suspendido         bool           `gorm:"column:suspendido"`
+	FechaEncuentro     time.Time `json:"fecha_encuentro"`
+	IDArbitro          int64     `json:"id_arbitro"`
+	IDAsistente        int64     `json:"id_asistente"`
+	IDCampeonato       int       `json:"id_campeonato"`
+	IDEquipoLocal      int       `json:"id_equipo_local"`
+	IDEquipoVisitante  int       `json:"id_equipo_visitante"`
+	IDLiga             int       `json:"id_liga"`
+	IDPartidos         int64     `json:"id_partidos"`
+	MotivoSuspencion   string    `json:"motivo_suspencion"`
+	Observacion        string    `json:"observacion"`
+	ResultadoLocal     int64     `json:"resultado_local"`
+	ResultadoVisitante int64     `json:"resultado_visitante"`
+	Suspendido         bool      `json:"suspendido"`
 }
 
 // TableName sets the insert table name for this struct type
