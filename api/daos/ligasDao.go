@@ -72,13 +72,7 @@ func (ed *LigasDaoImpl) Save(e *models.Ligas) int64 {
 			log.Println(error)
 			panic(error)
 		}
-
-		idEquipo, error2 := res.LastInsertId()
-		if error2 != nil {
-			panic(error2)
-		}
-
-		e.IDLiga = idEquipo
+		e.IDLiga, _ = res.LastInsertId()
 	}
 	return e.IDLiga
 }

@@ -22,10 +22,11 @@ func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
 	var eliminatorias []models.Eliminatorias
 	for rows.Next() {
 		eliminatoria := models.Eliminatorias{}
-		rows.Scan(&eliminatoria.IDEliminatoria)
-		rows.Scan(&eliminatoria.IDCampeonato)
-		rows.Scan(&eliminatoria.IDPartido)
-		rows.Scan(&eliminatoria.NroLlave)
+		error := rows.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		eliminatorias = append(eliminatorias, eliminatoria)
 	}
 	return eliminatorias
@@ -40,10 +41,11 @@ func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
 
 	row := db.QueryRow("select * from eliminatorias where id_eliminatoria = ?", id)
 	eliminatoria := models.Eliminatorias{}
-	row.Scan(&eliminatoria.IDEliminatoria)
-	row.Scan(&eliminatoria.IDCampeonato)
-	row.Scan(&eliminatoria.IDPartido)
-	row.Scan(&eliminatoria.NroLlave)
+	error := row.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return eliminatoria
 }
 
@@ -66,13 +68,10 @@ func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
 		res, error := db.Exec("insert into eliminatorias"+
 			" (id_eliminatoria, id_campeonato, id_partido, nro_llave) "+
 			" values(?,?,?,?)", e.IDEliminatoria, e.IDCampeonato, e.IDPartido, e.NroLlave)
-
-		IDEliminatoria, error := res.LastInsertId()
-
 		if error != nil {
 			panic(error)
 		}
-		e.IDEliminatoria = IDEliminatoria
+		e.IDEliminatoria, _ = res.LastInsertId()
 	}
 	return e.IDEliminatoria
 }

@@ -20,11 +20,14 @@ func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 		log.Fatalln("Failed to query")
 	}
 
-	var arbitros []models.Arbitros
+	arbitros := []models.Arbitros{}
 	for rows.Next() {
 		arbitro := models.Arbitros{}
-		rows.Scan(&arbitro.IDArbitro)
-		rows.Scan(&arbitro.IDPersona)
+		error := rows.Scan(&arbitro.IDArbitro, &arbitro.IDPersona)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		arbitros = append(arbitros, arbitro)
 	}
 	return arbitros
@@ -40,8 +43,8 @@ func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
 	isDelete := ed.Delete(e.IDArbitro, e.IDPersona)
 	if isDelete == true {
 		_, error := db.Exec("insert into arbitros (id_arbitros, id_personas) values(?,?)", e.IDArbitro, e.IDPersona)
-
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	}

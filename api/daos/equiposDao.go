@@ -23,11 +23,12 @@ func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 	var equipos []models.Equipos
 	for rows.Next() {
 		equipo := models.Equipos{}
-		rows.Scan(&equipo.IDEquipo)
-		rows.Scan(&equipo.IDLiga)
-		rows.Scan(&equipo.Nombre)
-		rows.Scan(&equipo.Habilitado)
-		rows.Scan(&equipo.Foto)
+		error := rows.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
+
 		equipos = append(equipos, equipo)
 	}
 	return equipos
@@ -42,11 +43,11 @@ func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
 
 	row := db.QueryRow("select * from equipos where id_equipo = ?", id)
 	equipo := models.Equipos{}
-	row.Scan(&equipo.IDEquipo)
-	row.Scan(&equipo.IDLiga)
-	row.Scan(&equipo.Nombre)
-	row.Scan(&equipo.Habilitado)
-	row.Scan(&equipo.Foto)
+	error := row.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return equipo
 }
 
@@ -69,13 +70,10 @@ func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
 		res, error := db.Exec("insert into equipos"+
 			" (id_equipo, id_liga, nombre, habilitado, foto) "+
 			" values(?,?,?,?,?)", e.IDEquipo, e.IDLiga, e.Nombre, e.Habilitado, e.Foto)
-
-		idEquipo, error := res.LastInsertId()
-
 		if error != nil {
 			panic(error)
 		}
-		e.IDEquipo = idEquipo
+		e.IDEquipo, _ = res.LastInsertId()
 	}
 	return e.IDEquipo
 }

@@ -23,12 +23,11 @@ func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
 	var campeonatos []models.Campeonatos
 	for rows.Next() {
 		campeonato := models.Campeonatos{}
-		rows.Scan(&campeonato.Descripcion)
-		rows.Scan(&campeonato.FechaFin)
-		rows.Scan(&campeonato.FechaInicio)
-		rows.Scan(&campeonato.IDCampeonato)
-		rows.Scan(&campeonato.IDLiga)
-		rows.Scan(&campeonato.IDModelo)
+		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		campeonatos = append(campeonatos, campeonato)
 	}
 	return campeonatos
@@ -43,12 +42,11 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 
 	row := db.QueryRow("select * from campeonatos where id_campeonato = ?", id)
 	campeonato := models.Campeonatos{}
-	row.Scan(&campeonato.Descripcion)
-	row.Scan(&campeonato.FechaFin)
-	row.Scan(&campeonato.FechaInicio)
-	row.Scan(&campeonato.IDCampeonato)
-	row.Scan(&campeonato.IDLiga)
-	row.Scan(&campeonato.IDModelo)
+	error := row.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return campeonato
 }
 

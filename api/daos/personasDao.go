@@ -23,16 +23,11 @@ func (ed *PersonasDaoImpl) GetAll() []models.Personas {
 	var personas []models.Personas
 	for rows.Next() {
 		persona := models.Personas{}
-		rows.Scan(&persona.IDPersona)
-		rows.Scan(&persona.ApellidoNombre)
-		rows.Scan(&persona.Domicilio)
-		rows.Scan(&persona.Edad)
-		rows.Scan(&persona.IDLiga)
-		rows.Scan(&persona.IDLocalidad)
-		rows.Scan(&persona.IDPais)
-		rows.Scan(&persona.IDProvincia)
-		rows.Scan(&persona.IDTipoDoc)
-		rows.Scan(&persona.NroDoc)
+		error := rows.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		personas = append(personas, persona)
 	}
 	return personas
@@ -47,16 +42,11 @@ func (ed *PersonasDaoImpl) Get(id int) models.Personas {
 
 	row := db.QueryRow("select * from personas where id_persona = ?", id)
 	persona := models.Personas{}
-	row.Scan(&persona.IDPersona)
-	row.Scan(&persona.ApellidoNombre)
-	row.Scan(&persona.Domicilio)
-	row.Scan(&persona.Edad)
-	row.Scan(&persona.IDLiga)
-	row.Scan(&persona.IDLocalidad)
-	row.Scan(&persona.IDPais)
-	row.Scan(&persona.IDProvincia)
-	row.Scan(&persona.IDTipoDoc)
-	row.Scan(&persona.NroDoc)
+	error := row.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return persona
 }
 

@@ -22,10 +22,11 @@ func (ed *SancionesDaoImpl) GetAll() []models.Sanciones {
 	var sanciones []models.Sanciones
 	for rows.Next() {
 		sancion := models.Sanciones{}
-		rows.Scan(&sancion.IDSanciones)
-		rows.Scan(&sancion.IDLigas)
-		rows.Scan(&sancion.Descripcion)
-		rows.Scan(&sancion.Observaciones)
+		error := rows.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		sanciones = append(sanciones, sancion)
 	}
 	return sanciones
@@ -43,10 +44,11 @@ func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
 		log.Fatalln("Failed to query")
 	}
 	sancion := models.Sanciones{}
-	row.Scan(&sancion.IDSanciones)
-	row.Scan(&sancion.IDLigas)
-	row.Scan(&sancion.Descripcion)
-	row.Scan(&sancion.Observaciones)
+	error := row.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return sancion
 }
 
@@ -69,13 +71,10 @@ func (ed *SancionesDaoImpl) Save(e *models.Sanciones) int64 {
 		res, error := db.Exec("insert into sanciones"+
 			" (id_sanciones, id_ligas, descripcion, observaciones) "+
 			" values(?,?,?,?)", e.IDSanciones, e.IDLigas, e.Descripcion, e.Observaciones)
-
-		IDSanciones, error := res.LastInsertId()
-
 		if error != nil {
 			panic(error)
 		}
-		e.IDSanciones = IDSanciones
+		e.IDSanciones, _ = res.LastInsertId()
 	}
 	return e.IDSanciones
 }

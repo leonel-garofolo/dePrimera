@@ -23,9 +23,11 @@ func (ed *ZonasDaoImpl) GetAll() []models.Zonas {
 	var zonas []models.Zonas
 	for rows.Next() {
 		zona := models.Zonas{}
-		rows.Scan(&zona.IDZona)
-		rows.Scan(&zona.IDCampeonato)
-		rows.Scan(&zona.Nombre)
+		error := rows.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		zonas = append(zonas, zona)
 	}
 	return zonas
@@ -40,9 +42,11 @@ func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
 
 	row := db.QueryRow("select * from zonas where id_zona = ?", id)
 	zona := models.Zonas{}
-	row.Scan(&zona.IDZona)
-	row.Scan(&zona.IDCampeonato)
-	row.Scan(&zona.Nombre)
+	error := row.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return zona
 }
 
@@ -65,13 +69,10 @@ func (ed *ZonasDaoImpl) Save(e *models.Zonas) int64 {
 		res, error := db.Exec("insert into zonas"+
 			" (id_zona, id_campeonato, nombre) "+
 			" values(?,?,?)", e.IDZona, e.IDCampeonato, e.Nombre)
-
-		IDZona, error := res.LastInsertId()
-
 		if error != nil {
 			panic(error)
 		}
-		e.IDZona = IDZona
+		e.IDZona, _ = res.LastInsertId()
 	}
 	return e.IDZona
 }

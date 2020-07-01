@@ -14,9 +14,9 @@ import (
 
 func RouterEquipos(e *echo.Echo) {
 	e.GET("/api/equipos", GetEquipos)
-	e.GET("/api/ligas/:id", GetEquipo)
+	e.GET("/api/equipos/:id", GetEquipo)
 	e.POST("/api/equipos", SaveEquipos)
-	e.DELETE("/api/ligas", DeleteEquipo)
+	e.DELETE("/api/equipos/:id", DeleteEquipo)
 	e.GET("/api/equipos/info", InfoEquipo)
 }
 
@@ -49,7 +49,7 @@ func SaveEquipos(c echo.Context) error {
 }
 
 func DeleteEquipo(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}
