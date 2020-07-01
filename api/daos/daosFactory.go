@@ -1,6 +1,8 @@
 package daos
 
-import "deprimera/api/models"
+import (
+	"deprimera/api/models"
+)
 
 type DaosFactory interface {
 	GetEquiposDao() *EquiposDao

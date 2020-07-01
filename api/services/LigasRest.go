@@ -16,7 +16,7 @@ func RouterLigas(e *echo.Echo) {
 	e.GET("/api/ligas", GetLigas)
 	e.GET("/api/ligas/:id", GetLiga)
 	e.POST("/api/ligas", SaveLiga)
-	e.DELETE("/api/ligas", DeleteLiga)
+	e.DELETE("/api/ligas/:id", DeleteLiga)
 	e.GET("/api/ligas/info", InfoLigas)
 }
 
@@ -49,7 +49,7 @@ func SaveLiga(c echo.Context) error {
 }
 
 func DeleteLiga(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

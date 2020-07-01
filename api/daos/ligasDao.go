@@ -20,17 +20,14 @@ func (ed *LigasDaoImpl) GetAll() []models.Ligas {
 		log.Fatalln("Failed to query")
 	}
 
-	var ligas []models.Ligas
+	ligas := []models.Ligas{}
 	for rows.Next() {
 		liga := models.Ligas{}
-		rows.Scan(&liga.Cuit)
-		rows.Scan(&liga.Domicilio)
-		rows.Scan(&liga.IDLiga)
-		rows.Scan(&liga.MailContacto)
-		rows.Scan(&liga.Nombre)
-		rows.Scan(&liga.NombreContacto)
-		rows.Scan(&liga.Telefono)
-		rows.Scan(&liga.TelefonoContacto)
+		error := rows.Scan(&liga.IDLiga, &liga.Nombre, &liga.NombreContacto, &liga.MailContacto, &liga.Cuit, &liga.Domicilio, &liga.Telefono, &liga.TelefonoContacto)
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 		ligas = append(ligas, liga)
 	}
 	return ligas
@@ -45,15 +42,11 @@ func (ed *LigasDaoImpl) Get(id int) models.Ligas {
 
 	liga := models.Ligas{}
 	row := db.QueryRow("select * from ligas where id_liga = ?", id)
-	row.Scan(&liga.Cuit)
-	row.Scan(&liga.Domicilio)
-	row.Scan(&liga.IDLiga)
-	row.Scan(&liga.MailContacto)
-	row.Scan(&liga.Nombre)
-	row.Scan(&liga.NombreContacto)
-	row.Scan(&liga.Telefono)
-	row.Scan(&liga.TelefonoContacto)
-
+	error := row.Scan(&liga.IDLiga, &liga.Cuit, &liga.Domicilio, &liga.MailContacto, &liga.Nombre, &liga.NombreContacto, &liga.Telefono, &liga.TelefonoContacto)
+	if error != nil {
+		log.Println(error)
+		panic(error)
+	}
 	return liga
 }
 
@@ -73,15 +66,18 @@ func (ed *LigasDaoImpl) Save(e *models.Ligas) int64 {
 			panic(error)
 		}
 	} else {
-		res, error := db.Exec("insert into ligas"+
-			" (cuit, domicilio, id_liga, mail_contacto, nombre, nombre_contacto, telefono, telefono_contacto) "+
-			" values(?,?,?,?,?,?,?,?)", e.Cuit, e.Domicilio, e.IDLiga, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto)
-
-		idEquipo, error := res.LastInsertId()
-
+		res, error := db.Exec("insert into ligas (cuit, domicilio, mail_contacto, nombre, nombre_contacto, telefono, telefono_contacto) "+
+			" values(?,?,?,?,?,?,?)", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
+
+		idEquipo, error2 := res.LastInsertId()
+		if error2 != nil {
+			panic(error2)
+		}
+
 		e.IDLiga = idEquipo
 	}
 	return e.IDLiga
