@@ -15,12 +15,12 @@ func (ed *PersonasDaoImpl) GetAll() []models.Personas {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select * from personas")
+	rows, err := db.Query("select id_persona, apellido_nombre, domicilio, edad, id_liga, id_localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas")
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
 
-	var personas []models.Personas
+	personas := []models.Personas{}
 	for rows.Next() {
 		persona := models.Personas{}
 		error := rows.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
@@ -40,7 +40,7 @@ func (ed *PersonasDaoImpl) Get(id int) models.Personas {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from personas where id_persona = ?", id)
+	row := db.QueryRow("select id_persona, apellido_nombre, domicilio, edad, id_liga, id_localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas where id_persona = ?", id)
 	persona := models.Personas{}
 	error := row.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 	if error != nil {
