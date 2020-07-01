@@ -16,7 +16,7 @@ func RouterSanciones(e *echo.Echo) {
 	e.GET("/api/sancions", GetSanciones)
 	e.GET("/api/sancions/:id", GetSancion)
 	e.POST("/api/sancions", SaveSancion)
-	e.DELETE("/api/sancions", DeleteSancion)
+	e.DELETE("/api/sancions/:id", DeleteSancion)
 	e.GET("/api/sancions/info", InfoSanciones)
 }
 
@@ -49,7 +49,7 @@ func SaveSancion(c echo.Context) error {
 }
 
 func DeleteSancion(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

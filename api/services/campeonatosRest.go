@@ -16,7 +16,7 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.GET("/api/campeonatos", GetCampeonatos)
 	e.GET("/api/campeonatos/:id", GetCampeonato)
 	e.POST("/api/campeonatos", SaveCampeonato)
-	e.DELETE("/api/campeonatos", DeleteCampeonato)
+	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
 	e.GET("/api/campeonatos/info", InfoCampeonatos)
 }
 
@@ -49,7 +49,7 @@ func SaveCampeonato(c echo.Context) error {
 }
 
 func DeleteCampeonato(c echo.Context) error {
-	id, err := strconv.ParseInt(c.FormValue("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		log.Panic(err)
 	}

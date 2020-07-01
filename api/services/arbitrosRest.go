@@ -15,7 +15,7 @@ import (
 func RouterArbitros(e *echo.Echo) {
 	e.GET("/api/arbitros", GetArbitros)
 	e.POST("/api/arbitros", SaveArbitro)
-	e.DELETE("/api/arbitros", DeleteArbitro)
+	e.DELETE("/api/arbitros/:id_arbitro/:id_equipo", DeleteArbitro)
 	e.GET("/api/arbitros/info", InfoArbitros)
 }
 
@@ -37,12 +37,12 @@ func SaveArbitro(c echo.Context) error {
 }
 
 func DeleteArbitro(c echo.Context) error {
-	idArbitro, err1 := strconv.ParseInt(c.FormValue("id_arbitro"), 10, 64)
+	idArbitro, err1 := strconv.ParseInt(c.Param("id_arbitro"), 10, 64)
 	if err1 != nil {
 		log.Panic(err1)
 	}
 
-	idEquipo, err2 := strconv.ParseInt(c.FormValue("id_equipo"), 10, 64)
+	idEquipo, err2 := strconv.ParseInt(c.Param("id_equipo"), 10, 64)
 	if err2 != nil {
 		log.Panic(err2)
 	}

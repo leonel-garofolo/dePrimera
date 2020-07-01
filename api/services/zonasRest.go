@@ -16,7 +16,7 @@ func RouterZonas(e *echo.Echo) {
 	e.GET("/api/zonas", GetZonas)
 	e.GET("/api/zonas/:id", GetZona)
 	e.POST("/api/zonas", SaveZona)
-	e.DELETE("/api/zonas", DeleteZona)
+	e.DELETE("/api/zonas/:id", DeleteZona)
 	e.GET("/api/zonas/info", InfoZonas)
 }
 
@@ -49,7 +49,7 @@ func SaveZona(c echo.Context) error {
 }
 
 func DeleteZona(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

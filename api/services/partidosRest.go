@@ -16,7 +16,7 @@ func RouterPartidos(e *echo.Echo) {
 	e.GET("/api/partidos", GetPartidos)
 	e.GET("/api/partidos/:id", GetPartido)
 	e.POST("/api/partidos", SavePartido)
-	e.DELETE("/api/partidos", DeletePartido)
+	e.DELETE("/api/partidos/:id", DeletePartido)
 	e.GET("/api/partidos/info", InfoPartidos)
 }
 
@@ -49,7 +49,7 @@ func SavePartido(c echo.Context) error {
 }
 
 func DeletePartido(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

@@ -16,7 +16,7 @@ func RouterEliminatorias(e *echo.Echo) {
 	e.GET("/api/eliminatorias", GetEliminatorias)
 	e.GET("/api/eliminatorias/:id", GetEliminatoria)
 	e.POST("/api/eliminatorias", SaveEliminatoria)
-	e.DELETE("/api/eliminatorias", DeleteEliminatoria)
+	e.DELETE("/api/eliminatorias/:id", DeleteEliminatoria)
 	e.GET("/api/eliminatorias/info", InfoEliminatorias)
 }
 
@@ -49,7 +49,7 @@ func SaveEliminatoria(c echo.Context) error {
 }
 
 func DeleteEliminatoria(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

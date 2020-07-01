@@ -16,7 +16,7 @@ func RouterPersonas(e *echo.Echo) {
 	e.GET("/api/personas", GetPersonas)
 	e.GET("/api/personas/:id", GetPersona)
 	e.POST("/api/personas", SavePersona)
-	e.DELETE("/api/personas", DeletePersona)
+	e.DELETE("/api/personas/:id", DeletePersona)
 	e.GET("/api/personas/info", InfoPersonas)
 }
 
@@ -49,7 +49,7 @@ func SavePersona(c echo.Context) error {
 }
 
 func DeletePersona(c echo.Context) error {
-	id, err := strconv.Atoi(c.FormValue("id"))
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Panic(err)
 	}

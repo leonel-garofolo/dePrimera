@@ -12,7 +12,7 @@ import (
 
 func RouterAsistentes(e *echo.Echo) {
 	e.POST("/api/asistentes", SaveAsistente)
-	e.DELETE("/api/asistentes", DeleteAsistente)
+	e.DELETE("/api/asistentes/:id_asistente/:id_persona", DeleteAsistente)
 }
 
 func SaveAsistente(c echo.Context) error {
@@ -27,12 +27,12 @@ func SaveAsistente(c echo.Context) error {
 }
 
 func DeleteAsistente(c echo.Context) error {
-	idAsistente, err := strconv.ParseInt(c.FormValue("id_asistente"), 10, 64)
+	idAsistente, err := strconv.ParseInt(c.Param("id_asistente"), 10, 64)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	idPersona, err := strconv.ParseInt(c.FormValue("id_persona"), 10, 64)
+	idPersona, err := strconv.ParseInt(c.Param("id_persona"), 10, 64)
 	if err != nil {
 		log.Panic(err)
 	}
