@@ -3,6 +3,8 @@ package services
 import (
 	"deprimera/api/daos"
 	"deprimera/api/models"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,6 +15,7 @@ import (
 func RouterAsistentes(e *echo.Echo) {
 	e.POST("/api/asistentes", SaveAsistente)
 	e.DELETE("/api/asistentes/:id_asistente/:id_persona", DeleteAsistente)
+	e.GET("/api/asistentes/info", InfoAsistentes)
 }
 
 func SaveAsistente(c echo.Context) error {
@@ -42,4 +45,19 @@ func DeleteAsistente(c echo.Context) error {
 
 	log.Println(idAsistente, idPersona)
 	return c.String(http.StatusOK, "delete")
+}
+
+func InfoAsistentes(c echo.Context) error {
+	asistentes := &models.Asistentes{}
+	c.Bind(asistentes)
+
+	j, err := json.Marshal(asistentes)
+	if err != nil {
+		fmt.Println(err)
+		return c.String(http.StatusInternalServerError, "error al obtener la info")
+	} else {
+		log.Println(string(j))
+
+		return c.JSON(http.StatusOK, asistentes)
+	}
 }

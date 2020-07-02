@@ -45,7 +45,7 @@ func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
 
 	isDelete := ed.Delete(e.IDArbitro, e.IDPersona)
 	if isDelete == true {
-		_, error := db.Exec("insert into arbitros (id_arbitros, id_personas) values(?,?)", e.IDArbitro, e.IDPersona)
+		_, error := db.Exec("insert into arbitros (id_arbitro, id_persona) values(?,?)", e.IDArbitro, e.IDPersona)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -61,9 +61,12 @@ func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64) bool {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from arbitros where id_arbitro = ? and id_equipo = ?", IDArbitro, IDPersona)
+	_, error := db.Exec("delete from arbitros where id_arbitro = ? and id_persona = ?", IDArbitro, IDPersona)
 	if error != nil {
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return true
 }

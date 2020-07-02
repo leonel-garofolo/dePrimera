@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -17,9 +18,10 @@ func (ed *AsistentesDaoImpl) Save(e *models.Asistentes) int64 {
 
 	isDelete := ed.Delete(e.IDAsistente, e.IDPersona)
 	if isDelete == true {
-		_, error := db.Exec("insert into arbitros (id_arbitros, id_personas) values(?,?)", e.IDAsistente, e.IDPersona)
+		_, error := db.Exec("insert into asistentes (id_asistente, id_persona) values(?,?)", e.IDAsistente, e.IDPersona)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	}
@@ -35,7 +37,10 @@ func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64) bool {
 
 	_, error := db.Exec("delete from asistentes where id_asistente = ? and id_persona = ?", IDAsistente, IDPersona)
 	if error != nil {
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return true
 }
