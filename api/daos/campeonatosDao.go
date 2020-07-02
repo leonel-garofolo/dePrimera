@@ -16,7 +16,7 @@ func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select * from campeonatos")
+	rows, err := db.Query("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin from campeonatos")
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
@@ -43,7 +43,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from campeonatos where id_campeonato = ?", id)
+	row := db.QueryRow("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin from campeonatos where id_campeonato = ?", id)
 	campeonato := models.Campeonatos{}
 	error := row.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
 	if error != nil {
@@ -62,7 +62,7 @@ func (ed *CampeonatosDaoImpl) Save(e *models.Campeonatos) int64 {
 		log.Println(err.Error())
 	}
 
-	if e.IDLiga > 0 {
+	if e.IDCampeonato > 0 {
 		_, error := db.Exec("update campeonatos set descripcion=?, fecha_fin=?, fecha_inicio=?, id_liga=?, id_modelo=? where id_campeonato = ?",
 			e.Descripcion, e.FechaFin, e.FechaInicio, e.IDLiga, e.IDModelo, e.IDCampeonato)
 

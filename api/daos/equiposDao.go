@@ -69,6 +69,7 @@ func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
 			" where id_equipo = ?", e.IDLiga, e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
@@ -76,6 +77,7 @@ func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
 			" (id_equipo, id_liga, nombre, habilitado, foto) "+
 			" values(?,?,?,?,?)", e.IDEquipo, e.IDLiga, e.Nombre, e.Habilitado, e.Foto)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDEquipo, _ = res.LastInsertId()

@@ -43,7 +43,7 @@ func (ed *PartidosDaoImpl) Get(id int) models.Partidos {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from partidos where id_partido = ?", id)
+	row := db.QueryRow("select * from partidos where id_partidos = ?", id)
 	partido := models.Partidos{}
 	error := row.Scan(&partido.IDPartidos, &partido.IDArbitro, &partido.IDAsistente, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDLiga, &partido.MotivoSuspencion, &partido.Observacion, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido)
 	if error != nil {
@@ -64,17 +64,19 @@ func (ed *PartidosDaoImpl) Save(e *models.Partidos) int64 {
 
 	if e.IDPartidos > 0 {
 		_, error := db.Exec("update partidos"+
-			" set id_arbitro=?, id_asistente=?, id_campeonato=?, id_equipo_local=?, id_equipo_visitante=?, id_liga=?, motivo_suspencion=?, observacion=?, resultado_local=?, resultado_visitante=?, suspendido, fecha?encuentro= ? "+
-			" where id_partido = ?", e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.FechaEncuentro, e.IDPartidos)
+			" set id_arbitro=?, id_asistente=?, id_campeonato=?, id_equipo_local=?, id_equipo_visitante=?, id_liga=?, motivo_suspencion=?, observacion=?, resultado_local=?, resultado_visitante=?, suspendido, fecha_encuentro= ? "+
+			" where id_partidos = ?", e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.FechaEncuentro, e.IDPartidos)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
 		res, error := db.Exec("insert into partidos"+
-			" (id_partido, id_arbitro, id_asistente, id_campeonato, id_equipo_local, id_equipo_visitante, id_liga, motivo_suspencion, observacion, resultado_local, resultado_visitante, suspendido, encuentro) "+
+			" (id_partidos, id_arbitro, id_asistente, id_campeonato, id_equipo_local, id_equipo_visitante, id_liga, motivo_suspencion, observacion, resultado_local, resultado_visitante, suspendido, fecha_encuentro) "+
 			" values(?,?,?,?,?,?,?,?,?,?,?,?,?)", e.IDPartidos, e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.Suspendido, e.FechaEncuentro)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDPartidos, _ = res.LastInsertId()
@@ -89,7 +91,7 @@ func (ed *PartidosDaoImpl) Delete(id int) bool {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from partidos where id_partido = ?", id)
+	_, error := db.Exec("delete from partidos where id_partidos = ?", id)
 	if error != nil {
 		panic(error)
 	}
