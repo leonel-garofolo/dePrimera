@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -25,8 +26,10 @@ func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 		arbitro := models.Arbitros{}
 		error := rows.Scan(&arbitro.IDArbitro, &arbitro.IDPersona)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		arbitros = append(arbitros, arbitro)
 	}

@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -25,8 +26,10 @@ func (ed *LigasDaoImpl) GetAll() []models.Ligas {
 		liga := models.Ligas{}
 		error := rows.Scan(&liga.IDLiga, &liga.Nombre, &liga.NombreContacto, &liga.MailContacto, &liga.Cuit, &liga.Domicilio, &liga.Telefono, &liga.TelefonoContacto)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		ligas = append(ligas, liga)
 	}
@@ -44,8 +47,10 @@ func (ed *LigasDaoImpl) Get(id int) models.Ligas {
 	row := db.QueryRow("select * from ligas where id_liga = ?", id)
 	error := row.Scan(&liga.IDLiga, &liga.Cuit, &liga.Domicilio, &liga.MailContacto, &liga.Nombre, &liga.NombreContacto, &liga.Telefono, &liga.TelefonoContacto)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return liga
 }

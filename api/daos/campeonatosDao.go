@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -25,8 +26,10 @@ func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
 		campeonato := models.Campeonatos{}
 		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		campeonatos = append(campeonatos, campeonato)
 	}
@@ -44,8 +47,10 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 	campeonato := models.Campeonatos{}
 	error := row.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return campeonato
 }
@@ -87,7 +92,10 @@ func (ed *CampeonatosDaoImpl) Delete(id int64) bool {
 
 	_, error := db.Exec("delete from campeonatos where id_campeonato = ?", id)
 	if error != nil {
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return true
 }

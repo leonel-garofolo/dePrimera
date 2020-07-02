@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -25,8 +26,10 @@ func (ed *PersonasDaoImpl) GetAll() []models.Personas {
 		persona := models.Personas{}
 		error := rows.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		personas = append(personas, persona)
 	}
@@ -44,8 +47,10 @@ func (ed *PersonasDaoImpl) Get(id int) models.Personas {
 	persona := models.Personas{}
 	error := row.Scan(&persona.IDPersona, &persona.ApellidoNombre, &persona.Domicilio, &persona.Edad, &persona.IDLiga, &persona.IDLocalidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return persona
 }

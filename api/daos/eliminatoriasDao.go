@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -24,8 +25,10 @@ func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
 		eliminatoria := models.Eliminatorias{}
 		error := rows.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		eliminatorias = append(eliminatorias, eliminatoria)
 	}
@@ -43,8 +46,10 @@ func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
 	eliminatoria := models.Eliminatorias{}
 	error := row.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return eliminatoria
 }

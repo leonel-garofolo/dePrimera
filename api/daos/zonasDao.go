@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -25,8 +26,10 @@ func (ed *ZonasDaoImpl) GetAll() []models.Zonas {
 		zona := models.Zonas{}
 		error := rows.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		zonas = append(zonas, zona)
 	}
@@ -44,8 +47,10 @@ func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
 	zona := models.Zonas{}
 	error := row.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return zona
 }

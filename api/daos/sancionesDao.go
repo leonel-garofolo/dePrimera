@@ -1,6 +1,7 @@
 package daos
 
 import (
+	"database/sql"
 	"deprimera/api/application"
 	"deprimera/api/models"
 	"log"
@@ -24,8 +25,10 @@ func (ed *SancionesDaoImpl) GetAll() []models.Sanciones {
 		sancion := models.Sanciones{}
 		error := rows.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
 		if error != nil {
-			log.Println(error)
-			panic(error)
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
 		}
 		sanciones = append(sanciones, sancion)
 	}
@@ -46,8 +49,10 @@ func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
 	sancion := models.Sanciones{}
 	error := row.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
 	if error != nil {
-		log.Println(error)
-		panic(error)
+		if error != sql.ErrNoRows {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return sancion
 }
