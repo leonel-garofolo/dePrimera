@@ -1,9 +1,11 @@
 runtime: go114
 main: ./api
 
-database:  
+
+database:
+  type: tcp
   host: "localhost"
   port: "3306"
   name: "de_primera_app"
   user: "root"
-  pass: "root"   
+  pass: "root"    

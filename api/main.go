@@ -13,12 +13,12 @@ import (
 
 func main() {
 
-	viper.SetConfigFile("../app.yaml")
+	viper.SetConfigFile("enviroment.yaml")
 	if len(os.Args) > 0 {
 		env := os.Args[1]
 		test := "test"
 		if env == test {
-			viper.SetConfigFile("../app-test.yaml")
+			viper.SetConfigFile("enviroment-local.yaml")
 		}
 
 	}
@@ -34,7 +34,7 @@ func main() {
 	e.Use(middleware.CORS()) //permite cualquier dominio
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World2!")
+		return c.String(http.StatusOK, "Bienvenido a la API de De Primera")
 	})
 
 	router.NewRouter(e)
