@@ -5,6 +5,8 @@ import (
 	"deprimera/api/config"
 	"deprimera/api/db"
 	"fmt"
+
+	"github.com/spf13/viper"
 )
 
 // Application holds commonly used app wide data, for ease of DI
@@ -31,10 +33,12 @@ func Get() (*Application, error) {
 
 func GetDB() (*sql.DB, error) {
 	db, err := sql.Open("mysql", fmt.Sprintf(
-		"%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
-		"root",
-		"root",
-		"de_primera_app",
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		viper.Get("database.user"),
+		viper.Get("database.pass"),
+		viper.Get("database.host"),
+		viper.Get("database.port"),
+		viper.Get("database.name"),
 	))
 	if err != nil {
 		return nil, err

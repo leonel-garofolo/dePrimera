@@ -4,6 +4,7 @@ import (
 	"deprimera/api/router"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -11,17 +12,21 @@ import (
 )
 
 func main() {
+
 	viper.SetConfigFile("../app.yaml")
+	if len(os.Args) > 0 {
+		env := os.Args[1]
+		test := "test"
+		if env == test {
+			viper.SetConfigFile("../app-test.yaml")
+		}
+
+	}
+
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error while reading config file %s", err)
 	}
-
-	miMain := viper.Get("test")
-	log.Println(miMain)
-
-	value := viper.Get("database.url")
-	log.Println(value)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
