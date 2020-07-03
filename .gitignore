@@ -1,3 +1,4 @@
 .vscode/
 api/main.exe
 api/__debug_bin
+*.exe
