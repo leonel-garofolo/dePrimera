@@ -1,0 +1,10 @@
+runtime: go114
+main: ./api
+
+database:
+  type: unix
+  host: "/cloudsql/de-primera-app"
+  port: "3306"
+  name: "de_primera_app"
+  user: "root"
+  pass: "30121DePrimera"  

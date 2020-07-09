@@ -64,10 +64,11 @@ func (ed *LigasDaoImpl) Save(e *models.Ligas) int64 {
 
 	if e.IDLiga > 0 {
 		_, error := db.Exec("update ligas"+
-			" set cuit=?, domicilio=?, id_liga=?, mail_contacto=?, nombre=?, nombre_contacto=?, telefono=?, telefono_contacto=? "+
+			" set cuit=?, domicilio=?, mail_contacto=?, nombre=?, nombre_contacto=?, telefono=?, telefono_contacto=? "+
 			" where id_liga = ?", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto, e.IDLiga)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {

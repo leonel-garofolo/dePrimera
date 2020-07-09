@@ -68,6 +68,7 @@ func (ed *ZonasDaoImpl) Save(e *models.Zonas) int64 {
 			" where id_zona = ?", e.IDCampeonato, e.Nombre, e.IDZona)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
@@ -75,6 +76,7 @@ func (ed *ZonasDaoImpl) Save(e *models.Zonas) int64 {
 			" (id_zona, id_campeonato, nombre) "+
 			" values(?,?,?)", e.IDZona, e.IDCampeonato, e.Nombre)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDZona, _ = res.LastInsertId()
@@ -91,6 +93,7 @@ func (ed *ZonasDaoImpl) Delete(id int) bool {
 
 	_, error := db.Exec("delete from zonas where id_zona = ?", id)
 	if error != nil {
+		log.Println(error)
 		panic(error)
 	}
 	return true

@@ -70,6 +70,7 @@ func (ed *SancionesDaoImpl) Save(e *models.Sanciones) int64 {
 			" where id_sanciones=?", e.IDLigas, e.Descripcion, e.Observaciones, e.IDSanciones)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
@@ -77,6 +78,7 @@ func (ed *SancionesDaoImpl) Save(e *models.Sanciones) int64 {
 			" (id_sanciones, id_ligas, descripcion, observaciones) "+
 			" values(?,?,?,?)", e.IDSanciones, e.IDLigas, e.Descripcion, e.Observaciones)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDSanciones, _ = res.LastInsertId()
@@ -93,6 +95,7 @@ func (ed *SancionesDaoImpl) Delete(id int) bool {
 
 	_, error := db.Exec("delete from sanciones where id_sancion = ?", id)
 	if error != nil {
+		log.Println(error)
 		panic(error)
 	}
 	return true

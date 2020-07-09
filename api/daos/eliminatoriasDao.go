@@ -67,6 +67,7 @@ func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
 			" where id_eliminatoria=?", e.IDCampeonato, e.IDPartido, e.NroLlave, e.IDEliminatoria)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
@@ -74,6 +75,7 @@ func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
 			" (id_eliminatoria, id_campeonato, id_partido, nro_llave) "+
 			" values(?,?,?,?)", e.IDEliminatoria, e.IDCampeonato, e.IDPartido, e.NroLlave)
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDEliminatoria, _ = res.LastInsertId()
@@ -89,6 +91,7 @@ func (ed *EliminatoriasDaoImpl) Delete(id int) bool {
 	}
 	_, error := db.Exec("delete from eliminatorias where id_eliminatoria = ?", id)
 	if error != nil {
+		log.Println(error)
 		panic(error)
 	}
 	return true

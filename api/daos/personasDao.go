@@ -68,6 +68,7 @@ func (ed *PersonasDaoImpl) Save(e *models.Personas) int64 {
 			" where id_persona = ?", e.ApellidoNombre, e.Domicilio, e.Edad, e.IDLiga, e.IDLocalidad, e.IDPais, e.IDProvincia, e.IDTipoDoc, e.NroDoc, e.IDPersona)
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 	} else {
@@ -78,6 +79,7 @@ func (ed *PersonasDaoImpl) Save(e *models.Personas) int64 {
 		IDPersona, error := res.LastInsertId()
 
 		if error != nil {
+			log.Println(error)
 			panic(error)
 		}
 		e.IDPersona = IDPersona
@@ -94,6 +96,7 @@ func (ed *PersonasDaoImpl) Delete(id int) bool {
 
 	_, error := db.Exec("delete from personas where id_persona = ?", id)
 	if error != nil {
+		log.Println(error)
 		panic(error)
 	}
 	return true

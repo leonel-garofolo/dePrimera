@@ -1,7 +1,9 @@
 package basic
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test(t *testing.T) {
-
+	currentTime()
 }
