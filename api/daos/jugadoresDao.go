@@ -23,15 +23,15 @@ func (ed *JugadoresDaoImpl) GetAll() []models.Jugadores {
 
 	jugadores := []models.Jugadores{}
 	for rows.Next() {
-		jugador := models.Jugadores{}
-		error := rows.Scan(&jugador.IDJugador, &jugador.IDPersona)
+		asistente := models.Jugadores{}
+		error := rows.Scan(&asistente.IDJugador, &asistente.IDPersona)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
 				panic(error)
 			}
 		}
-		jugadores = append(jugadores, jugador)
+		jugadores = append(jugadores, asistente)
 	}
 	return jugadores
 }
