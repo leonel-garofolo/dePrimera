@@ -1,13 +1,11 @@
 package models
 
-import "database/sql"
-
-type app_grupos struct {
-	Descripcion sql.NullString `gorm:"column:descripcion"`
-	Idgrupo     int            `gorm:"column:idgrupo;primary_key"`
+type AppGrupos struct {
+	Idgrupo     int    `json:"id_grupo"`
+	Descripcion string `json:"descripcion"`
 }
 
 // TableName sets the insert table name for this struct type
-func (a *app_grupos) TableName() string {
+func (a *AppGrupos) TableName() string {
 	return "app_grupos"
 }

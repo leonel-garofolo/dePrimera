@@ -184,3 +184,11 @@ type NotificacionesDao interface {
 func (dao *DePrimeraDaos) GetNotificacionesDao() *NotificacionesDaoImpl {
 	return &NotificacionesDaoImpl{}
 }
+
+type AppGruposDao interface {
+	GetAll() []models.AppGrupos
+}
+
+func (dao *DePrimeraDaos) GetAppGruposDao() *AppGruposDaoImpl {
+	return &AppGruposDaoImpl{}
+}

@@ -24,6 +24,7 @@ func NewRouter(e *echo.Echo) {
 	services.RouterSanciones(e)
 	services.RouterZonas(e)
 	services.RouterNotificaciones(e)
+	services.RouterAppGrupos(e)
 
 	e.GET("/api/home", home)
 }
