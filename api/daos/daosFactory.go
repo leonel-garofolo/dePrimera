@@ -160,3 +160,27 @@ type ZonasEquiposDao interface {
 func (dao *DePrimeraDaos) GetZonasEquiposDao() *ZonasEquiposDaoImpl {
 	return &ZonasEquiposDaoImpl{}
 }
+
+type JugadoresDao interface {
+	GetAll() []models.Jugadores
+	Get(id int) *models.Jugadores
+	Save(e *models.Jugadores) int
+	Delete(id int) bool
+	Query(filter string) []models.Jugadores
+}
+
+func (dao *DePrimeraDaos) GetJugadoresDao() *JugadoresDaoImpl {
+	return &JugadoresDaoImpl{}
+}
+
+type NotificacionesDao interface {
+	GetAll() []models.Notificaciones
+	Get(id int) *models.Notificaciones
+	Save(e *models.Notificaciones) int
+	Delete(id int) bool
+	Query(filter string) []models.Notificaciones
+}
+
+func (dao *DePrimeraDaos) GetNotificacionesDao() *NotificacionesDaoImpl {
+	return &NotificacionesDaoImpl{}
+}

@@ -14,6 +14,7 @@ func home(c echo.Context) error {
 func NewRouter(e *echo.Echo) {
 	services.RouterArbitros(e)
 	services.RouterAsistentes(e)
+	services.RouterJugadores(e)
 	services.RouterCampeonatos(e)
 	services.RouterEliminatorias(e)
 	services.RouterEquipos(e)

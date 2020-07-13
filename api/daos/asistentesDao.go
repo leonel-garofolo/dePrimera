@@ -9,6 +9,33 @@ import (
 
 type AsistentesDaoImpl struct{}
 
+func (ed *AsistentesDaoImpl) GetAll() []models.Asistentes {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select * from asistentes")
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	asistentes := []models.Asistentes{}
+	for rows.Next() {
+		asistente := models.Asistentes{}
+		error := rows.Scan(&asistente.IDAsistente, &asistente.IDPersona)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		asistentes = append(asistentes, asistente)
+	}
+	return asistentes
+}
+
 func (ed *AsistentesDaoImpl) Save(e *models.Asistentes) int64 {
 	db, err := application.GetDB()
 	defer db.Close()

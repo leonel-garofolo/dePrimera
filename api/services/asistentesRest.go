@@ -13,9 +13,16 @@ import (
 )
 
 func RouterAsistentes(e *echo.Echo) {
+	e.GET("/api/asistentes", GetAsistentes)
 	e.POST("/api/asistentes", SaveAsistente)
 	e.DELETE("/api/asistentes/:id_asistente/:id_persona", DeleteAsistente)
 	e.GET("/api/asistentes/info", InfoAsistentes)
+}
+
+func GetAsistentes(c echo.Context) error {
+	daos := daos.NewDePrimeraDaos()
+	arbitros := daos.GetAsistentesDao().GetAll()
+	return c.JSON(http.StatusOK, arbitros)
 }
 
 func SaveAsistente(c echo.Context) error {

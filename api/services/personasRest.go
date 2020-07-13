@@ -45,7 +45,7 @@ func SavePersona(c echo.Context) error {
 	id := daos.GetPersonasDao().Save(personas)
 
 	log.Println(id)
-	return c.String(http.StatusOK, "insertado")
+	return c.String(http.StatusOK, strconv.FormatInt(id, 10))
 }
 
 func DeletePersona(c echo.Context) error {
