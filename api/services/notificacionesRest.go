@@ -12,59 +12,54 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RouterJugadores(e *echo.Echo) {
-	e.GET("/api/jugadores", GetJugadores)
-	e.POST("/api/jugadores", SaveJugador)
-	e.DELETE("/api/jugadores/:id_jugador/:id_persona", DeleteJugador)
-	e.GET("/api/jugadores/info", InfoJugadores)
+func RouterNotificaciones(e *echo.Echo) {
+	e.GET("/api/notificaciones", GetNotificaciones)
+	e.POST("/api/notificaciones", SaveNotificacion)
+	e.DELETE("/api/notificaciones/:id_notificacion", DeleteNotificacion)
+	e.GET("/api/notificaciones/info", InfoNotificaciones)
 }
 
-func GetJugadores(c echo.Context) error {
+func GetNotificaciones(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitros := daos.GetJugadoresDao().GetAll()
+	arbitros := daos.GetNotificacionesDao().GetAll()
 	return c.JSON(http.StatusOK, arbitros)
 }
 
-func SaveJugador(c echo.Context) error {
-	jugadores := &models.Jugadores{}
-	c.Bind(jugadores)
+func SaveNotificacion(c echo.Context) error {
+	notificaciones := &models.Notificaciones{}
+	c.Bind(notificaciones)
 
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetJugadoresDao().Save(jugadores)
+	id := daos.GetNotificacionesDao().Save(notificaciones)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")
 }
 
-func DeleteJugador(c echo.Context) error {
-	idJugador, err := strconv.ParseInt(c.Param("id_jugador"), 10, 64)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	idPersona, err := strconv.ParseInt(c.Param("id_persona"), 10, 64)
+func DeleteNotificacion(c echo.Context) error {
+	idNotificacion, err := strconv.ParseInt(c.Param("id_notificacion"), 10, 64)
 	if err != nil {
 		log.Panic(err)
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	daos.GetJugadoresDao().Delete(idJugador, idPersona)
+	daos.GetNotificacionesDao().Delete(idNotificacion)
 
-	log.Println(idJugador, idPersona)
+	log.Println(idNotificacion)
 	return c.String(http.StatusOK, "delete")
 }
 
-func InfoJugadores(c echo.Context) error {
-	jugadores := &models.Jugadores{}
-	c.Bind(jugadores)
+func InfoNotificaciones(c echo.Context) error {
+	notificaciones := &models.Notificaciones{}
+	c.Bind(notificaciones)
 
-	j, err := json.Marshal(jugadores)
+	j, err := json.Marshal(notificaciones)
 	if err != nil {
 		fmt.Println(err)
 		return c.String(http.StatusInternalServerError, "error al obtener la info")
 	} else {
 		log.Println(string(j))
 
-		return c.JSON(http.StatusOK, jugadores)
+		return c.JSON(http.StatusOK, notificaciones)
 	}
 }

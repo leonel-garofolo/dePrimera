@@ -24,7 +24,7 @@ func (ed *NotificacionesDaoImpl) GetAll() []models.Notificaciones {
 	notificaciones := []models.Notificaciones{}
 	for rows.Next() {
 		notificacion := models.Notificaciones{}
-		error := rows.Scan(&notificacion.IDNotificacion, &notificacion.Titulo, &notificacion.Texto)
+		error := rows.Scan(&notificacion.IDNotificacion, &notificacion.Titulo, &notificacion.Texto, &notificacion.IDGrupo)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -55,7 +55,7 @@ func (ed *NotificacionesDaoImpl) Save(e *models.Notificaciones) int64 {
 	} else {
 		res, error := db.Exec("insert into notificaciones"+
 			" (id_notificacion, titulo, texto, id_grupo) "+
-			" values(?,?,?,?,?)", e.IDNotificacion, e.Titulo, e.Texto, e.IDGrupo)
+			" values(?,?,?,?)", e.IDNotificacion, e.Titulo, e.Texto, e.IDGrupo)
 		if error != nil {
 			log.Println(error)
 			panic(error)
