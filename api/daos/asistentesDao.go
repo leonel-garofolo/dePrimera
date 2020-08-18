@@ -7,8 +7,10 @@ import (
 	"log"
 )
 
+// AsistentesDaoImpl struct
 type AsistentesDaoImpl struct{}
 
+// GetAll asistentes
 func (ed *AsistentesDaoImpl) GetAll() []gorms.AsistentesGorm {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -36,6 +38,7 @@ func (ed *AsistentesDaoImpl) GetAll() []gorms.AsistentesGorm {
 	return asistentes
 }
 
+// Save asistentes
 func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -55,6 +58,7 @@ func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 	return e.IDAsistente
 }
 
+// Delete asistentes
 func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()

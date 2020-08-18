@@ -8,8 +8,10 @@ import (
 	"log"
 )
 
+// CampeonatosDaoImpl struct
 type CampeonatosDaoImpl struct{}
 
+// GetAll campeonatos
 func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -37,6 +39,7 @@ func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 	return campeonatos
 }
 
+// Get campeonatos
 func (ed *CampeonatosDaoImpl) Get(id int) gorms.CampeonatosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -56,6 +59,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) gorms.CampeonatosGorm {
 	return campeonato
 }
 
+// Save campeonatos
 func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -95,6 +99,7 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	return e.IDCampeonato
 }
 
+// Delete campeonatos
 func (ed *CampeonatosDaoImpl) Delete(id int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
