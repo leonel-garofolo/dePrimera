@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type AsistentesDaoImpl struct{}
 
-func (ed *AsistentesDaoImpl) GetAll() []models.Asistentes {
+func (ed *AsistentesDaoImpl) GetAll() []gorms.AsistentesGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *AsistentesDaoImpl) GetAll() []models.Asistentes {
 		log.Fatalln("Failed to query")
 	}
 
-	asistentes := []models.Asistentes{}
+	asistentes := []gorms.AsistentesGorm{}
 	for rows.Next() {
-		asistente := models.Asistentes{}
+		asistente := gorms.AsistentesGorm{}
 		error := rows.Scan(&asistente.IDAsistente, &asistente.IDPersona)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +36,7 @@ func (ed *AsistentesDaoImpl) GetAll() []models.Asistentes {
 	return asistentes
 }
 
-func (ed *AsistentesDaoImpl) Save(e *models.Asistentes) int64 {
+func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

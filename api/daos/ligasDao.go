@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type LigasDaoImpl struct{}
 
-func (ed *LigasDaoImpl) GetAll() []models.Ligas {
+func (ed *LigasDaoImpl) GetAll() []gorms.LigasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *LigasDaoImpl) GetAll() []models.Ligas {
 		log.Fatalln("Failed to query")
 	}
 
-	ligas := []models.Ligas{}
+	ligas := []gorms.LigasGorm{}
 	for rows.Next() {
-		liga := models.Ligas{}
+		liga := gorms.LigasGorm{}
 		error := rows.Scan(&liga.IDLiga, &liga.Nombre, &liga.NombreContacto, &liga.MailContacto, &liga.Cuit, &liga.Domicilio, &liga.Telefono, &liga.TelefonoContacto)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,14 +36,14 @@ func (ed *LigasDaoImpl) GetAll() []models.Ligas {
 	return ligas
 }
 
-func (ed *LigasDaoImpl) Get(id int) models.Ligas {
+func (ed *LigasDaoImpl) Get(id int) gorms.LigasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	liga := models.Ligas{}
+	liga := gorms.LigasGorm{}
 	row := db.QueryRow("select * from ligas where id_liga = ?", id)
 	error := row.Scan(&liga.IDLiga, &liga.Cuit, &liga.Domicilio, &liga.MailContacto, &liga.Nombre, &liga.NombreContacto, &liga.Telefono, &liga.TelefonoContacto)
 	if error != nil {
@@ -55,7 +55,7 @@ func (ed *LigasDaoImpl) Get(id int) models.Ligas {
 	return liga
 }
 
-func (ed *LigasDaoImpl) Save(e *models.Ligas) int64 {
+func (ed *LigasDaoImpl) Save(e *gorms.LigasGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

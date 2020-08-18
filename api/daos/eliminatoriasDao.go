@@ -3,13 +3,15 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
+// EliminatoriasDaoImpl struct
 type EliminatoriasDaoImpl struct{}
 
-func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
+// GetAll eliminatorias
+func (ed *EliminatoriasDao) GetAll() []gorms.EliminatoriasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -20,9 +22,9 @@ func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
-	var eliminatorias []models.Eliminatorias
+	var eliminatorias []gorms.EliminatoriasGorm
 	for rows.Next() {
-		eliminatoria := models.Eliminatorias{}
+		eliminatoria := gorms.EliminatoriasGorm{}
 		error := rows.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -35,7 +37,8 @@ func (ed *EliminatoriasDaoImpl) GetAll() []models.Eliminatorias {
 	return eliminatorias
 }
 
-func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
+// Get eliminatoria
+func (ed *EliminatoriasDaoImpl) Get(id int) gorms.EliminatoriasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -43,7 +46,7 @@ func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
 	}
 
 	row := db.QueryRow("select * from eliminatorias where id_eliminatoria = ?", id)
-	eliminatoria := models.Eliminatorias{}
+	eliminatoria := gorms.EliminatoriasGorm{}
 	error := row.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -54,7 +57,8 @@ func (ed *EliminatoriasDaoImpl) Get(id int) models.Eliminatorias {
 	return eliminatoria
 }
 
-func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
+// Save eliminatoria
+func (ed *EliminatoriasDaoImpl) Save(e *gorms.EliminatoriasGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -83,6 +87,7 @@ func (ed *EliminatoriasDaoImpl) Save(e *models.Eliminatorias) int64 {
 	return e.IDEliminatoria
 }
 
+// Delete eliminatoria
 func (ed *EliminatoriasDaoImpl) Delete(id int) bool {
 	db, err := application.GetDB()
 	defer db.Close()

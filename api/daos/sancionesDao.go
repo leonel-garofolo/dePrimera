@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type SancionesDaoImpl struct{}
 
-func (ed *SancionesDaoImpl) GetAll() []models.Sanciones {
+func (ed *SancionesDaoImpl) GetAll() []gorms.SancionesGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -20,9 +20,9 @@ func (ed *SancionesDaoImpl) GetAll() []models.Sanciones {
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
-	var sanciones []models.Sanciones
+	var sanciones []gorms.SancionesGorm
 	for rows.Next() {
-		sancion := models.Sanciones{}
+		sancion := gorms.SancionesGorm{}
 		error := rows.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -35,7 +35,7 @@ func (ed *SancionesDaoImpl) GetAll() []models.Sanciones {
 	return sanciones
 }
 
-func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
+func (ed *SancionesDaoImpl) Get(id int) gorms.SancionesGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -46,7 +46,7 @@ func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
-	sancion := models.Sanciones{}
+	sancion := gorms.SancionesGorm{}
 	error := row.Scan(&sancion.IDSanciones, &sancion.IDLigas, &sancion.Descripcion, &sancion.Observaciones)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -57,7 +57,7 @@ func (ed *SancionesDaoImpl) Get(id int) models.Sanciones {
 	return sancion
 }
 
-func (ed *SancionesDaoImpl) Save(e *models.Sanciones) int64 {
+func (ed *SancionesDaoImpl) Save(e *gorms.SancionesGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

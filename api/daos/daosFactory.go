@@ -1,8 +1,6 @@
 package daos
 
-import (
-	"deprimera/api/models"
-)
+import "deprimera/api/daos/gorms"
 
 type DaosFactory interface {
 	GetEquiposDao() *EquiposDao
@@ -15,11 +13,11 @@ func NewDePrimeraDaos() *DePrimeraDaos {
 }
 
 type ArbitrosDao interface {
-	GetAll() []models.Arbitros
-	Get(id int) *models.Arbitros
-	Save(e *models.Arbitros) int
+	GetAll() []gorms.ArbitrosGorm
+	Get(id int) *gorms.ArbitrosGorm
+	Save(e *gorms.ArbitrosGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Arbitros
+	Query(filter string) []gorms.ArbitrosGorm
 }
 
 func (dao *DePrimeraDaos) GetArbitrosDao() *ArbitrosDaoImpl {
@@ -27,11 +25,11 @@ func (dao *DePrimeraDaos) GetArbitrosDao() *ArbitrosDaoImpl {
 }
 
 type AsistentesDao interface {
-	GetAll() []models.Asistentes
-	Get(id int) *models.Asistentes
-	Save(e *models.Asistentes) int
+	GetAll() []gorms.AsistentesGorm
+	Get(id int) *gorms.AsistentesGorm
+	Save(e *gorms.AsistentesGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Asistentes
+	Query(filter string) []gorms.AsistentesGorm
 }
 
 func (dao *DePrimeraDaos) GetAsistentesDao() *AsistentesDaoImpl {
@@ -39,11 +37,11 @@ func (dao *DePrimeraDaos) GetAsistentesDao() *AsistentesDaoImpl {
 }
 
 type CampeonatosDao interface {
-	GetAll() []models.Campeonatos
-	Get(id int) *models.Campeonatos
-	Save(e *models.Campeonatos) int
+	GetAll() []gorms.CampeonatosGorm
+	Get(id int) *gorms.CampeonatosGorm
+	Save(e *gorms.CampeonatosGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Campeonatos
+	Query(filter string) []gorms.CampeonatosGorm
 }
 
 func (dao *DePrimeraDaos) GetCampeonatosDao() *CampeonatosDaoImpl {
@@ -51,11 +49,11 @@ func (dao *DePrimeraDaos) GetCampeonatosDao() *CampeonatosDaoImpl {
 }
 
 type EliminatoriasDao interface {
-	GetAll() []models.Eliminatorias
-	Get(id int) *models.Eliminatorias
-	Save(e *models.Eliminatorias) int
+	GetAll() []gorms.EliminatoriasGorm
+	Get(id int) *gorms.EliminatoriasGorm
+	Save(e *gorms.EliminatoriasGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Eliminatorias
+	Query(filter string) []gorms.EliminatoriasGorm
 }
 
 func (dao *DePrimeraDaos) GetEliminatoriasDao() *EliminatoriasDaoImpl {
@@ -63,11 +61,11 @@ func (dao *DePrimeraDaos) GetEliminatoriasDao() *EliminatoriasDaoImpl {
 }
 
 type EquiposDao interface {
-	GetAll() []models.Equipos
-	Get(id int) *models.Equipos
-	Save(e *models.Equipos) int
+	GetAll() []gorms.EquiposGorm
+	Get(id int) *gorms.EquiposGorm
+	Save(e *gorms.EquiposGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Equipos
+	Query(filter string) []gorms.EquiposGorm
 }
 
 func (dao *DePrimeraDaos) GetEquiposDao() *EquiposDaoImpl {
@@ -75,7 +73,7 @@ func (dao *DePrimeraDaos) GetEquiposDao() *EquiposDaoImpl {
 }
 
 type EquiposJugadoresDao interface {
-	Save(e *models.EquiposJugadores) int64
+	Save(e *gorms.EquiposJugadoresGorm) int64
 	Delete(id int64) bool
 }
 
@@ -84,11 +82,11 @@ func (dao *DePrimeraDaos) GetEquiposJugadoresDao() *EquiposJugadoresDaoImpl {
 }
 
 type LigasDao interface {
-	GetAll() []models.Ligas
-	Get(id int) *models.Ligas
-	Save(e *models.Ligas) int
+	GetAll() []gorms.LigasGorm
+	Get(id int) *gorms.LigasGorm
+	Save(e *gorms.LigasGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Ligas
+	Query(filter string) []gorms.LigasGorm
 }
 
 func (dao *DePrimeraDaos) GetLigasDao() *LigasDaoImpl {
@@ -96,11 +94,11 @@ func (dao *DePrimeraDaos) GetLigasDao() *LigasDaoImpl {
 }
 
 type PartidosDao interface {
-	GetAll() []models.Partidos
-	Get(id int) *models.Partidos
-	Save(e *models.Partidos) int
+	GetAll() []gorms.PartidosGorm
+	Get(id int) *gorms.PartidosGorm
+	Save(e *gorms.PartidosGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Partidos
+	Query(filter string) []gorms.PartidosGorm
 }
 
 func (dao *DePrimeraDaos) GetPartidosDao() *PartidosDaoImpl {
@@ -108,11 +106,11 @@ func (dao *DePrimeraDaos) GetPartidosDao() *PartidosDaoImpl {
 }
 
 type PersonasDao interface {
-	GetAll() []models.Personas
-	Get(id int) *models.Personas
-	Save(e *models.Personas) int
+	GetAll() []gorms.PersonasGorm
+	Get(id int) *gorms.PersonasGorm
+	Save(e *gorms.PersonasGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Personas
+	Query(filter string) []gorms.PersonasGorm
 }
 
 func (dao *DePrimeraDaos) GetPersonasDao() *PersonasDaoImpl {
@@ -120,11 +118,11 @@ func (dao *DePrimeraDaos) GetPersonasDao() *PersonasDaoImpl {
 }
 
 type SancionesDao interface {
-	GetAll() []models.Sanciones
-	Get(id int) *models.Sanciones
-	Save(e *models.Sanciones) int
+	GetAll() []gorms.SancionesGorm
+	Get(id int) *gorms.SancionesGorm
+	Save(e *gorms.SancionesGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Sanciones
+	Query(filter string) []gorms.SancionesGorm
 }
 
 func (dao *DePrimeraDaos) GetSancionesDao() *SancionesDaoImpl {
@@ -132,7 +130,7 @@ func (dao *DePrimeraDaos) GetSancionesDao() *SancionesDaoImpl {
 }
 
 type SancionesEquiposDao interface {
-	Save(e *models.SancionesEquipos) int64
+	Save(e *gorms.SancionesEquiposGorm) int64
 	Delete(id int64) bool
 }
 
@@ -141,11 +139,11 @@ func (dao *DePrimeraDaos) GetSancionesEquiposDao() *SancionesEquiposDaoImpl {
 }
 
 type ZonasDao interface {
-	GetAll() []models.Zonas
-	Get(id int) *models.Zonas
-	Save(e *models.Zonas) int
+	GetAll() []gorms.ZonasGorm
+	Get(id int) *gorms.ZonasGorm
+	Save(e *gorms.ZonasGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Zonas
+	Query(filter string) []gorms.ZonasGorm
 }
 
 func (dao *DePrimeraDaos) GetZonasDao() *ZonasDaoImpl {
@@ -153,7 +151,7 @@ func (dao *DePrimeraDaos) GetZonasDao() *ZonasDaoImpl {
 }
 
 type ZonasEquiposDao interface {
-	Save(e *models.ZonasEquipos) int64
+	Save(e *gorms.ZonasEquiposGorm) int64
 	Delete(id int64) bool
 }
 
@@ -162,11 +160,11 @@ func (dao *DePrimeraDaos) GetZonasEquiposDao() *ZonasEquiposDaoImpl {
 }
 
 type JugadoresDao interface {
-	GetAll() []models.Jugadores
-	Get(id int) *models.Jugadores
-	Save(e *models.Jugadores) int
+	GetAll() []gorms.JugadoresGorm
+	Get(id int) *gorms.JugadoresGorm
+	Save(e *gorms.JugadoresGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Jugadores
+	Query(filter string) []gorms.JugadoresGorm
 }
 
 func (dao *DePrimeraDaos) GetJugadoresDao() *JugadoresDaoImpl {
@@ -174,11 +172,11 @@ func (dao *DePrimeraDaos) GetJugadoresDao() *JugadoresDaoImpl {
 }
 
 type NotificacionesDao interface {
-	GetAll() []models.Notificaciones
-	Get(id int) *models.Notificaciones
-	Save(e *models.Notificaciones) int
+	GetAll() []gorms.NotificacionesGorm
+	Get(id int) *gorms.NotificacionesGorm
+	Save(e *gorms.NotificacionesGorm) int
 	Delete(id int) bool
-	Query(filter string) []models.Notificaciones
+	Query(filter string) []gorms.NotificacionesGorm
 }
 
 func (dao *DePrimeraDaos) GetNotificacionesDao() *NotificacionesDaoImpl {
@@ -186,7 +184,7 @@ func (dao *DePrimeraDaos) GetNotificacionesDao() *NotificacionesDaoImpl {
 }
 
 type AppGruposDao interface {
-	GetAll() []models.AppGrupos
+	GetAll() []gorms.AppGruposGorm
 }
 
 func (dao *DePrimeraDaos) GetAppGruposDao() *AppGruposDaoImpl {

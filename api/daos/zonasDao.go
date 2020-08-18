@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type ZonasDaoImpl struct{}
 
-func (ed *ZonasDaoImpl) GetAll() []models.Zonas {
+func (ed *ZonasDaoImpl) GetAll() []gorms.ZonasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *ZonasDaoImpl) GetAll() []models.Zonas {
 		log.Fatalln("Failed to query")
 	}
 
-	var zonas []models.Zonas
+	var zonas []gorms.ZonasGorm
 	for rows.Next() {
-		zona := models.Zonas{}
+		zona := gorms.ZonasGorm{}
 		error := rows.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +36,7 @@ func (ed *ZonasDaoImpl) GetAll() []models.Zonas {
 	return zonas
 }
 
-func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
+func (ed *ZonasDaoImpl) Get(id int) gorms.ZonasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -44,7 +44,7 @@ func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
 	}
 
 	row := db.QueryRow("select * from zonas where id_zona = ?", id)
-	zona := models.Zonas{}
+	zona := gorms.ZonasGorm{}
 	error := row.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -55,7 +55,7 @@ func (ed *ZonasDaoImpl) Get(id int) models.Zonas {
 	return zona
 }
 
-func (ed *ZonasDaoImpl) Save(e *models.Zonas) int64 {
+func (ed *ZonasDaoImpl) Save(e *gorms.ZonasGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

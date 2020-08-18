@@ -3,13 +3,15 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
+// EquiposDaoImpl sarasa
 type EquiposDaoImpl struct{}
 
-func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
+// GetAll object
+func (ed *EquiposDao) GetAll() []gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +23,9 @@ func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 		log.Fatalln("Failed to query")
 	}
 
-	var equipos []models.Equipos
+	var equipos []gorms.EquiposGorm
 	for rows.Next() {
-		equipo := models.Equipos{}
+		equipo := gorms.EquiposGorm{}
 		error := rows.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -37,7 +39,8 @@ func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 	return equipos
 }
 
-func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
+// Get equipo
+func (ed *EquiposDao) Get(id int) gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -45,7 +48,7 @@ func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
 	}
 
 	row := db.QueryRow("select * from equipos where id_equipo = ?", id)
-	equipo := models.Equipos{}
+	equipo := gorms.EquiposGorm{}
 	error := row.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -56,7 +59,8 @@ func (ed *EquiposDaoImpl) Get(id int) models.Equipos {
 	return equipo
 }
 
-func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
+// Save equipos
+func (ed *EquiposDao) Save(e *gorms.EquiposGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -85,7 +89,8 @@ func (ed *EquiposDaoImpl) Save(e *models.Equipos) int64 {
 	return e.IDEquipo
 }
 
-func (ed *EquiposDaoImpl) Delete(id int) bool {
+// Delete equipos
+func (ed *EquiposDao) Delete(id int) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

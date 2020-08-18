@@ -3,14 +3,14 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"fmt"
 	"log"
 )
 
 type CampeonatosDaoImpl struct{}
 
-func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
+func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -22,9 +22,9 @@ func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
 		log.Fatalln("Failed to query")
 	}
 
-	var campeonatos []models.Campeonatos
+	var campeonatos []gorms.CampeonatosGorm
 	for rows.Next() {
-		campeonato := models.Campeonatos{}
+		campeonato := gorms.CampeonatosGorm{}
 		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -37,7 +37,7 @@ func (ed *CampeonatosDaoImpl) GetAll() []models.Campeonatos {
 	return campeonatos
 }
 
-func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
+func (ed *CampeonatosDaoImpl) Get(id int) gorms.CampeonatosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -45,7 +45,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 	}
 
 	row := db.QueryRow("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin from campeonatos where id_campeonato = ?", id)
-	campeonato := models.Campeonatos{}
+	campeonato := gorms.CampeonatosGorm{}
 	error := row.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -56,7 +56,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) models.Campeonatos {
 	return campeonato
 }
 
-func (ed *CampeonatosDaoImpl) Save(e *models.Campeonatos) int64 {
+func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

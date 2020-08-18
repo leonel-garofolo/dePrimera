@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type PartidosDaoImpl struct{}
 
-func (ed *PartidosDaoImpl) GetAll() []models.Partidos {
+func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *PartidosDaoImpl) GetAll() []models.Partidos {
 		log.Fatalln("Failed to query")
 	}
 
-	var partidos []models.Partidos
+	var partidos []gorms.PartidosGorm
 	for rows.Next() {
-		partido := models.Partidos{}
+		partido := gorms.PartidosGorm{}
 		error := rows.Scan(&partido.IDPartidos, &partido.IDArbitro, &partido.IDAsistente, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDLiga, &partido.MotivoSuspencion, &partido.Observacion, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +36,7 @@ func (ed *PartidosDaoImpl) GetAll() []models.Partidos {
 	return partidos
 }
 
-func (ed *PartidosDaoImpl) Get(id int) models.Partidos {
+func (ed *PartidosDaoImpl) Get(id int) gorms.PartidosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -44,7 +44,7 @@ func (ed *PartidosDaoImpl) Get(id int) models.Partidos {
 	}
 
 	row := db.QueryRow("select * from partidos where id_partidos = ?", id)
-	partido := models.Partidos{}
+	partido := gorms.PartidosGorm{}
 	error := row.Scan(&partido.IDPartidos, &partido.IDArbitro, &partido.IDAsistente, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDLiga, &partido.MotivoSuspencion, &partido.Observacion, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -55,7 +55,7 @@ func (ed *PartidosDaoImpl) Get(id int) models.Partidos {
 	return partido
 }
 
-func (ed *PartidosDaoImpl) Save(e *models.Partidos) int64 {
+func (ed *PartidosDaoImpl) Save(e *gorms.PartidosGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

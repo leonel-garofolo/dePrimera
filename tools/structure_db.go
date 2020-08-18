@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"go/format"
 	"log"
 	"os"
 	"strconv"
@@ -38,21 +37,22 @@ func main() {
 			fmt.Println("Error in selecting column data information from mysql information schema")
 			return
 		}
+
+		sTable := strings.Split(table, "_")
+		var structName string
+		for i := 0; i < len(sTable); i++ {
+			structName += strings.Title(strings.ToLower(sTable[i]))
+		}
+
+		fmt.Println(structName)
 		// Generate struct string based on columnDataTypes
-		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, true, true, true)
+		struc, err := db2struct.Generate(*columnDataTypes, table, structName, packagename, false, true, false)
 		if err != nil {
 			fmt.Println("Error in creating struct from json: " + err.Error())
 			return
 		}
 
-		tableUpper := strings.ToUpper(string(struc[0]))
-		tableNameFunc := "// TableName sets the insert table name for this struct type\n" +
-			"func (" + tableUpper + " *" + table + ") Get" + tableUpper + "() string {\n" +
-			"	return \"" + table + "\"" +
-			"}"
-		struc, err = format.Source([]byte(fmt.Sprintf("%s\n%s", string(struc), tableNameFunc)))
-
-		file, err := os.Create(packagename + "/" + table + ".go")
+		file, err := os.Create(packagename + "/" + structName + "Gorm.go")
 		if err != nil {
 			log.Printf("exist: " + table)
 			log.Fatal("exception", err)
@@ -62,5 +62,4 @@ func main() {
 		fmt.Fprintf(file, string(struc))
 		log.Println("Wrote " + table + ".go to disk")
 	}
-
 }

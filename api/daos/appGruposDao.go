@@ -3,13 +3,15 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
+// AppGruposDaoImpl struct
 type AppGruposDaoImpl struct{}
 
-func (ed *AppGruposDaoImpl) GetAll() []models.AppGrupos {
+// GetAll appGrupos
+func (ed *AppGruposDao) GetAll() []gorms.AppGruposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +23,9 @@ func (ed *AppGruposDaoImpl) GetAll() []models.AppGrupos {
 		log.Fatalln("Failed to query")
 	}
 
-	grupos := []models.AppGrupos{}
+	grupos := []gorms.AppGruposGorm{}
 	for rows.Next() {
-		grupo := models.AppGrupos{}
+		grupo := gorms.AppGruposGorm{}
 		error := rows.Scan(&grupo.Idgrupo, &grupo.Descripcion)
 		if error != nil {
 			if error != sql.ErrNoRows {

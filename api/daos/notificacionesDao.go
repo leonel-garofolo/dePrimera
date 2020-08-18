@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type NotificacionesDaoImpl struct{}
 
-func (ed *NotificacionesDaoImpl) GetAll() []models.Notificaciones {
+func (ed *NotificacionesDaoImpl) GetAll() []gorms.NotificacionesGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *NotificacionesDaoImpl) GetAll() []models.Notificaciones {
 		log.Fatalln("Failed to query")
 	}
 
-	notificaciones := []models.Notificaciones{}
+	notificaciones := []gorms.NotificacionesGorm{}
 	for rows.Next() {
-		notificacion := models.Notificaciones{}
+		notificacion := gorms.NotificacionesGorm{}
 		error := rows.Scan(&notificacion.IDNotificacion, &notificacion.Titulo, &notificacion.Texto, &notificacion.IDGrupo)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +36,7 @@ func (ed *NotificacionesDaoImpl) GetAll() []models.Notificaciones {
 	return notificaciones
 }
 
-func (ed *NotificacionesDaoImpl) Save(e *models.Notificaciones) int64 {
+func (ed *NotificacionesDaoImpl) Save(e *gorms.NotificacionesGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

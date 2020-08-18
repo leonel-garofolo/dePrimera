@@ -3,13 +3,13 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type JugadoresDaoImpl struct{}
 
-func (ed *JugadoresDaoImpl) GetAll() []models.Jugadores {
+func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +21,9 @@ func (ed *JugadoresDaoImpl) GetAll() []models.Jugadores {
 		log.Fatalln("Failed to query")
 	}
 
-	jugadores := []models.Jugadores{}
+	jugadores := []gorms.JugadoresGorm{}
 	for rows.Next() {
-		asistente := models.Jugadores{}
+		asistente := gorms.JugadoresGorm{}
 		error := rows.Scan(&asistente.IDJugador, &asistente.IDPersona)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +36,7 @@ func (ed *JugadoresDaoImpl) GetAll() []models.Jugadores {
 	return jugadores
 }
 
-func (ed *JugadoresDaoImpl) Save(e *models.Jugadores) int64 {
+func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-
 	viper.SetConfigFile("enviroment.yaml")
 	if len(os.Args) > 0 {
 		env := os.Args[1]

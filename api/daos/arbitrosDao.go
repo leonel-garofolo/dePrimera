@@ -3,13 +3,15 @@ package daos
 import (
 	"database/sql"
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
+// ArbitrosDaoImpl struct
 type ArbitrosDaoImpl struct{}
 
-func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
+// GetAll arbritros
+func (ed *ArbitrosDaoImpl) GetAll() []gorms.ArbitrosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,9 +23,9 @@ func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 		log.Fatalln("Failed to query")
 	}
 
-	arbitros := []models.Arbitros{}
+	arbitros := []gorms.ArbitrosGorm{}
 	for rows.Next() {
-		arbitro := models.Arbitros{}
+		arbitro := gorms.ArbitrosGorm{}
 		error := rows.Scan(&arbitro.IDArbitro, &arbitro.IDPersona)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -36,7 +38,8 @@ func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 	return arbitros
 }
 
-func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
+// Save arbritros
+func (ed *ArbitrosDaoImpl) Save(e *gorms.ArbitrosGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -54,6 +57,7 @@ func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
 	return e.IDArbitro
 }
 
+// Delete arbitro
 func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()

@@ -2,13 +2,13 @@ package daos
 
 import (
 	"deprimera/api/application"
-	"deprimera/api/models"
+	"deprimera/api/daos/gorms"
 	"log"
 )
 
 type EquiposJugadoresDaoImpl struct{}
 
-func (ed *EquiposJugadoresDaoImpl) Save(e *models.EquiposJugadores) int64 {
+func (ed *EquiposJugadoresDaoImpl) Save(e *gorms.EquiposJugadoresGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
