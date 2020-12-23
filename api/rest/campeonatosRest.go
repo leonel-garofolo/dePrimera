@@ -24,7 +24,9 @@ func RouterCampeonatos(e *echo.Echo) {
 
 func GetCampeonatos(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	campeonatos := daos.GetCampeonatosDao().GetAll()
+	campeonatosGorm := daos.GetCampeonatosDao().GetAll()
+	campeonatos := []models.Campeonatos{}
+	copier.Copy(&campeonatos, &campeonatosGorm)
 	return c.JSON(http.StatusOK, campeonatos)
 }
 
@@ -35,7 +37,9 @@ func GetCampeonato(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	campeonato := daos.GetCampeonatosDao().Get(id)
+	campeonatoGorm := daos.GetCampeonatosDao().Get(id)
+	campeonato := &models.Campeonatos{}
+	copier.Copy(&campeonato, &campeonatoGorm)
 	return c.JSON(http.StatusOK, campeonato)
 }
 

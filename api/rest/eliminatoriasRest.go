@@ -24,7 +24,9 @@ func RouterEliminatorias(e *echo.Echo) {
 
 func GetEliminatorias(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	eliminatorias := daos.GetEliminatoriasDao().GetAll()
+	eliminatoriasGorm := daos.GetEliminatoriasDao().GetAll()
+	eliminatorias := []models.Eliminatorias{}
+	copier.Copy(&eliminatorias, &eliminatoriasGorm)
 	return c.JSON(http.StatusOK, eliminatorias)
 }
 
@@ -35,7 +37,9 @@ func GetEliminatoria(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	eliminatoria := daos.GetEliminatoriasDao().Get(id)
+	eliminatoriaGorm := daos.GetEliminatoriasDao().Get(id)
+	eliminatoria := &models.Eliminatorias{}
+	copier.Copy(&eliminatoria, &eliminatoriaGorm)
 	return c.JSON(http.StatusOK, eliminatoria)
 }
 

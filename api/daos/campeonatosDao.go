@@ -21,7 +21,8 @@ func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 
 	rows, err := db.Query("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin from campeonatos")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var campeonatos []gorms.CampeonatosGorm

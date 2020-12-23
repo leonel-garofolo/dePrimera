@@ -24,7 +24,9 @@ func RouterPartidos(e *echo.Echo) {
 
 func GetPartidos(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	partidos := daos.GetPartidosDao().GetAll()
+	partidosGorm := daos.GetPartidosDao().GetAll()
+	partidos := []models.Partidos{}
+	copier.Copy(&partidos, &partidosGorm)
 	return c.JSON(http.StatusOK, partidos)
 }
 
@@ -35,7 +37,9 @@ func GetPartido(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	partido := daos.GetPartidosDao().Get(id)
+	partidoGorm := daos.GetPartidosDao().Get(id)
+	partido := &models.Partidos{}
+	copier.Copy(&partido, &partidoGorm)
 	return c.JSON(http.StatusOK, partido)
 }
 

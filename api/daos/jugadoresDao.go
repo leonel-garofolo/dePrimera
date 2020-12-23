@@ -23,15 +23,15 @@ func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
 
 	jugadores := []gorms.JugadoresGorm{}
 	for rows.Next() {
-		asistente := gorms.JugadoresGorm{}
-		error := rows.Scan(&asistente.IDJugador, &asistente.IDPersona)
+		jugador := gorms.JugadoresGorm{}
+		error := rows.Scan(&jugador.IDJugador, &jugador.IDPersona, &jugador.IDEquipo)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
 				panic(error)
 			}
 		}
-		jugadores = append(jugadores, asistente)
+		jugadores = append(jugadores, jugador)
 	}
 	return jugadores
 }
@@ -43,9 +43,9 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 		log.Println(err.Error())
 	}
 
-	isDelete := ed.Delete(e.IDJugador, e.IDPersona)
+	isDelete := ed.Delete(e.IDPersona, e.IDEquipo)
 	if isDelete == true {
-		_, error := db.Exec("insert into jugadores (id_jugador, id_persona) values(?,?)", e.IDJugador, e.IDPersona)
+		_, error := db.Exec("insert into jugadores (id_persona, id_equipo) values(?,?)", e.IDPersona, e.IDEquipo)
 
 		if error != nil {
 			log.Println(error)
@@ -55,19 +55,19 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 	return e.IDJugador
 }
 
-func (ed *JugadoresDaoImpl) Delete(IDJugador int64, IDPersona int64) bool {
+func (ed *JugadoresDaoImpl) Delete(IDPersona int64, IDEquipo int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from jugadores where id_jugador = ? and id_persona = ?", IDJugador, IDPersona)
+	_, error := db.Exec("delete from jugadores where id_persona = ? and id_equipo = ?", IDPersona, IDEquipo)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
 			panic(error)
-		}
+		}	
 	}
 	return true
 }

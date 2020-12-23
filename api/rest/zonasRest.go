@@ -24,7 +24,9 @@ func RouterZonas(e *echo.Echo) {
 
 func GetZonas(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	zonas := daos.GetZonasDao().GetAll()
+	zonasGorm := daos.GetZonasDao().GetAll()
+	zonas := []models.Zonas{}
+	copier.Copy(&zonas, &zonasGorm)
 	return c.JSON(http.StatusOK, zonas)
 }
 
@@ -35,7 +37,9 @@ func GetZona(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	zona := daos.GetZonasDao().Get(id)
+	zonaGorm := daos.GetZonasDao().Get(id)
+	zona := &models.Zonas{}
+	copier.Copy(&zona, &zonaGorm)
 	return c.JSON(http.StatusOK, zona)
 }
 

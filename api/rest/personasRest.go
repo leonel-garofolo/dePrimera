@@ -35,7 +35,9 @@ func GetPersona(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	persona := daos.GetPersonasDao().Get(id)
+	personaGorm := daos.GetPersonasDao().Get(id)
+	persona := &models.Personas{}
+	copier.Copy(&persona, &personaGorm)
 	return c.JSON(http.StatusOK, persona)
 }
 

@@ -23,7 +23,9 @@ func RouterEquipos(e *echo.Echo) {
 
 func GetEquipos(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	equipos := daos.GetEquiposDao().GetAll()
+	equiposGorm := daos.GetEquiposDao().GetAll()
+	equipos := []models.Equipos{}
+	copier.Copy(&equipos, &equiposGorm)
 	return c.JSON(http.StatusOK, equipos)
 }
 

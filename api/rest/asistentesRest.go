@@ -23,7 +23,9 @@ func RouterAsistentes(e *echo.Echo) {
 
 func GetAsistentes(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitros := daos.GetAsistentesDao().GetAll()
+	arbitrosGorm := daos.GetAsistentesDao().GetAll()
+	arbitros := []models.Arbitros{}
+	copier.Copy(&arbitros, &arbitrosGorm)
 	return c.JSON(http.StatusOK, arbitros)
 }
 

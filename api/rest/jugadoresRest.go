@@ -23,8 +23,10 @@ func RouterJugadores(e *echo.Echo) {
 
 func GetJugadores(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitros := daos.GetJugadoresDao().GetAll()
-	return c.JSON(http.StatusOK, arbitros)
+	jugadoresGorm := daos.GetJugadoresDao().GetAll()
+	jugadores := []models.Jugadores{}
+	copier.Copy(&jugadores, &jugadoresGorm)
+	return c.JSON(http.StatusOK, jugadores)
 }
 
 func SaveJugador(c echo.Context) error {

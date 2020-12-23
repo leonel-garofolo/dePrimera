@@ -24,8 +24,12 @@ func RouterLigas(e *echo.Echo) {
 
 func GetLigas(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	ligas := daos.GetLigasDao().GetAll()
-	return c.JSON(http.StatusOK, ligas)
+	ligasGorm := daos.GetLigasDao().GetAll()
+	
+	ligas := []models.Ligas{}
+	copier.Copy(&ligas, &ligasGorm)
+
+	return c.JSON(http.StatusOK, &ligas)
 }
 
 func GetLiga(c echo.Context) error {
@@ -35,7 +39,11 @@ func GetLiga(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	liga := daos.GetLigasDao().Get(id)
+	
+	ligaGorm := daos.GetLigasDao().Get(id)
+	liga := &models.Ligas{}
+	copier.Copy(&liga, &ligaGorm)
+
 	return c.JSON(http.StatusOK, liga)
 }
 

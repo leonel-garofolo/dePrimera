@@ -23,7 +23,11 @@ func RouterArbitros(e *echo.Echo) {
 
 func GetArbitros(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitros := daos.GetArbitrosDao().GetAll()
+	arbitrosGorm := daos.GetArbitrosDao().GetAll()
+	
+	arbitros := []models.Arbitros{}
+	copier.Copy(&arbitros, &arbitrosGorm)
+
 	return c.JSON(http.StatusOK, arbitros)
 }
 
@@ -33,7 +37,6 @@ func SaveArbitro(c echo.Context) error {
 
 	arbitrosGorm := &gorms.ArbitrosGorm{}
 	copier.Copy(&arbitrosGorm, &arbitros)
-
 
 	daos := daos.NewDePrimeraDaos()
 	id := daos.GetArbitrosDao().Save(arbitrosGorm)

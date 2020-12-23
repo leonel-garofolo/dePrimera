@@ -31,7 +31,7 @@ func Get() *Config {
 	*/
 
 	flag.StringVar(&conf.dbUser, "dbuser", "root", "DB user name")
-	flag.StringVar(&conf.dbPswd, "dbpswd", "root", "DB pass")
+	flag.StringVar(&conf.dbPswd, "dbpswd", "1234", "DB pass")
 	flag.StringVar(&conf.dbPort, "dbport", "3306", "DB port")
 	flag.StringVar(&conf.dbHost, "dbhost", "localhost", "DB host")
 	flag.StringVar(&conf.dbName, "dbname", "de_primera_app", "DB name")
@@ -53,7 +53,7 @@ func (c *Config) GetTestDBConnStr() string {
 
 func (c *Config) getDBConnStr(dbhost, dbname string) string {
 	return fmt.Sprintf(
-		"%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
+		"%s:%s@/%s?charset=utf8&parseTime=true&loc=Local",
 		c.dbUser,
 		c.dbPswd,
 		dbname,

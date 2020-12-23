@@ -32,15 +32,17 @@ func Get() (*Application, error) {
 }
 
 func GetDB() (*sql.DB, error) {
-	db, err := sql.Open("mysql", fmt.Sprintf(
-		"%s:%s@%s(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	printConn :=fmt.Sprintf(
+		"%s:%s@%s(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local",
 		viper.Get("database.user"),
 		viper.Get("database.pass"),
 		viper.Get("database.type"),
 		viper.Get("database.host"),
 		viper.Get("database.port"),
 		viper.Get("database.name"),
-	))
+	)
+	fmt.Println(printConn)
+	db, err := sql.Open("mysql", printConn)
 	if err != nil {
 		return nil, err
 	}

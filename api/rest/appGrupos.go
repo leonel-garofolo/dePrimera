@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -18,7 +19,11 @@ func RouterAppGrupos(e *echo.Echo) {
 
 func GetAppGrupos(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	grupos := daos.GetAppGruposDao().GetAll()
+	gruposGorms := daos.GetAppGruposDao().GetAll()
+
+	grupos := []models.AppGrupos{}
+	copier.Copy(&grupos, &gruposGorms)
+
 	return c.JSON(http.StatusOK, grupos)
 }
 

@@ -24,8 +24,10 @@ func RouterSanciones(e *echo.Echo) {
 
 func GetSanciones(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	sancions := daos.GetSancionesDao().GetAll()
-	return c.JSON(http.StatusOK, sancions)
+	sancionesGorm := daos.GetSancionesDao().GetAll()
+	sanciones:= []models.Sanciones{}
+	copier.Copy(&sanciones, &sancionesGorm)
+	return c.JSON(http.StatusOK, sanciones)
 }
 
 func GetSancion(c echo.Context) error {
@@ -35,7 +37,9 @@ func GetSancion(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	sancion := daos.GetSancionesDao().Get(id)
+	sancionGorm := daos.GetSancionesDao().Get(id)
+	sancion := &models.Sanciones{}
+	copier.Copy(&sancion, &sancionGorm)
 	return c.JSON(http.StatusOK, sancion)
 }
 

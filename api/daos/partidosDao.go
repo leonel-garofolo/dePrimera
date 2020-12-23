@@ -24,7 +24,7 @@ func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 	var partidos []gorms.PartidosGorm
 	for rows.Next() {
 		partido := gorms.PartidosGorm{}
-		error := rows.Scan(&partido.IDPartidos, &partido.IDArbitro, &partido.IDAsistente, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDLiga, &partido.MotivoSuspencion, &partido.Observacion, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido)
+		error := rows.Scan(&partido.IDPartidos, &partido.IDLiga, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDArbitro, &partido.IDAsistente, &partido.FechaEncuentro, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido, &partido.MotivoSuspencion, &partido.Observacion)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
