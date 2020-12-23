@@ -24,7 +24,9 @@ func RouterPersonas(e *echo.Echo) {
 
 func GetPersonas(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	personas := daos.GetPersonasDao().GetAll()
+	personasGorm := daos.GetPersonasDao().GetAll()
+	personas := []models.Personas{}
+	copier.Copy(&personas, &personasGorm)
 	return c.JSON(http.StatusOK, personas)
 }
 

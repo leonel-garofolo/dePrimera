@@ -16,6 +16,7 @@ import (
 
 func RouterPartidos(e *echo.Echo) {
 	e.GET("/api/partidos", GetPartidos)
+	e.GET("/api/partidos/date/:id", GetPartidosFromDate)
 	e.GET("/api/partidos/:id", GetPartido)
 	e.POST("/api/partidos", SavePartido)
 	e.DELETE("/api/partidos/:id", DeletePartido)
@@ -28,6 +29,14 @@ func GetPartidos(c echo.Context) error {
 	partidos := []models.Partidos{}
 	copier.Copy(&partidos, &partidosGorm)
 	return c.JSON(http.StatusOK, partidos)
+}
+
+func GetPartidosFromDate(c echo.Context) error {	
+	daos := daos.NewDePrimeraDaos()
+	partidosFromDateGorm := daos.GetPartidosDao().GetAllFromDate(c.Param("date"))
+	partidosFromDate := []models.PartidosFromDate{}
+	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
+	return c.JSON(http.StatusOK, partidosFromDate)
 }
 
 func GetPartido(c echo.Context) error {

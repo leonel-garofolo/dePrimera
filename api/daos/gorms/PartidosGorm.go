@@ -25,3 +25,15 @@ type PartidosGorm struct {
 func (p *PartidosGorm) TableName() string {
 	return "partidos"
 }
+
+type PartidosFromDateGorm struct {	
+	IDPartidos         int64          `gorm:"column:id_partidos"`
+	FechaEncuentro     time.Time      `gorm:"column:fecha_encuentro"`	
+	LigaName           string         `gorm:"column:liga_name"`
+	CampeonatoName     string 		  `gorm:"column:campeonato_name"`
+	ELocalName         string         `gorm:"column:e_local_name"`
+	EVisitName         string         `gorm:"column:e_visit_name"`
+	ResultadoLocal     sql.NullInt64  `gorm:"column:resultado_local"`
+	ResultadoVisitante sql.NullInt64  `gorm:"column:resultado_visitante"`
+	Suspendido         string `gorm:"column:suspendido"`
+}
