@@ -1,6 +1,6 @@
 package daos
 
-import "deprimera/api/daos/gorms"
+import "github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 
 // DaosFactory general interface
 type DaosFactory interface {

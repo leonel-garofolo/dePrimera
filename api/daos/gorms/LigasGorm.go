@@ -5,7 +5,7 @@ import "database/sql"
 type LigasGorm struct {
 	Cuit             sql.NullString `gorm:"column:cuit"`
 	Domicilio        string         `gorm:"column:domicilio"`
-	IDLiga           int            `gorm:"column:id_liga;primary_key"`
+	IDLiga           int64            `gorm:"column:id_liga;primary_key"`
 	MailContacto     sql.NullString `gorm:"column:mail_contacto"`
 	Nombre           string         `gorm:"column:nombre"`
 	NombreContacto   sql.NullString `gorm:"column:nombre_contacto"`

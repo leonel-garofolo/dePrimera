@@ -5,8 +5,8 @@ import "database/sql"
 type EquiposGorm struct {
 	Foto       []byte        `gorm:"column:foto"`
 	Habilitado sql.NullInt64 `gorm:"column:habilitado"`
-	IDEquipo   int           `gorm:"column:id_equipo;primary_key"`
-	IDLiga     int           `gorm:"column:id_liga"`
+	IDEquipo   int64           `gorm:"column:id_equipo;primary_key"`
+	IDLiga     int64           `gorm:"column:id_liga"`
 	Nombre     string        `gorm:"column:nombre"`
 }
 

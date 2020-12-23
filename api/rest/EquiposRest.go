@@ -1,14 +1,15 @@
 package services
 
 import (
-	"deprimera/api/daos"
-	"deprimera/api/models"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-
+	"fmt"
 	"github.com/labstack/echo/v4"
 )
 
@@ -41,8 +42,11 @@ func SaveEquipos(c echo.Context) error {
 	equipos := &models.Equipos{}
 	c.Bind(equipos)
 
+	equiposGorm := &gorms.EquiposGorm{}
+	copier.Copy(&equiposGorm, &equipos)
+
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetEquiposDao().Save(equipos)
+	id := daos.GetEquiposDao().Save(equiposGorm)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

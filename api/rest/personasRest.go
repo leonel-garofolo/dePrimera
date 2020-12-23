@@ -1,8 +1,10 @@
 package services
 
 import (
-	"deprimera/api/daos"
-	"deprimera/api/models"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -41,8 +43,12 @@ func SavePersona(c echo.Context) error {
 	personas := &models.Personas{}
 	c.Bind(personas)
 
+	personasGorm := &gorms.PersonasGorm{}
+	copier.Copy(&personasGorm, &personas)
+
+
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetPersonasDao().Save(personas)
+	id := daos.GetPersonasDao().Save(personasGorm)
 
 	log.Println(id)
 	return c.String(http.StatusOK, strconv.FormatInt(id, 10))

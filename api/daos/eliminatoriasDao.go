@@ -2,8 +2,8 @@ package daos
 
 import (
 	"database/sql"
-	"deprimera/api/application"
-	"deprimera/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	"log"
 )
 
@@ -11,7 +11,7 @@ import (
 type EliminatoriasDaoImpl struct{}
 
 // GetAll eliminatorias
-func (ed *EliminatoriasDao) GetAll() []gorms.EliminatoriasGorm {
+func (ed *EliminatoriasDaoImpl) GetAll() []gorms.EliminatoriasGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

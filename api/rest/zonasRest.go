@@ -1,8 +1,10 @@
 package services
 
 import (
-	"deprimera/api/daos"
-	"deprimera/api/models"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"	
 	"encoding/json"
 	"fmt"
 	"log"
@@ -41,8 +43,12 @@ func SaveZona(c echo.Context) error {
 	zonas := &models.Zonas{}
 	c.Bind(zonas)
 
+	zonasGorm := &gorms.ZonasGorm{}
+	copier.Copy(&zonasGorm, &zonas)
+
+
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetZonasDao().Save(zonas)
+	id := daos.GetZonasDao().Save(zonasGorm)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

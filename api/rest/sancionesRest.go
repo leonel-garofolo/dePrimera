@@ -1,8 +1,10 @@
 package services
 
 import (
-	"deprimera/api/daos"
-	"deprimera/api/models"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -41,8 +43,11 @@ func SaveSancion(c echo.Context) error {
 	sancion := &models.Sanciones{}
 	c.Bind(sancion)
 
+	sancionGorm := &gorms.SancionesGorm{}
+	copier.Copy(&sancionGorm, &sancion)
+
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetSancionesDao().Save(sancion)
+	id := daos.GetSancionesDao().Save(sancionGorm)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

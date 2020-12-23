@@ -1,8 +1,8 @@
 package gorms
 
 type AsistentesGorm struct {
-	IDAsistente int `gorm:"column:id_asistente;primary_key"`
-	IDPersona   int `gorm:"column:id_persona"`
+	IDAsistente int64 `gorm:"column:id_asistente;primary_key"`
+	IDPersona   int64 `gorm:"column:id_persona"`
 }
 
 // TableName sets the insert table name for this struct type

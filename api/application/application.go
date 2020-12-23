@@ -2,8 +2,8 @@ package application
 
 import (
 	"database/sql"
-	"deprimera/api/config"
-	"deprimera/api/db"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/config"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/db"
 	"fmt"
 
 	"github.com/spf13/viper"

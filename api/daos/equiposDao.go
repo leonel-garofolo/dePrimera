@@ -2,8 +2,8 @@ package daos
 
 import (
 	"database/sql"
-	"deprimera/api/application"
-	"deprimera/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	"log"
 )
 
@@ -11,7 +11,7 @@ import (
 type EquiposDaoImpl struct{}
 
 // GetAll object
-func (ed *EquiposDao) GetAll() []gorms.EquiposGorm {
+func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -40,7 +40,7 @@ func (ed *EquiposDao) GetAll() []gorms.EquiposGorm {
 }
 
 // Get equipo
-func (ed *EquiposDao) Get(id int) gorms.EquiposGorm {
+func (ed *EquiposDaoImpl) Get(id int) gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -60,7 +60,7 @@ func (ed *EquiposDao) Get(id int) gorms.EquiposGorm {
 }
 
 // Save equipos
-func (ed *EquiposDao) Save(e *gorms.EquiposGorm) int64 {
+func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -90,7 +90,7 @@ func (ed *EquiposDao) Save(e *gorms.EquiposGorm) int64 {
 }
 
 // Delete equipos
-func (ed *EquiposDao) Delete(id int) bool {
+func (ed *EquiposDaoImpl) Delete(id int) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {

@@ -1,8 +1,8 @@
 package daos
 
 import (
-	"deprimera/api/application"
-	"deprimera/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	"log"
 )
 

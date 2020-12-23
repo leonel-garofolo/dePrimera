@@ -1,8 +1,10 @@
 package services
 
 import (
-	"deprimera/api/daos"
-	"deprimera/api/models"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -29,8 +31,11 @@ func SaveNotificacion(c echo.Context) error {
 	notificaciones := &models.Notificaciones{}
 	c.Bind(notificaciones)
 
+	notificacionesGorm := &gorms.NotificacionesGorm{}
+	copier.Copy(&notificacionesGorm, &notificaciones)
+
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetNotificacionesDao().Save(notificaciones)
+	id := daos.GetNotificacionesDao().Save(notificacionesGorm)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

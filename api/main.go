@@ -1,7 +1,7 @@
 package main
 
 import (
-	"deprimera/api/router"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/router"
 	"log"
 	"net/http"
 	"os"

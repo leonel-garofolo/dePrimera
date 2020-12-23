@@ -6,7 +6,7 @@ type UsersGorm struct {
 	Clave       sql.NullString `gorm:"column:clave"`
 	Descripcion sql.NullString `gorm:"column:descripcion"`
 	Email       sql.NullString `gorm:"column:email"`
-	Habilitado  `gorm:"column:habilitado"`
+	Habilitado  bool `gorm:"column:habilitado"`
 	Telefono    sql.NullString `gorm:"column:telefono"`
 	UserID      string         `gorm:"column:user_id;primary_key"`
 }
