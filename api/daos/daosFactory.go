@@ -16,6 +16,18 @@ func NewDePrimeraDaos() *DePrimeraDaos {
 }
 
 // ArbitrosDao interface of arbitros
+type AuthenticationDao interface {
+	Login(user string, pass string) *gorms.UsersGorm
+	Register(user *gorms.UsersGorm) int
+	ResetPassword(user string, oldPass string, newPass string)
+}
+
+// GetArbitrosDao factory of arbitros
+func (dao *DePrimeraDaos) GetAuthenticationDao() *AuthenticationDaoImpl {
+	return &AuthenticationDaoImpl{}
+}
+
+// ArbitrosDao interface of arbitros
 type ArbitrosDao interface {
 	GetAll() []gorms.ArbitrosGorm
 	Get(id int) *gorms.ArbitrosGorm

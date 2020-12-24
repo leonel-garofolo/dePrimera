@@ -25,6 +25,7 @@ func NewRouter(e *echo.Echo) {
 	services.RouterZonas(e)
 	services.RouterNotificaciones(e)
 	services.RouterAppGrupos(e)
+	services.RouterAuthentication(e)
 
 	e.GET("/api/home", home)
 }

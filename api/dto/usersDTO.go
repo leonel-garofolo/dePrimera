@@ -1,17 +1,23 @@
 package models
 
-import "database/sql"
+type Users struct {
+	UserID      string  `json:"user_id"`
+	Email       string  `json:"email"`
+	Password       string  `json:"password"`
+	Nombre  	string 	`json:"nombre"`
+	Apellido  	string  `json:"apellido"`		
+	Telefono    string  `json:"telefono"`	
+	Habilitado  bool    `json:"habilitado"`
+}
 
-type users struct {
-	Clave       sql.NullString `gorm:"column:clave"`
-	Descripcion sql.NullString `gorm:"column:descripcion"`
-	Email       sql.NullString `gorm:"column:email"`
-	Habilitado  bool           `gorm:"column:habilitado"`
-	Telefono    sql.NullString `gorm:"column:telefono"`
-	UserID      string         `gorm:"column:user_id;primary_key"`
+
+type UsersPassReset struct {
+	Email      	      string  `json:"email"`
+	OldPassword       string  `json:"old_password"`
+	NewPassword       string  `json:"new_password"`		
 }
 
 // TableName sets the insert table name for this struct type
-func (u *users) TableName() string {
+func (u *Users) TableName() string {
 	return "users"
 }

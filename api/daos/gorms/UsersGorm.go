@@ -3,12 +3,12 @@ package gorms
 import "database/sql"
 
 type UsersGorm struct {
-	Clave       sql.NullString `gorm:"column:clave"`
-	Descripcion sql.NullString `gorm:"column:descripcion"`
-	Email       sql.NullString `gorm:"column:email"`
-	Habilitado  bool `gorm:"column:habilitado"`
-	Telefono    sql.NullString `gorm:"column:telefono"`
-	UserID      string         `gorm:"column:user_id;primary_key"`
+	IDUser      string  `gorm:"column:id_user;primary_key"`
+	Clave       string 	`gorm:"column:clave"`
+	Nombre      string 	`gorm:"column:nombre"`
+	Apellido    string 	`gorm:"column:apellido"`	
+	Habilitado  bool 	`gorm:"column:habilitado"`
+	Telefono    sql.NullString `gorm:"column:telefono"`	
 }
 
 // TableName sets the insert table name for this struct type
