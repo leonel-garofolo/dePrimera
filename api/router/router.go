@@ -1,8 +1,9 @@
 package router
 
 import (
-	services "github.com/leonel-garofolo/dePrimeraApiRest/api/rest"
 	"net/http"
+
+	services "github.com/leonel-garofolo/dePrimeraApiRest/api/rest"
 
 	"github.com/labstack/echo/v4"
 )

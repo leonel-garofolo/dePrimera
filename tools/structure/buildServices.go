@@ -1,11 +1,10 @@
-package main
+package structure
 
 import (
 	"fmt"
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/Shelnutt2/db2struct"
 	"github.com/jinzhu/gorm"
@@ -37,22 +36,13 @@ func main() {
 			fmt.Println("Error in selecting column data information from mysql information schema")
 			return
 		}
-
-		sTable := strings.Split(table, "_")
-		var structName string
-		for i := 0; i < len(sTable); i++ {
-			structName += strings.Title(strings.ToLower(sTable[i]))
-		}
-
-		fmt.Println(structName)
 		// Generate struct string based on columnDataTypes
-		struc, err := db2struct.Generate(*columnDataTypes, table, structName, packagename, false, true, false)
+		struc, err := db2struct.Generate(*columnDataTypes, table, table, packagename, true, true, false)
 		if err != nil {
 			fmt.Println("Error in creating struct from json: " + err.Error())
 			return
 		}
-
-		file, err := os.Create(packagename + "/" + structName + "Gorm.go")
+		file, err := os.Create(packagename + "/" + table + ".go")
 		if err != nil {
 			log.Printf("exist: " + table)
 			log.Fatal("exception", err)
@@ -62,4 +52,5 @@ func main() {
 		fmt.Fprintf(file, string(struc))
 		log.Println("Wrote " + table + ".go to disk")
 	}
+
 }

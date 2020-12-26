@@ -27,7 +27,35 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 	var equipos []gorms.EquiposGorm
 	for rows.Next() {
 		equipo := gorms.EquiposGorm{}
-		error := rows.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+
+		equipos = append(equipos, equipo)
+	}
+	return equipos
+}
+
+func (ed *EquiposDaoImpl) GetAllFromLiga(idLiga int64) []gorms.EquiposGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select * from equipos where id_campeonato = ?", idLiga)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var equipos []gorms.EquiposGorm
+	for rows.Next() {
+		equipo := gorms.EquiposGorm{}
+		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -50,7 +78,7 @@ func (ed *EquiposDaoImpl) Get(id int) gorms.EquiposGorm {
 
 	row := db.QueryRow("select * from equipos where id_equipo = ?", id)
 	equipo := gorms.EquiposGorm{}
-	error := row.Scan(&equipo.IDEquipo, &equipo.IDLiga, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+	error := row.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
@@ -70,8 +98,8 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 
 	if e.IDEquipo > 0 {
 		_, error := db.Exec("update equipos"+
-			" set id_liga=?, nombre=?, habilitado=?, foto=? "+
-			" where id_equipo = ?", e.IDLiga, e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
+			" set id_campeonato=?, nombre=?, habilitado=?, foto=? "+
+			" where id_equipo = ?", e.IDCampeonato, e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
 
 		if error != nil {
 			log.Println(error)
@@ -79,8 +107,8 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 		}
 	} else {
 		res, error := db.Exec("insert into equipos"+
-			" (id_equipo, id_liga, nombre, habilitado, foto) "+
-			" values(?,?,?,?,?)", e.IDEquipo, e.IDLiga, e.Nombre, e.Habilitado, e.Foto)
+			" (id_equipo, id_campeonato, nombre, habilitado, foto) "+
+			" values(?,?,?,?,?)", e.IDEquipo, e.IDCampeonato, e.Nombre, e.Habilitado, e.Foto)
 		if error != nil {
 			log.Println(error)
 			panic(error)

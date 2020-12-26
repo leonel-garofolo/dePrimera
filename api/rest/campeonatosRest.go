@@ -1,15 +1,17 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jinzhu/copier"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	help "github.com/leonel-garofolo/dePrimeraApiRest/api/help"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,6 +21,8 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.GET("/api/campeonatos/:id", GetCampeonato)
 	e.POST("/api/campeonatos", SaveCampeonato)
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
+	e.GET("/api/campeonato/fixture/:id_campeonato", GetFixture)
+	e.GET("/api/campeonato/fixture/generate", GetFixtureGenerate)
 	e.GET("/api/campeonatos/info", InfoCampeonatos)
 }
 
@@ -82,4 +86,35 @@ func InfoCampeonatos(c echo.Context) error {
 
 		return c.JSON(http.StatusOK, campeonatos)
 	}
+}
+
+func GetFixture(c echo.Context) error {
+	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println("get torneo: ")
+	fmt.Println(idTorneo)
+
+	daos := daos.NewDePrimeraDaos()
+	campeonatoGorm := daos.GetCampeonatosDao().Get(idTorneo)
+	equiposGorm := daos.GetEquiposDao().GetAllFromLiga(campeonatoGorm.IDLiga)
+
+	fixtureService := help.FixtureHelp{}
+	fixture := fixtureService.CalcularLiga(len(equiposGorm))
+
+	return c.JSON(http.StatusOK, fixture)
+}
+
+func GetFixtureGenerate(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	zonaGorm := daos.GetZonasDao().Get(id)
+	zona := &models.Zonas{}
+	copier.Copy(&zona, &zonaGorm)
+	return c.JSON(http.StatusOK, zona)
 }

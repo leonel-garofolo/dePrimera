@@ -3,6 +3,9 @@ module github.com/leonel-garofolo/dePrimeraApiRest
 go 1.15
 
 require (
+	github.com/Shelnutt2/db2struct v1.0.2
+	github.com/go-delve/delve v1.5.1
+	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 	github.com/jinzhu/copier v0.1.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/labstack/echo/v4 v4.1.17

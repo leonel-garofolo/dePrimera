@@ -2,10 +2,11 @@ package daos
 
 import (
 	"database/sql"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	"fmt"
 	"log"
+
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 )
 
 // CampeonatosDaoImpl struct
