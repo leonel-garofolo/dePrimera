@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 type PartidosDaoImpl struct{}
@@ -43,19 +44,19 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select p.id_partidos, p.fecha_encuentro, " +
-			" l.nombre as liga_name, c.descripcion as campeonato_name, " +
-			" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, " + 
-			" p.resultado_local, p.resultado_visitante, " +
-			" p.suspendido " +
-		" from partidos p " +
-		" inner join ligas l on l.id_liga = p.id_liga " +
-		" inner join campeonatos c on c.id_campeonato = p.id_campeonato " +
-		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local " +
-		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante " +
-		" inner join arbitros a on a.id_arbitro = p.id_arbitro " +
-		" inner join asistentes asis on asis.id_asistente = p.id_asistente " +
-		" where fecha_encuentro like ?", datePartidos + "%")
+	rows, err := db.Query("select p.id_partidos, p.fecha_encuentro, "+
+		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
+		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
+		" p.resultado_local, p.resultado_visitante, "+
+		" p.suspendido "+
+		" from partidos p "+
+		" inner join ligas l on l.id_liga = p.id_liga "+
+		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
+		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local "+
+		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
+		" inner join arbitros a on a.id_arbitro = p.id_arbitro "+
+		" inner join asistentes asis on asis.id_asistente = p.id_asistente "+
+		" where fecha_encuentro like ?", datePartidos+"%")
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
@@ -64,14 +65,14 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
 		error := rows.Scan(
-			&partido.IDPartidos, 
-			&partido.FechaEncuentro, 
-			&partido.LigaName, 
-			&partido.CampeonatoName, 
-			&partido.ELocalName, 
-			&partido.EVisitName, 
-			&partido.ResultadoLocal, 
-			&partido.ResultadoVisitante, 
+			&partido.IDPartidos,
+			&partido.FechaEncuentro,
+			&partido.LigaName,
+			&partido.CampeonatoName,
+			&partido.ELocalName,
+			&partido.EVisitName,
+			&partido.ResultadoLocal,
+			&partido.ResultadoVisitante,
 			&partido.Suspendido,
 		)
 		if error != nil {
@@ -145,4 +146,54 @@ func (ed *PartidosDaoImpl) Delete(id int) bool {
 		panic(error)
 	}
 	return true
+}
+
+// Get equipo
+func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select p.id_partidos, p.fecha_encuentro, "+
+		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
+		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
+		" p.resultado_local, p.resultado_visitante, "+
+		" p.suspendido "+
+		" from partidos p "+
+		" inner join ligas l on l.id_liga = p.id_liga "+
+		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
+		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local "+
+		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
+		" inner join arbitros a on a.id_arbitro = p.id_arbitro "+
+		" inner join asistentes asis on asis.id_asistente = p.id_asistente "+
+		" where id_equipo_local = ? or id_equipo_visitante = ?", id, id)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var partidos []gorms.PartidosFromDateGorm
+	for rows.Next() {
+		partido := gorms.PartidosFromDateGorm{}
+		error := rows.Scan(
+			&partido.IDPartidos,
+			&partido.FechaEncuentro,
+			&partido.LigaName,
+			&partido.CampeonatoName,
+			&partido.ELocalName,
+			&partido.EVisitName,
+			&partido.ResultadoLocal,
+			&partido.ResultadoVisitante,
+			&partido.Suspendido,
+		)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		partidos = append(partidos, partido)
+	}
+	return partidos
 }

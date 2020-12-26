@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 // EquiposDaoImpl sarasa

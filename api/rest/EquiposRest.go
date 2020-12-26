@@ -1,16 +1,17 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"fmt"
+
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 func RouterEquipos(e *echo.Echo) {

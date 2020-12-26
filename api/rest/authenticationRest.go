@@ -1,20 +1,22 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"	
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 func RouterAuthentication(e *echo.Echo) {
 	e.POST("/api/authentication/login", Login)
-	e.POST("/api/authentication/register", Register)	
-	e.POST("/api/authentication/forgot", GetZonas)
+	e.POST("/api/authentication/register", Register)
+	e.POST("/api/authentication/forgot", Forgot)
+	e.POST("/api/authentication/reset", ResetPassword)
 }
 
 func Login(c echo.Context) error {
@@ -55,5 +57,3 @@ func ResetPassword(c echo.Context) error {
 	fmt.Println(id)
 	return c.JSON(http.StatusOK, "reset password")
 }
-
-

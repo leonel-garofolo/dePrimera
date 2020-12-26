@@ -1,15 +1,16 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jinzhu/copier"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,6 +22,7 @@ func RouterPartidos(e *echo.Echo) {
 	e.POST("/api/partidos", SavePartido)
 	e.DELETE("/api/partidos/:id", DeletePartido)
 	e.GET("/api/partidos/info", InfoPartidos)
+	e.GET("/api/partidos/history/:id", HistoryPartido)
 }
 
 func GetPartidos(c echo.Context) error {
@@ -31,7 +33,7 @@ func GetPartidos(c echo.Context) error {
 	return c.JSON(http.StatusOK, partidos)
 }
 
-func GetPartidosFromDate(c echo.Context) error {	
+func GetPartidosFromDate(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
 	partidosFromDateGorm := daos.GetPartidosDao().GetAllFromDate(c.Param("date"))
 	partidosFromDate := []models.PartidosFromDate{}
@@ -58,7 +60,6 @@ func SavePartido(c echo.Context) error {
 
 	partidosGorm := &gorms.PartidosGorm{}
 	copier.Copy(&partidosGorm, &partidos)
-
 
 	daos := daos.NewDePrimeraDaos()
 	id := daos.GetPartidosDao().Save(partidosGorm)
@@ -92,4 +93,18 @@ func InfoPartidos(c echo.Context) error {
 
 		return c.JSON(http.StatusOK, partidos)
 	}
+}
+
+func HistoryPartido(c echo.Context) error {
+	fromEquipo, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	partidosFromDateGorm := daos.GetPartidosDao().HistoryPlays(fromEquipo)
+	partidosFromDate := []models.PartidosFromDate{}
+	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
+
+	return c.JSON(http.StatusOK, partidosFromDate)
 }

@@ -2,24 +2,25 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 // ArbitrosDaoImpl struct
 type AuthenticationDaoImpl struct{}
 
 // Login user
-func (ed *AuthenticationDaoImpl) Login(user string, pass string) string{
+func (ed *AuthenticationDaoImpl) Login(user string, pass string) string {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	user_id := "";
-	row := db.QueryRow("select id_user from app_users where id_user = ?, clave = ?", user, pass)
+	user_id := ""
+	row := db.QueryRow("select id_user from app_users where id_user = ? and clave = ?", user, pass)
 	error := row.Scan(&user_id)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -38,7 +39,7 @@ func (ed *AuthenticationDaoImpl) Register(user *gorms.UsersGorm) string {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("insert into app_users (id_user, clave, nombre, apellido, habilitado, telefono) values(?,?,?,?,?,?)", 
+	_, error := db.Exec("insert into app_users (id_user, clave, nombre, apellido, habilitado, telefono) values(?,?,?,?,?,?)",
 		user.IDUser, user.Clave, user.Nombre, user.Apellido, user.Habilitado, user.Telefono)
 	if error != nil {
 		log.Println(error)
