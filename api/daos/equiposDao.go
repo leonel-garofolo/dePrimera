@@ -140,8 +140,8 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 		}
 	} else {
 		res, error := db.Exec("insert into equipos"+
-			" (id_equipo, id_campeonato, nombre, habilitado, foto) "+
-			" values(?,?,?,?,?)", e.IDEquipo, e.IDCampeonato, e.Nombre, e.Habilitado, e.Foto)
+			" (id_equipo, id_campeonato, nombre, foto) "+
+			" values(?,?,?,?)", e.IDEquipo, e.IDCampeonato, e.Nombre, e.Foto)
 		if error != nil {
 			log.Println(error)
 			panic(error)

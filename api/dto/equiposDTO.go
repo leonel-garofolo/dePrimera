@@ -1,12 +1,14 @@
 package models
 
+import "database/sql"
+
 type Equipos struct {
-	Foto         []byte `json:"foto"`
-	Habilitado   bool   `json:"habilitado" copier:"nopanic"`
-	IDEquipo     int64  `json:"id_equipo"`
-	IDCampeonato int    `json:"id_campeonato"`
-	Nombre       string `json:"nombre"`
-	NroEquipo    int64  `json:"nro_equipo"`
+	Foto         []byte         `json:"foto"`
+	Habilitado   sql.NullString `json:"habilitado" copier:"nopanic"`
+	IDEquipo     int64          `json:"id_equipo"`
+	IDCampeonato int            `json:"id_campeonato"`
+	Nombre       string         `json:"nombre"`
+	NroEquipo    int64          `json:"nro_equipo"`
 }
 
 // TableName sets the insert table name for this struct type

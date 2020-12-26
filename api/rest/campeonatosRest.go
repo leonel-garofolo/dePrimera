@@ -106,7 +106,7 @@ func GetFixture(c echo.Context) error {
 
 	daos.GetEquiposDao().UpdateNro(idTorneo)
 
-	daos.GetPartidosDao().SaveFixture(1, 1, time.Now(), fixture)
+	daos.GetPartidosDao().SaveFixture(2, idTorneo, time.Now(), fixture)
 
 	return c.JSON(http.StatusOK, fixture)
 }

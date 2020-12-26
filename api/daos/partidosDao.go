@@ -211,6 +211,12 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 		log.Println(err.Error())
 	}
 
+	_, errorDelete := db.Exec("delete from partidos where id_liga = ? and id_campeonato = ?", idLiga, idCampeonato)
+	if errorDelete != nil {
+		fmt.Println(errorDelete)
+		panic(errorDelete)
+	}
+
 	datesAvailability := getWeekendFromDate(dateFrom)
 	dateCount := 0
 	for i := 0; i < len(rondas); i++ {
@@ -232,11 +238,11 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 				idCampeonato, 1+rondas[i][j].Visitante,
 				datesAvailability[dateCount])
 			if error != nil {
+				fmt.Println(error)
 				panic(error)
 			}
-			dateCount++
 		}
-
+		dateCount++
 		fmt.Println()
 	}
 
@@ -262,11 +268,11 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 				idCampeonato, 1+rondas[i][j].Local,
 				datesAvailability[dateCount])
 			if error != nil {
+				fmt.Println(error)
 				panic(error)
 			}
-			dateCount++
 		}
-
+		dateCount++
 		fmt.Println()
 	}
 }
@@ -274,7 +280,7 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 func getWeekendFromDate(start time.Time) []time.Time {
 	var datesAvailability []time.Time
 	start.Year()
-	end, _ := time.Parse(dateFormat, "2021-12-01")
+	end, _ := time.Parse(dateFormat, "2022-12-01")
 	end = end.Add(time.Hour * 24)
 
 	for t := start; t.Before(end); t = t.Add(time.Hour * 24) {
