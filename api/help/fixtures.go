@@ -6,8 +6,8 @@ import (
 )
 
 type Partido struct {
-	local     int
-	visitante int
+	Local     int
+	Visitante int
 }
 
 type FixtureHelp struct{}
@@ -31,7 +31,7 @@ func calcularLigaNumEquiposPar(numEquipos int) [][]Partido {
 		for j := 0; j < numPartidosPorRonda; j++ {
 			rondas[i][j] = Partido{}
 
-			rondas[i][j].local = k
+			rondas[i][j].Local = k
 
 			k++
 
@@ -43,10 +43,10 @@ func calcularLigaNumEquiposPar(numEquipos int) [][]Partido {
 
 	for i := 0; i < numRondas; i++ {
 		if i%2 == 0 {
-			rondas[i][0].visitante = numEquipos - 1
+			rondas[i][0].Visitante = numEquipos - 1
 		} else {
-			rondas[i][0].visitante = rondas[i][0].local
-			rondas[i][0].local = numEquipos - 1
+			rondas[i][0].Visitante = rondas[i][0].Local
+			rondas[i][0].Local = numEquipos - 1
 		}
 	}
 
@@ -56,7 +56,7 @@ func calcularLigaNumEquiposPar(numEquipos int) [][]Partido {
 	k = equipoImparMasAlto
 	for i := 0; i < numRondas; i++ {
 		for j := 1; j < numPartidosPorRonda; j++ {
-			rondas[i][j].visitante = k
+			rondas[i][j].Visitante = k
 
 			k--
 
@@ -81,7 +81,7 @@ func calcularLigaNumEquiposImpar(numEquipos int) [][]Partido {
 			if j >= 0 {
 				rondas[i][j] = Partido{}
 
-				rondas[i][j].local = k
+				rondas[i][j].Local = k
 			}
 
 			k++
@@ -96,7 +96,7 @@ func calcularLigaNumEquiposImpar(numEquipos int) [][]Partido {
 	k = equipoMasAlto
 	for i := 0; i < numRondas; i++ {
 		for j := 0; j < numPartidosPorRonda; j++ {
-			rondas[i][j].visitante = k
+			rondas[i][j].Visitante = k
 
 			k--
 
@@ -109,12 +109,12 @@ func calcularLigaNumEquiposImpar(numEquipos int) [][]Partido {
 	return rondas
 }
 
-func mostrarPartidos(rondas [][]Partido) {
+func (ed *FixtureHelp) MostrarPartidos(rondas [][]Partido) {
 	fmt.Println("IDA")
 	for i := 0; i < len(rondas); i++ {
 		fmt.Print("Ronda " + strconv.Itoa((i + 1)) + ": ")
 		for j := 0; j < len(rondas[i]); j++ {
-			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].local)) + "-" + strconv.Itoa((1 + rondas[i][j].visitante)))
+			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].Local)) + "-" + strconv.Itoa((1 + rondas[i][j].Visitante)))
 		}
 
 		fmt.Println()
@@ -126,7 +126,7 @@ func mostrarPartidos(rondas [][]Partido) {
 		fmt.Print("Ronda " + strconv.Itoa((i + 1)) + ": ")
 
 		for j := 0; j < len(rondas[i]); j++ {
-			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].visitante)) + "-" + strconv.Itoa((1 + rondas[i][j].local)))
+			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].Visitante)) + "-" + strconv.Itoa((1 + rondas[i][j].Local)))
 		}
 
 		fmt.Println()

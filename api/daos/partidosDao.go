@@ -2,10 +2,14 @@ package daos
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"strconv"
+	"time"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/help"
 )
 
 type PartidosDaoImpl struct{}
@@ -196,4 +200,87 @@ func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
 		partidos = append(partidos, partido)
 	}
 	return partidos
+}
+
+var dateFormat = "2006-01-02"
+
+func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom time.Time, rondas [][]help.Partido) {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	datesAvailability := getWeekendFromDate(dateFrom)
+	dateCount := 0
+	for i := 0; i < len(rondas); i++ {
+		fmt.Print("Ronda " + strconv.Itoa((i + 1)) + ": ")
+		for j := 0; j < len(rondas[i]); j++ {
+			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].Local)) + "-" + strconv.Itoa((1 + rondas[i][j].Visitante)))
+
+			_, error := db.Exec("insert into partidos(id_liga, id_campeonato, id_equipo_local, id_equipo_visitante, fecha_encuentro ) "+
+				"values ( "+
+				"?, "+
+				"?, "+
+				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"? "+
+				")",
+				idLiga,
+				idCampeonato,
+				idCampeonato, 1+rondas[i][j].Local,
+				idCampeonato, 1+rondas[i][j].Visitante,
+				datesAvailability[dateCount])
+			if error != nil {
+				panic(error)
+			}
+			dateCount++
+		}
+
+		fmt.Println()
+	}
+
+	fmt.Println("VUELTA")
+
+	for i := 0; i < len(rondas); i++ {
+		fmt.Print("Ronda " + strconv.Itoa((i + 1)) + ": ")
+
+		for j := 0; j < len(rondas[i]); j++ {
+			fmt.Print("   " + strconv.Itoa((1 + rondas[i][j].Visitante)) + "-" + strconv.Itoa((1 + rondas[i][j].Local)))
+
+			_, error := db.Exec("insert into partidos(id_liga, id_campeonato, id_equipo_local, id_equipo_visitante, fecha_encuentro ) "+
+				"values ( "+
+				"?, "+
+				"?, "+
+				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"? "+
+				")",
+				idLiga,
+				idCampeonato,
+				idCampeonato, 1+rondas[i][j].Visitante,
+				idCampeonato, 1+rondas[i][j].Local,
+				datesAvailability[dateCount])
+			if error != nil {
+				panic(error)
+			}
+			dateCount++
+		}
+
+		fmt.Println()
+	}
+}
+
+func getWeekendFromDate(start time.Time) []time.Time {
+	var datesAvailability []time.Time
+	start.Year()
+	end, _ := time.Parse(dateFormat, "2021-12-01")
+	end = end.Add(time.Hour * 24)
+
+	for t := start; t.Before(end); t = t.Add(time.Hour * 24) {
+		if t.Weekday() == time.Saturday {
+			datesAvailability = append(datesAvailability, t)
+		}
+	}
+	return datesAvailability
 }

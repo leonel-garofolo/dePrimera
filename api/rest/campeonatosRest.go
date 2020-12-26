@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
@@ -93,15 +94,19 @@ func GetFixture(c echo.Context) error {
 	if err != nil {
 		log.Panic(err)
 	}
-	fmt.Println("get torneo: ")
+	fmt.Println("id_campeonato: ")
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
 	campeonatoGorm := daos.GetCampeonatosDao().Get(idTorneo)
-	equiposGorm := daos.GetEquiposDao().GetAllFromLiga(campeonatoGorm.IDLiga)
+	equiposGorm := daos.GetEquiposDao().GetAllFromCampeonato(campeonatoGorm.IDLiga)
 
 	fixtureService := help.FixtureHelp{}
 	fixture := fixtureService.CalcularLiga(len(equiposGorm))
+
+	daos.GetEquiposDao().UpdateNro(idTorneo)
+
+	daos.GetPartidosDao().SaveFixture(1, 1, time.Now(), fixture)
 
 	return c.JSON(http.StatusOK, fixture)
 }

@@ -1,3 +1,5 @@
+SET SQL_SAFE_UPDATES = 0;
+
 select * from personas;
 select * from arbitros;
 select * from ligas;
@@ -11,7 +13,6 @@ select * from campeonatos;
 
 -- authentication
 select * from app_users;
-
 
 select * from ligas where id_liga = 1;
 
@@ -48,3 +49,15 @@ inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 inner join arbitros a on a.id_arbitro = p.id_arbitro
 inner join asistentes asis on asis.id_asistente = p.id_asistente
 where id_equipo_local = 2 or id_equipo_visitante = 2;
+
+delete from partidos;
+select * from partidos;
+-- insert partidos fixture
+insert into partidos(id_liga, id_campeonato, id_equipo_local, id_equipo_visitante, fecha_encuentro ) 
+values (
+	1,
+	1, 
+    (select id_equipo from equipos where id_campeonato = 1 and nro_equipo = 1), 
+    (select id_equipo from equipos where id_campeonato = 1 and nro_equipo = 2),
+    current_timestamp()
+    );

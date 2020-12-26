@@ -40,14 +40,14 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 	return equipos
 }
 
-func (ed *EquiposDaoImpl) GetAllFromLiga(idLiga int64) []gorms.EquiposGorm {
+func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDCampeonato int64) []gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select * from equipos where id_campeonato = ?", idLiga)
+	rows, err := db.Query("select * from equipos where id_campeonato = ?", IDCampeonato)
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
@@ -55,7 +55,7 @@ func (ed *EquiposDaoImpl) GetAllFromLiga(idLiga int64) []gorms.EquiposGorm {
 	var equipos []gorms.EquiposGorm
 	for rows.Next() {
 		equipo := gorms.EquiposGorm{}
-		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto, &equipo.NroEquipo)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -66,6 +66,39 @@ func (ed *EquiposDaoImpl) GetAllFromLiga(idLiga int64) []gorms.EquiposGorm {
 		equipos = append(equipos, equipo)
 	}
 	return equipos
+}
+
+func (ed *EquiposDaoImpl) UpdateNro(IDCampeonato int) {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select id_equipo from equipos where id_campeonato = ?", IDCampeonato)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	nroEquipo := 1
+	for rows.Next() {
+		idEquipo := int64(0)
+		error := rows.Scan(&idEquipo)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+
+		_, errorUpdate := db.Exec("update equipos set nro_equipo = ? where id_equipo = ? ", nroEquipo, idEquipo)
+
+		if errorUpdate != nil {
+			log.Println(errorUpdate)
+			panic(errorUpdate)
+		}
+		nroEquipo++
+	}
 }
 
 // Get equipo

@@ -8,6 +8,7 @@ type EquiposGorm struct {
 	IDEquipo     int64          `gorm:"column:id_equipo;primary_key"`
 	IDCampeonato int64          `gorm:"column:id_campeonato"`
 	Nombre       string         `gorm:"column:nombre"`
+	NroEquipo    int64          `gorm:"column:nro_equipo"`
 }
 
 // TableName sets the insert table name for this struct type
