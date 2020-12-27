@@ -58,8 +58,8 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
 		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local "+
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
-		" inner join arbitros a on a.id_arbitro = p.id_arbitro "+
-		" inner join asistentes asis on asis.id_asistente = p.id_asistente "+
+		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
+		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
 		" where fecha_encuentro like ?", datePartidos+"%")
 	if err != nil {
 		log.Fatalln("Failed to query")
@@ -170,8 +170,8 @@ func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
 		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local "+
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
-		" inner join arbitros a on a.id_arbitro = p.id_arbitro "+
-		" inner join asistentes asis on asis.id_asistente = p.id_asistente "+
+		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
+		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
 		" where id_equipo_local = ? or id_equipo_visitante = ?", id, id)
 	if err != nil {
 		log.Fatalln("Failed to query")

@@ -12,23 +12,24 @@ import (
 type AuthenticationDaoImpl struct{}
 
 // Login user
-func (ed *AuthenticationDaoImpl) Login(user string, pass string) string {
+func (ed *AuthenticationDaoImpl) Login(user string, pass string) gorms.UsersGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	user_id := ""
-	row := db.QueryRow("select id_user from app_users where id_user = ? and clave = ?", user, pass)
-	error := row.Scan(&user_id)
+	userGorm := gorms.UsersGorm{}
+	row := db.QueryRow("select * from app_users where id_user = ? and clave = ?", user, pass)
+	error := row.Scan(&userGorm.IDUser, &userGorm.Clave, &userGorm.Nombre, &userGorm.Apellido, &userGorm.Habilitado, &userGorm.Telefono)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
 			panic(error)
 		}
+		userGorm.IDUser = ""
 	}
-	return user_id
+	return userGorm
 }
 
 // Register usuario

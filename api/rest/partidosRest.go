@@ -17,12 +17,12 @@ import (
 
 func RouterPartidos(e *echo.Echo) {
 	e.GET("/api/partidos", GetPartidos)
-	e.GET("/api/partidos/date/:id", GetPartidosFromDate)
+	e.GET("/api/partidos/date/:date", GetPartidosFromDate)
 	e.GET("/api/partidos/:id", GetPartido)
 	e.POST("/api/partidos", SavePartido)
 	e.DELETE("/api/partidos/:id", DeletePartido)
 	e.GET("/api/partidos/info", InfoPartidos)
-	e.GET("/api/partidos/history/:id", HistoryPartido)
+	e.GET("/api/partidos/history/:date", HistoryPartido)
 }
 
 func GetPartidos(c echo.Context) error {
@@ -96,7 +96,7 @@ func InfoPartidos(c echo.Context) error {
 }
 
 func HistoryPartido(c echo.Context) error {
-	fromEquipo, err := strconv.Atoi(c.Param("id"))
+	fromEquipo, err := strconv.Atoi(c.Param("date"))
 	if err != nil {
 		log.Panic(err)
 	}

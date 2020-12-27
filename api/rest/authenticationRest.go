@@ -20,10 +20,18 @@ func RouterAuthentication(e *echo.Echo) {
 }
 
 func Login(c echo.Context) error {
-	daos := daos.NewDePrimeraDaos()
-	id := daos.GetAuthenticationDao().Login(c.Param("user"), c.Param("pass"))
+	user := &models.Users{}
+	c.Bind(user)
 
-	return c.JSON(http.StatusOK, id)
+	daos := daos.NewDePrimeraDaos()
+	userGorm := daos.GetAuthenticationDao().Login(user.UserID, user.Password)
+	user.UserID = userGorm.IDUser
+	user.Nombre = userGorm.Nombre
+	user.Apellido = userGorm.Apellido
+	user.Telefono = userGorm.Telefono.String
+	user.Habilitado = userGorm.Habilitado
+
+	return c.JSON(http.StatusOK, user)
 }
 
 func Register(c echo.Context) error {

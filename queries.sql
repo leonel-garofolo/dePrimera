@@ -31,9 +31,9 @@ inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
 inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
-inner join arbitros a on a.id_arbitro = p.id_arbitro
-inner join asistentes asis on asis.id_asistente = p.id_asistente
-where fecha_encuentro like "2020-07-04%";
+left join arbitros a on a.id_arbitro = p.id_arbitro
+left join asistentes asis on asis.id_asistente = p.id_asistente
+where fecha_encuentro like "2020-12-26%";
 
 -- query for get history of team.
 select p.id_partidos, p.fecha_encuentro,
