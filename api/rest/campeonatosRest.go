@@ -23,7 +23,7 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.POST("/api/campeonatos", SaveCampeonato)
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
 	e.GET("/api/campeonato/fixture/:id_campeonato", GetFixture)
-	e.GET("/api/campeonato/fixture/generate", GetFixtureGenerate)
+	e.POST("/api/campeonato/fixture/generate/:id_campeonato", GenerateFixture)
 	e.GET("/api/campeonatos/info", InfoCampeonatos)
 }
 
@@ -98,6 +98,21 @@ func GetFixture(c echo.Context) error {
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
+	partidosFromDateGorm := daos.GetPartidosDao().GetAllFromCampeonato(idTorneo)
+	partidosFromDate := []models.PartidosFromDate{}
+	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
+	return c.JSON(http.StatusOK, partidosFromDate)
+}
+
+func GenerateFixture(c echo.Context) error {
+	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println("id_campeonato: ")
+	fmt.Println(idTorneo)
+
+	daos := daos.NewDePrimeraDaos()
 	campeonatoGorm := daos.GetCampeonatosDao().Get(idTorneo)
 	equiposGorm := daos.GetEquiposDao().GetAllFromCampeonato(campeonatoGorm.IDLiga)
 
@@ -109,17 +124,4 @@ func GetFixture(c echo.Context) error {
 	daos.GetPartidosDao().SaveFixture(2, idTorneo, time.Now(), fixture)
 
 	return c.JSON(http.StatusOK, fixture)
-}
-
-func GetFixtureGenerate(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Panic(err)
-	}
-
-	daos := daos.NewDePrimeraDaos()
-	zonaGorm := daos.GetZonasDao().Get(id)
-	zona := &models.Zonas{}
-	copier.Copy(&zona, &zonaGorm)
-	return c.JSON(http.StatusOK, zona)
 }

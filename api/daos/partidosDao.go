@@ -90,6 +90,56 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 	return partidos
 }
 
+func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFromDateGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select p.id_partidos, p.fecha_encuentro, "+
+		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
+		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
+		" p.resultado_local, p.resultado_visitante, "+
+		" p.suspendido "+
+		" from partidos p "+
+		" inner join ligas l on l.id_liga = p.id_liga "+
+		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
+		" inner join equipos e_local on e_local.id_equipo = p.id_equipo_local "+
+		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
+		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
+		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
+		" where c.id_campeonato = ?"+
+		" order by fecha_encuentro asc", idTorneo)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var partidos []gorms.PartidosFromDateGorm
+	for rows.Next() {
+		partido := gorms.PartidosFromDateGorm{}
+		error := rows.Scan(
+			&partido.IDPartidos,
+			&partido.FechaEncuentro,
+			&partido.LigaName,
+			&partido.CampeonatoName,
+			&partido.ELocalName,
+			&partido.EVisitName,
+			&partido.ResultadoLocal,
+			&partido.ResultadoVisitante,
+			&partido.Suspendido,
+		)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		partidos = append(partidos, partido)
+	}
+	return partidos
+}
+
 func (ed *PartidosDaoImpl) Get(id int) gorms.PartidosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
