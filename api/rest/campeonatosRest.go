@@ -24,6 +24,7 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
 	e.GET("/api/campeonatos/fixture/:id_campeonato", GetFixture)
 	e.GET("/api/campeonatos/table/:id_campeonato", GetTablePosition)
+	e.GET("/api/campeonatos/sanciones/:id_campeonato", GetJugadoresSanciones)
 	e.POST("/api/campeonatos/fixture/generate/:id_liga/:id_campeonato", GenerateFixture)
 	e.GET("/api/campeonatos/info", InfoCampeonatos)
 }
@@ -118,6 +119,21 @@ func GetTablePosition(c echo.Context) error {
 	equiposTablePos := []models.EquiposTablePos{}
 	copier.Copy(&equiposTablePos, &equiposTablePosGorm)
 	return c.JSON(http.StatusOK, equiposTablePos)
+}
+
+func GetJugadoresSanciones(c echo.Context) error {
+	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println("id_campeonato: ")
+	fmt.Println(idTorneo)
+
+	daos := daos.NewDePrimeraDaos()
+	sancionesJugadoresFromCampeonatoGorm := daos.GetSancionesDao().GetSancionesFromCampeonato(idTorneo)
+	sancionesJugadoresFromCampeonato := []models.SancionesJugadoresFromCampeonatoGorm{}
+	copier.Copy(&sancionesJugadoresFromCampeonato, &sancionesJugadoresFromCampeonatoGorm)
+	return c.JSON(http.StatusOK, sancionesJugadoresFromCampeonato)
 }
 
 func GenerateFixture(c echo.Context) error {

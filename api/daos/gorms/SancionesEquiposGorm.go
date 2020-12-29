@@ -1,8 +1,9 @@
 package gorms
 
 type SancionesEquiposGorm struct {
-	IDEquipo    int64 `gorm:"column:id_equipo;primary_key"`
-	IDSanciones int64 `gorm:"column:id_sanciones;primary_key"`
+	IDSanciones  int64 `gorm:"column:id_sanciones;primary_key"`
+	IDEquipo     int64 `gorm:"column:id_equipo;primary_key"`
+	IDCampeonato int64 `gorm:"column:id_campeonato;primary_key"`
 }
 
 // TableName sets the insert table name for this struct type

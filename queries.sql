@@ -1,5 +1,5 @@
 SET SQL_SAFE_UPDATES = 0;
-
+drop table sanciones_jugadores;
 select * from personas;
 select * from arbitros;
 select * from ligas;
@@ -64,6 +64,19 @@ inner join campeonatos c on c.id_campeonato = ce.id_campeonato
 inner join equipos e on e.id_equipo = ce.id_equipo
 where c.id_campeonato = 2
 order by ce.puntos desc;
+
+-- get Sanciones por Campeonatos
+select p.apellido_nombre, e.nombre as e_nombre, 
+	(case when sj.id_sancion = 1 then count(sj.id_sancion) else 0 end ) as c_rojas,
+    (case when sj.id_sancion = 2 then count(sj.id_sancion) else 0 end ) as c_amarillas,
+    (case when sj.id_sancion = 3 then count(sj.id_sancion) else 0 end ) as c_azules
+from sanciones_jugadores sj
+inner join jugadores j on j.id_jugadores = sj.id_jugador
+inner join equipos e on e.id_equipo = j.id_equipo
+inner join personas p on p.id_persona = j.id_persona
+where sj.id_campeonato = 1
+group by p.apellido_nombre, e.nombre, sj.id_sancion
+order by p.apellido_nombre asc;
 
 -- query for get history of team.
 select p.id_partidos, p.fecha_encuentro,
