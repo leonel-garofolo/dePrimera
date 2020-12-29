@@ -22,8 +22,9 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.GET("/api/campeonatos/:id", GetCampeonato)
 	e.POST("/api/campeonatos", SaveCampeonato)
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
-	e.GET("/api/campeonato/fixture/:id_campeonato", GetFixture)
-	e.POST("/api/campeonato/fixture/generate/:id_campeonato", GenerateFixture)
+	e.GET("/api/campeonatos/fixture/:id_campeonato", GetFixture)
+	e.GET("/api/campeonatos/table/:id_campeonato", GetTablePosition)
+	e.POST("/api/campeonatos/fixture/generate/:id_liga/:id_campeonato", GenerateFixture)
 	e.GET("/api/campeonatos/info", InfoCampeonatos)
 }
 
@@ -104,7 +105,7 @@ func GetFixture(c echo.Context) error {
 	return c.JSON(http.StatusOK, partidosFromDate)
 }
 
-func GenerateFixture(c echo.Context) error {
+func GetTablePosition(c echo.Context) error {
 	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
 	if err != nil {
 		log.Panic(err)
@@ -113,15 +114,33 @@ func GenerateFixture(c echo.Context) error {
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
-	campeonatoGorm := daos.GetCampeonatosDao().Get(idTorneo)
-	equiposGorm := daos.GetEquiposDao().GetAllFromCampeonato(campeonatoGorm.IDLiga)
+	equiposTablePosGorm := daos.GetPartidosDao().GetTablePosition(idTorneo)
+	equiposTablePos := []models.EquiposTablePos{}
+	copier.Copy(&equiposTablePos, &equiposTablePosGorm)
+	return c.JSON(http.StatusOK, equiposTablePos)
+}
+
+func GenerateFixture(c echo.Context) error {
+	idLiga, errLiga := strconv.Atoi(c.Param("id_liga"))
+	if errLiga != nil {
+		log.Panic(errLiga)
+	}
+
+	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println("id_liga: " + c.Param("id_liga") + " | id_campeonato: " + c.Param("id_campeonato"))
+
+	daos := daos.NewDePrimeraDaos()
+	equiposGorm := daos.GetEquiposDao().GetAllFromCampeonato(idLiga, idTorneo)
 
 	fixtureService := help.FixtureHelp{}
 	fixture := fixtureService.CalcularLiga(len(equiposGorm))
 
-	daos.GetEquiposDao().UpdateNro(idTorneo)
+	daos.GetEquiposDao().UpdateNro(idLiga, idTorneo)
 
-	daos.GetPartidosDao().SaveFixture(2, idTorneo, time.Now(), fixture)
+	daos.GetPartidosDao().SaveFixture(idLiga, idTorneo, time.Now(), fixture)
 
 	return c.JSON(http.StatusOK, fixture)
 }

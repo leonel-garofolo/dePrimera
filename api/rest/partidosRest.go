@@ -80,6 +80,30 @@ func DeletePartido(c echo.Context) error {
 	return c.String(http.StatusOK, "delete")
 }
 
+func FinalizarPartido(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Panic(err)
+	}
+	daos := daos.NewDePrimeraDaos()
+	partidoGorm := daos.GetPartidosDao().Get(id)
+
+	statusResult := "GL"
+	if partidoGorm.ResultadoLocal < partidoGorm.ResultadoVisitante {
+		statusResult = "GV"
+	} else if partidoGorm.ResultadoLocal == partidoGorm.ResultadoVisitante {
+		statusResult = "E"
+	}
+
+	daos.GetPartidosDao().FinalizarPartido(
+		partidoGorm.IDLiga,
+		partidoGorm.IDCampeonato,
+		partidoGorm.IDEquipoLocal,
+		partidoGorm.IDEquipoVisitante,
+		statusResult)
+	return c.String(http.StatusOK, "finalizado")
+}
+
 func InfoPartidos(c echo.Context) error {
 	partidos := &models.Partidos{}
 	c.Bind(partidos)

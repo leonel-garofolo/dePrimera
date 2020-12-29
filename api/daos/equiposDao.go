@@ -40,14 +40,14 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 	return equipos
 }
 
-func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDCampeonato int64) []gorms.EquiposGorm {
+func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDLiga int, IDCampeonato int) []gorms.EquiposGorm {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select * from equipos where id_campeonato = ?", IDCampeonato)
+	rows, err := db.Query("select id_equipo from campeonatos_equipos where id_liga=? and id_campeonato = ?", IDLiga, IDCampeonato)
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
@@ -55,7 +55,7 @@ func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDCampeonato int64) []gorms.Equip
 	var equipos []gorms.EquiposGorm
 	for rows.Next() {
 		equipo := gorms.EquiposGorm{}
-		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto, &equipo.NroEquipo)
+		error := rows.Scan(&equipo.IDEquipo)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -68,14 +68,14 @@ func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDCampeonato int64) []gorms.Equip
 	return equipos
 }
 
-func (ed *EquiposDaoImpl) UpdateNro(IDCampeonato int) {
+func (ed *EquiposDaoImpl) UpdateNro(IDLiga int, IDCampeonato int) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select id_equipo from equipos where id_campeonato = ?", IDCampeonato)
+	rows, err := db.Query("select id_equipo from campeonatos_equipos where id_liga=? and id_campeonato = ?", IDLiga, IDCampeonato)
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
@@ -91,11 +91,11 @@ func (ed *EquiposDaoImpl) UpdateNro(IDCampeonato int) {
 			}
 		}
 
-		_, errorUpdate := db.Exec("update equipos set nro_equipo = ? where id_equipo = ? ", nroEquipo, idEquipo)
-
-		if errorUpdate != nil {
-			log.Println(errorUpdate)
-			panic(errorUpdate)
+		_, errorInsert := db.Exec("update campeonatos_equipos set nro_equipo = ? where id_liga =? and id_campeonato=? and id_equipo=?",
+			nroEquipo, IDLiga, IDCampeonato, idEquipo)
+		if errorInsert != nil {
+			log.Println(errorInsert)
+			panic(errorInsert)
 		}
 		nroEquipo++
 	}

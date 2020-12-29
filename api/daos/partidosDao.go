@@ -140,6 +140,50 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 	return partidos
 }
 
+// Nombre Equipo, Pts, PG, PE, PP
+func (ed *PartidosDaoImpl) GetTablePosition(idTorneo int) []gorms.EquiposTablePosGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select ce.id_campeonato, ce.id_equipo, e.nombre, "+
+		"	ce.nro_equipo, "+
+		"	ce.puntos, ce.p_gan, ce.p_emp, ce.p_per "+
+		" from campeonatos_equipos ce "+
+		" inner join campeonatos c on c.id_campeonato = ce.id_campeonato "+
+		" inner join equipos e on e.id_equipo = ce.id_equipo "+
+		" where c.id_campeonato = ? "+
+		" order by ce.puntos desc", idTorneo)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var equiposPos []gorms.EquiposTablePosGorm
+	for rows.Next() {
+		partido := gorms.EquiposTablePosGorm{}
+		error := rows.Scan(
+			&partido.IDCampeonato,
+			&partido.IDEquipo,
+			&partido.Nombre,
+			&partido.NroEquipo,
+			&partido.Puntos,
+			&partido.PartidoGanado,
+			&partido.PartidoEmpatado,
+			&partido.PartidoPerdido,
+		)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		equiposPos = append(equiposPos, partido)
+	}
+	return equiposPos
+}
+
 func (ed *PartidosDaoImpl) Get(id int) gorms.PartidosGorm {
 	db, err := application.GetDB()
 	defer db.Close()
@@ -278,14 +322,14 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 				"values ( "+
 				"?, "+
 				"?, "+
-				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
-				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
 				"? "+
 				")",
 				idLiga,
 				idCampeonato,
-				idCampeonato, 1+rondas[i][j].Local,
-				idCampeonato, 1+rondas[i][j].Visitante,
+				idLiga, idCampeonato, 1+rondas[i][j].Local,
+				idLiga, idCampeonato, 1+rondas[i][j].Visitante,
 				datesAvailability[dateCount])
 			if error != nil {
 				fmt.Println(error)
@@ -308,14 +352,14 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 				"values ( "+
 				"?, "+
 				"?, "+
-				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
-				"(select id_equipo from equipos where id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
 				"? "+
 				")",
 				idLiga,
 				idCampeonato,
-				idCampeonato, 1+rondas[i][j].Visitante,
-				idCampeonato, 1+rondas[i][j].Local,
+				idLiga, idCampeonato, 1+rondas[i][j].Visitante,
+				idLiga, idCampeonato, 1+rondas[i][j].Local,
 				datesAvailability[dateCount])
 			if error != nil {
 				fmt.Println(error)
@@ -325,6 +369,50 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 		dateCount++
 		fmt.Println()
 	}
+}
+
+func (ed *PartidosDaoImpl) FinalizarPartido(idLiga int64, idCampeonato int64, idEquipoLocal int64, idEquipoVisit int64, statusResult string) {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	switch statusResult {
+	case "GL":
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoLocal)
+		if errorUpdateGan != nil {
+			fmt.Println(errorUpdateGan)
+			panic(errorUpdateGan)
+		}
+
+		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoVisit)
+		if errorUpdatePer != nil {
+			fmt.Println(errorUpdatePer)
+			panic(errorUpdatePer)
+		}
+
+	case "GV":
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoVisit)
+		if errorUpdateGan != nil {
+			fmt.Println(errorUpdateGan)
+			panic(errorUpdateGan)
+		}
+
+		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoLocal)
+		if errorUpdatePer != nil {
+			fmt.Println(errorUpdatePer)
+			panic(errorUpdatePer)
+		}
+
+	case "E":
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 1), p_emp =(p_emp + 1) where id_liga = ? and id_campeonato = ? and id_equipo in (?,)", idLiga, idCampeonato, idEquipoLocal, idEquipoVisit)
+		if errorUpdateGan != nil {
+			fmt.Println(errorUpdateGan)
+			panic(errorUpdateGan)
+		}
+	}
+
 }
 
 func getWeekendFromDate(start time.Time) []time.Time {

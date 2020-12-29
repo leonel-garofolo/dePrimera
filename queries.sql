@@ -10,6 +10,10 @@ select * from asistentes;
 select * from partidos;
 select * from jugadores;
 select * from campeonatos;
+select * from campeonatos_equipos;
+
+insert into campeonatos_equipos(id_liga, id_campeonato, id_equipo)
+select 2,2, id_equipo from equipos where id_equipo > 5;
 
 -- authentication
 select * from app_users;
@@ -34,6 +38,32 @@ inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
 where fecha_encuentro like "2020-12-26%";
+
+-- get FIXTURE
+select p.id_partidos, p.fecha_encuentro,
+	l.nombre as ligaName, c.descripcion as campeonatoName, 
+    e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
+    p.resultado_local, p.resultado_visitante,
+    p.suspendido
+from partidos p
+inner join ligas l on l.id_liga = p.id_liga
+inner join campeonatos c on c.id_campeonato = p.id_campeonato
+inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
+inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
+left join arbitros a on a.id_arbitro = p.id_arbitro
+left join asistentes asis on asis.id_asistente = p.id_asistente
+where c.id_campeonato = 2
+order by fecha_encuentro asc;
+
+-- get Table Position
+select e.nombre, 
+	ce.nro_equipo,
+	ce.puntos, ce.p_gan, ce.p_emp, ce.p_per
+from campeonatos_equipos ce
+inner join campeonatos c on c.id_campeonato = ce.id_campeonato
+inner join equipos e on e.id_equipo = ce.id_equipo
+where c.id_campeonato = 2
+order by ce.puntos desc;
 
 -- query for get history of team.
 select p.id_partidos, p.fecha_encuentro,
