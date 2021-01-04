@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 // AsistentesDaoImpl struct
@@ -26,7 +27,7 @@ func (ed *AsistentesDaoImpl) GetAll() []gorms.AsistentesGorm {
 	asistentes := []gorms.AsistentesGorm{}
 	for rows.Next() {
 		asistente := gorms.AsistentesGorm{}
-		error := rows.Scan(&asistente.IDAsistente, &asistente.IDPersona)
+		error := rows.Scan(&asistente.IDAsistente, &asistente.IDPersona, &asistente.IDCampeonato)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -46,9 +47,14 @@ func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 		log.Println(err.Error())
 	}
 
-	isDelete := ed.Delete(e.IDAsistente, e.IDPersona)
+	isDelete := true
+	if e.IDAsistente > 0 {
+		isDelete = ed.Delete(e.IDAsistente, e.IDPersona, e.IDCampeonato)
+	}
+
 	if isDelete == true {
-		_, error := db.Exec("insert into asistentes (id_asistente, id_persona) values(?,?)", e.IDAsistente, e.IDPersona)
+		_, error := db.Exec("insert into asistentes (id_asistente, id_persona, id_campeonato) values(?,?, ?)",
+			e.IDAsistente, e.IDPersona, e.IDCampeonato)
 
 		if error != nil {
 			log.Println(error)
@@ -59,14 +65,14 @@ func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 }
 
 // Delete asistentes
-func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64) bool {
+func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64, IDCampeonato int64) bool {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from asistentes where id_asistente = ? and id_persona = ?", IDAsistente, IDPersona)
+	_, error := db.Exec("delete from asistentes where id_asistente = ? and id_persona = ? and id_campeonato", IDAsistente, IDPersona, IDCampeonato)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)

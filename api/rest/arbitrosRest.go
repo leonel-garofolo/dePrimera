@@ -1,15 +1,16 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jinzhu/copier"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,14 +18,14 @@ import (
 func RouterArbitros(e *echo.Echo) {
 	e.GET("/api/arbitros", GetArbitros)
 	e.POST("/api/arbitros", SaveArbitro)
-	e.DELETE("/api/arbitros/:id_arbitro/:id_equipo", DeleteArbitro)
+	e.DELETE("/api/arbitros/:id_arbitro/:id_persona/id_campeonato", DeleteArbitro)
 	e.GET("/api/arbitros/info", InfoArbitros)
 }
 
 func GetArbitros(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
 	arbitrosGorm := daos.GetArbitrosDao().GetAll()
-	
+
 	arbitros := []models.Arbitros{}
 	copier.Copy(&arbitros, &arbitrosGorm)
 
@@ -51,14 +52,19 @@ func DeleteArbitro(c echo.Context) error {
 		log.Panic(err1)
 	}
 
-	idEquipo, err2 := strconv.ParseInt(c.Param("id_equipo"), 10, 64)
+	idPersona, err2 := strconv.ParseInt(c.Param("id_persona"), 10, 64)
+	if err2 != nil {
+		log.Panic(err2)
+	}
+
+	idCampeonato, err2 := strconv.ParseInt(c.Param("id_campeonato"), 10, 64)
 	if err2 != nil {
 		log.Panic(err2)
 	}
 	daos := daos.NewDePrimeraDaos()
-	daos.GetArbitrosDao().Delete(idArbitro, idEquipo)
+	daos.GetArbitrosDao().Delete(idArbitro, idPersona, idCampeonato)
 
-	log.Println(idArbitro, idEquipo)
+	log.Println(idArbitro, idPersona, idCampeonato)
 	return c.String(http.StatusOK, "delete")
 }
 

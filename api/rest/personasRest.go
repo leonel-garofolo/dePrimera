@@ -1,15 +1,16 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 
 	"github.com/labstack/echo/v4"
 )
@@ -25,8 +26,13 @@ func RouterPersonas(e *echo.Echo) {
 func GetPersonas(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
 	personasGorm := daos.GetPersonasDao().GetAll()
+
 	personas := []models.Personas{}
-	copier.Copy(&personas, &personasGorm)
+	for n := range personasGorm {
+		persona := parseGson(personasGorm[n])
+		personas = append(personas, persona)
+	}
+
 	return c.JSON(http.StatusOK, personas)
 }
 
@@ -38,18 +44,15 @@ func GetPersona(c echo.Context) error {
 
 	daos := daos.NewDePrimeraDaos()
 	personaGorm := daos.GetPersonasDao().Get(id)
-	persona := &models.Personas{}
-	copier.Copy(&persona, &personaGorm)
+	persona := parseGson(personaGorm)
 	return c.JSON(http.StatusOK, persona)
 }
 
 func SavePersona(c echo.Context) error {
-	personas := &models.Personas{}
-	c.Bind(personas)
+	persona := &models.Personas{}
+	c.Bind(persona)
 
-	personasGorm := &gorms.PersonasGorm{}
-	copier.Copy(&personasGorm, &personas)
-
+	personasGorm := parseJson(persona)
 
 	daos := daos.NewDePrimeraDaos()
 	id := daos.GetPersonasDao().Save(personasGorm)
@@ -82,5 +85,39 @@ func InfoPersonas(c echo.Context) error {
 		log.Println(string(j))
 
 		return c.JSON(http.StatusOK, personas)
+	}
+}
+
+func parseJson(json *models.Personas) *gorms.PersonasGorm {
+	return &gorms.PersonasGorm{
+		IDPersona:      json.IDPersona,
+		ApellidoNombre: json.ApellidoNombre,
+		Domicilio: sql.NullString{
+			String: json.Domicilio,
+			Valid:  false,
+		},
+		Edad: sql.NullInt64{
+			Int64: json.Edad,
+			Valid: false,
+		},
+		Localidad:   json.Localidad,
+		IDPais:      json.IDPais,
+		IDProvincia: json.IDProvincia,
+		IDTipoDoc:   json.IDTipoDoc,
+		NroDoc:      json.NroDoc,
+	}
+}
+
+func parseGson(dto gorms.PersonasGorm) models.Personas {
+	return models.Personas{
+		IDPersona:      dto.IDPersona,
+		ApellidoNombre: dto.ApellidoNombre,
+		Domicilio:      dto.Domicilio.String,
+		Edad:           dto.Edad.Int64,
+		Localidad:      dto.Localidad,
+		IDPais:         dto.IDPais,
+		IDProvincia:    dto.IDProvincia,
+		IDTipoDoc:      dto.IDTipoDoc,
+		NroDoc:         dto.NroDoc,
 	}
 }

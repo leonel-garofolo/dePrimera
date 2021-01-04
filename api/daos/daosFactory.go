@@ -15,6 +15,11 @@ func NewDePrimeraDaos() *DePrimeraDaos {
 	return &DePrimeraDaos{}
 }
 
+// GetArbitrosDao factory of arbitros
+func (dao *DePrimeraDaos) GetQueryDao() *QueryDaoImpl {
+	return &QueryDaoImpl{}
+}
+
 // ArbitrosDao interface of arbitros
 type AuthenticationDao interface {
 	Login(user string, pass string) *gorms.UsersGorm
@@ -177,6 +182,26 @@ type ZonasDao interface {
 
 func (dao *DePrimeraDaos) GetZonasDao() *ZonasDaoImpl {
 	return &ZonasDaoImpl{}
+}
+
+// PaisesDao interface of paises
+type PaisesDao interface {
+	GetAll() []gorms.PaisesGorm
+	Get(id int) *gorms.PaisesGorm
+}
+
+func (dao *DePrimeraDaos) GetPaisesDao() *PaisesDaoImpl {
+	return &PaisesDaoImpl{}
+}
+
+// PaisesDao interface of paises
+type ProvinciasDao interface {
+	GetAll() []gorms.PaisesGorm
+	Get(id int) *gorms.PaisesGorm
+}
+
+func (dao *DePrimeraDaos) GetProvinciasDao() *ProvinciasDaoImpl {
+	return &ProvinciasDaoImpl{}
 }
 
 // ZonasEquiposDao interface of zonasEquipos

@@ -28,5 +28,9 @@ func NewRouter(e *echo.Echo) {
 	services.RouterAppGrupos(e)
 	services.RouterAuthentication(e)
 
+	services.RouterPaises(e)
+	services.RouterProvincias(e)
+	services.RouterQuery(e)
+
 	e.GET("/api/home", home)
 }

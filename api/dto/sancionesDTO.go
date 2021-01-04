@@ -6,7 +6,7 @@ type Sanciones struct {
 	Observaciones string `json:"observaciones"`
 }
 
-type SancionesJugadoresFromCampeonatoGorm struct {
+type SancionesJugadoresFromCampeonato struct {
 	ApellidoNombre string `json:"apellido_nombre"`
 	ENombre        string `json:"e_nombre"`
 	CRojas         int    `json:"c_rojas"`

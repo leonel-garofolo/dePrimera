@@ -11,9 +11,9 @@ select * from partidos;
 select * from jugadores;
 select * from campeonatos;
 select * from campeonatos_equipos;
+select * from paises;
+select * from provincias;
 
-insert into campeonatos_equipos(id_liga, id_campeonato, id_equipo)
-select 2,2, id_equipo from equipos where id_equipo > 5;
 
 -- authentication
 select * from app_users;

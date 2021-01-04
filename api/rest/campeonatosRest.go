@@ -131,7 +131,7 @@ func GetJugadoresSanciones(c echo.Context) error {
 
 	daos := daos.NewDePrimeraDaos()
 	sancionesJugadoresFromCampeonatoGorm := daos.GetSancionesDao().GetSancionesFromCampeonato(idTorneo)
-	sancionesJugadoresFromCampeonato := []models.SancionesJugadoresFromCampeonatoGorm{}
+	sancionesJugadoresFromCampeonato := []models.SancionesJugadoresFromCampeonato{}
 	copier.Copy(&sancionesJugadoresFromCampeonato, &sancionesJugadoresFromCampeonatoGorm)
 	return c.JSON(http.StatusOK, sancionesJugadoresFromCampeonato)
 }

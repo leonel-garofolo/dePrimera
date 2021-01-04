@@ -4,8 +4,7 @@ type Personas struct {
 	ApellidoNombre string `json:"apellido_nombre"`
 	Domicilio      string `json:"domicilio"`
 	Edad           int64  `json:"edad"`
-	IDLiga         int    `json:"id_liga"`
-	IDLocalidad    int64  `json:"id_localidad"`
+	Localidad      string `json:"localidad"`
 	IDPais         int64  `json:"id_pais"`
 	IDPersona      int64  `json:"id_persona"`
 	IDProvincia    int64  `json:"id_provincia"`

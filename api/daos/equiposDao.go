@@ -27,7 +27,7 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 	var equipos []gorms.EquiposGorm
 	for rows.Next() {
 		equipo := gorms.EquiposGorm{}
-		error := rows.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		error := rows.Scan(&equipo.IDEquipo, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -111,7 +111,7 @@ func (ed *EquiposDaoImpl) Get(id int) gorms.EquiposGorm {
 
 	row := db.QueryRow("select * from equipos where id_equipo = ?", id)
 	equipo := gorms.EquiposGorm{}
-	error := row.Scan(&equipo.IDEquipo, &equipo.IDCampeonato, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+	error := row.Scan(&equipo.IDEquipo, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
@@ -131,8 +131,8 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 
 	if e.IDEquipo > 0 {
 		_, error := db.Exec("update equipos"+
-			" set id_campeonato=?, nombre=?, habilitado=?, foto=? "+
-			" where id_equipo = ?", e.IDCampeonato, e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
+			" set nombre=?, habilitado=?, foto=? "+
+			" where id_equipo = ?", e.Nombre, e.Habilitado, e.Foto, e.IDEquipo)
 
 		if error != nil {
 			log.Println(error)
@@ -140,8 +140,8 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 		}
 	} else {
 		res, error := db.Exec("insert into equipos"+
-			" (id_equipo, id_campeonato, nombre, foto) "+
-			" values(?,?,?,?)", e.IDEquipo, e.IDCampeonato, e.Nombre, e.Foto)
+			" (id_equipo, nombre, foto) "+
+			" values(?,?,?,?)", e.IDEquipo, e.Nombre, e.Foto)
 		if error != nil {
 			log.Println(error)
 			panic(error)
