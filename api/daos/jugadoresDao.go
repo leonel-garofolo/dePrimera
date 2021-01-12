@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 type JugadoresDaoImpl struct{}
@@ -43,7 +44,7 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 		log.Println(err.Error())
 	}
 
-	isDelete := ed.Delete(e.IDPersona, e.IDEquipo)
+	isDelete, _ := ed.Delete(e.IDPersona, e.IDEquipo)
 	if isDelete == true {
 		_, error := db.Exec("insert into jugadores (id_persona, id_equipo) values(?,?)", e.IDPersona, e.IDEquipo)
 
@@ -55,7 +56,7 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 	return e.IDJugador
 }
 
-func (ed *JugadoresDaoImpl) Delete(IDPersona int64, IDEquipo int64) bool {
+func (ed *JugadoresDaoImpl) Delete(IDPersona int64, IDEquipo int64) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -66,8 +67,8 @@ func (ed *JugadoresDaoImpl) Delete(IDPersona int64, IDEquipo int64) bool {
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
-			panic(error)
-		}	
+			return false, error
+		}
 	}
-	return true
+	return true, nil
 }

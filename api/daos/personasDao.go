@@ -97,7 +97,7 @@ func (ed *PersonasDaoImpl) Save(e *gorms.PersonasGorm) int64 {
 	return e.IDPersona
 }
 
-func (ed *PersonasDaoImpl) Delete(id int) bool {
+func (ed *PersonasDaoImpl) Delete(id int) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -107,7 +107,7 @@ func (ed *PersonasDaoImpl) Delete(id int) bool {
 	_, error := db.Exec("delete from personas where id_persona = ?", id)
 	if error != nil {
 		log.Println(error)
-		panic(error)
+		return false, error
 	}
-	return true
+	return true, nil
 }

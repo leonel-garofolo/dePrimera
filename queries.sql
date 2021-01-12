@@ -11,8 +11,9 @@ select * from partidos;
 select * from jugadores;
 select * from campeonatos;
 select * from campeonatos_equipos;
-select * from paises;
-select * from provincias;
+select * from app_ppaises;
+select * from app_provincias;
+select * from comentarios;
 
 
 -- authentication
@@ -104,3 +105,15 @@ values (
     (select id_equipo from equipos where id_campeonato = 1 and nro_equipo = 2),
     current_timestamp()
     );
+    
+    
+-- get query of notification
+select 
+	(select count(*) from ligas) as ligas,
+    (select count(*) from campeonatos) as campeonatos,
+    (select count(*) from equipos) as equipos,
+    (select count(*) from arbitros) as arbitros,
+    (select count(*) from asistentes) as asistentes,
+    (select count(*) from jugadores) as jugadores
+    ;
+ 

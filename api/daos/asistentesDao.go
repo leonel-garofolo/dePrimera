@@ -49,7 +49,7 @@ func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 
 	isDelete := true
 	if e.IDAsistente > 0 {
-		isDelete = ed.Delete(e.IDAsistente, e.IDPersona, e.IDCampeonato)
+		isDelete, _ = ed.Delete(e.IDAsistente, e.IDPersona, e.IDCampeonato)
 	}
 
 	if isDelete == true {
@@ -65,7 +65,7 @@ func (ed *AsistentesDaoImpl) Save(e *gorms.AsistentesGorm) int64 {
 }
 
 // Delete asistentes
-func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64, IDCampeonato int64) bool {
+func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64, IDCampeonato int64) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -76,8 +76,8 @@ func (ed *AsistentesDaoImpl) Delete(IDAsistente int64, IDPersona int64, IDCampeo
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
-			panic(error)
+			return false, error
 		}
 	}
-	return true
+	return true, nil
 }

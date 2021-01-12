@@ -102,7 +102,7 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 }
 
 // Delete campeonatos
-func (ed *CampeonatosDaoImpl) Delete(id int64) bool {
+func (ed *CampeonatosDaoImpl) Delete(id int64) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -113,8 +113,8 @@ func (ed *CampeonatosDaoImpl) Delete(id int64) bool {
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
-			panic(error)
+			return false, error
 		}
 	}
-	return true
+	return true, nil
 }

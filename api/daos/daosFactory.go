@@ -1,6 +1,9 @@
 package daos
 
-import "github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+import (
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+)
 
 // DaosFactory general interface
 type DaosFactory interface {
@@ -182,6 +185,14 @@ type ZonasDao interface {
 
 func (dao *DePrimeraDaos) GetZonasDao() *ZonasDaoImpl {
 	return &ZonasDaoImpl{}
+}
+
+type ComentariosDao interface {
+	Save(e *models.Comentarios) int
+}
+
+func (dao *DePrimeraDaos) GetComentariosDao() *ComentariosDaoImpl {
+	return &ComentariosDaoImpl{}
 }
 
 // PaisesDao interface of paises

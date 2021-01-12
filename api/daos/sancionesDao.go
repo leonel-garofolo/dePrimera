@@ -123,7 +123,7 @@ func (ed *SancionesDaoImpl) Save(e *gorms.SancionesGorm) int64 {
 	return e.IDSanciones
 }
 
-func (ed *SancionesDaoImpl) Delete(id int) bool {
+func (ed *SancionesDaoImpl) Delete(id int) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -133,7 +133,7 @@ func (ed *SancionesDaoImpl) Delete(id int) bool {
 	_, error := db.Exec("delete from sanciones where id_sancion = ?", id)
 	if error != nil {
 		log.Println(error)
-		panic(error)
+		return false, error
 	}
-	return true
+	return true, nil
 }

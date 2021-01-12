@@ -232,7 +232,7 @@ func (ed *PartidosDaoImpl) Save(e *gorms.PartidosGorm) int64 {
 	return e.IDPartidos
 }
 
-func (ed *PartidosDaoImpl) Delete(id int) bool {
+func (ed *PartidosDaoImpl) Delete(id int) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -241,9 +241,9 @@ func (ed *PartidosDaoImpl) Delete(id int) bool {
 
 	_, error := db.Exec("delete from partidos where id_partidos = ?", id)
 	if error != nil {
-		panic(error)
+		return false, error
 	}
-	return true
+	return true, nil
 }
 
 // Get equipo

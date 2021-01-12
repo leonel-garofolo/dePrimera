@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 type ZonasDaoImpl struct{}
@@ -84,7 +85,7 @@ func (ed *ZonasDaoImpl) Save(e *gorms.ZonasGorm) int64 {
 	return e.IDZona
 }
 
-func (ed *ZonasDaoImpl) Delete(id int) bool {
+func (ed *ZonasDaoImpl) Delete(id int) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -94,7 +95,7 @@ func (ed *ZonasDaoImpl) Delete(id int) bool {
 	_, error := db.Exec("delete from zonas where id_zona = ?", id)
 	if error != nil {
 		log.Println(error)
-		panic(error)
+		return false, error
 	}
-	return true
+	return true, nil
 }

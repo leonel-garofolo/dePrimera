@@ -68,7 +68,7 @@ func (ed *ArbitrosDaoImpl) Save(e *gorms.ArbitrosGorm) int64 {
 
 	isDelete := true
 	if e.IDArbitro > 0 {
-		isDelete = ed.Delete(e.IDArbitro, e.IDPersona, e.IDCampeonato)
+		isDelete, _ = ed.Delete(e.IDArbitro, e.IDPersona, e.IDCampeonato)
 	}
 
 	if isDelete == true {
@@ -86,7 +86,7 @@ func (ed *ArbitrosDaoImpl) Save(e *gorms.ArbitrosGorm) int64 {
 }
 
 // Delete arbitro
-func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64, IDCampeonato int64) bool {
+func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64, IDCampeonato int64) (bool, error) {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -97,8 +97,8 @@ func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64, IDCampeonato
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
-			panic(error)
+			return false, error
 		}
 	}
-	return true
+	return true, nil
 }
