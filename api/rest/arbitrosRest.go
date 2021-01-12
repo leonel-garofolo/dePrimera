@@ -6,11 +6,13 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/jinzhu/copier"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto/response"
 
 	"github.com/labstack/echo/v4"
 )
@@ -62,10 +64,21 @@ func DeleteArbitro(c echo.Context) error {
 		log.Panic(err2)
 	}
 	daos := daos.NewDePrimeraDaos()
-	daos.GetArbitrosDao().Delete(idArbitro, idPersona, idCampeonato)
+	status, error := daos.GetArbitrosDao().Delete(idArbitro, idPersona, idCampeonato)
+
+	resp := &response.UpdatedResponse{}
+	resp.Status = status
+	if !status {
+		resp.Message = "Error al intentar eliminar el Registro."
+		sError := error.Error()
+		fmt.Println(sError)
+		if strings.Contains(sError, "Cannot") {
+			resp.Message = "El registro no se pudo eliminar."
+		}
+	}
 
 	log.Println(idArbitro, idPersona, idCampeonato)
-	return c.String(http.StatusOK, "delete")
+	return c.JSON(http.StatusOK, resp)
 }
 
 func InfoArbitros(c echo.Context) error {

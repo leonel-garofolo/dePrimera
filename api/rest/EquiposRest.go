@@ -6,12 +6,14 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto/response"
 )
 
 func RouterEquipos(e *echo.Echo) {
@@ -61,7 +63,18 @@ func DeleteEquipo(c echo.Context) error {
 		log.Panic(err)
 	}
 	daos := daos.NewDePrimeraDaos()
-	daos.GetEquiposDao().Delete(id)
+	status, error := daos.GetEquiposDao().Delete(id)
+
+	resp := &response.UpdatedResponse{}
+	resp.Status = status
+	if !status {
+		resp.Message = "Error al intentar eliminar el Registro."
+		sError := error.Error()
+		fmt.Println(sError)
+		if strings.Contains(sError, "Cannot") {
+			resp.Message = "El registro no se pudo eliminar."
+		}
+	}
 
 	log.Println(id)
 	return c.String(http.StatusOK, "delete")

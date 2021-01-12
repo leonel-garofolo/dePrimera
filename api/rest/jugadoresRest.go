@@ -1,15 +1,18 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"github.com/jinzhu/copier"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto/response"
 
 	"github.com/labstack/echo/v4"
 )
@@ -36,7 +39,6 @@ func SaveJugador(c echo.Context) error {
 	jugadoresGorm := &gorms.JugadoresGorm{}
 	copier.Copy(&jugadoresGorm, &jugadores)
 
-
 	daos := daos.NewDePrimeraDaos()
 	id := daos.GetJugadoresDao().Save(jugadoresGorm)
 
@@ -56,7 +58,18 @@ func DeleteJugador(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	daos.GetJugadoresDao().Delete(idJugador, idPersona)
+	status, error := daos.GetJugadoresDao().Delete(idJugador, idPersona)
+
+	resp := &response.UpdatedResponse{}
+	resp.Status = status
+	if !status {
+		resp.Message = "Error al intentar eliminar el Registro."
+		sError := error.Error()
+		fmt.Println(sError)
+		if strings.Contains(sError, "Cannot") {
+			resp.Message = "El registro no se pudo eliminar."
+		}
+	}
 
 	log.Println(idJugador, idPersona)
 	return c.String(http.StatusOK, "delete")

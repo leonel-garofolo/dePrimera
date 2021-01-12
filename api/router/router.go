@@ -31,6 +31,6 @@ func NewRouter(e *echo.Echo) {
 	services.RouterPaises(e)
 	services.RouterProvincias(e)
 	services.RouterQuery(e)
-
+	services.RouterComentarios(e)
 	e.GET("/api/home", home)
 }
