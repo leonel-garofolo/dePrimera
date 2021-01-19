@@ -19,6 +19,8 @@ import (
 func RouterEquipos(e *echo.Echo) {
 	e.GET("/api/equipos", GetEquipos)
 	e.GET("/api/equipos/:id", GetEquipo)
+	e.GET("/api/equipos/user/:id_user/:id_grupo", GetEquiposFromUser)
+	e.GET("/api/equipos/plantel/:id_equipo", GetPlantel)
 	e.POST("/api/equipos", SaveEquipos)
 	e.DELETE("/api/equipos/:id", DeleteEquipo)
 	e.GET("/api/equipos/info", InfoEquipo)
@@ -41,6 +43,32 @@ func GetEquipo(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
 	equipo := daos.GetEquiposDao().Get(id)
 	return c.JSON(http.StatusOK, equipo)
+}
+
+func GetEquiposFromUser(c echo.Context) error {
+	idGrupo, err := strconv.Atoi(c.Param("id_grupo"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	equiposGorm := daos.GetEquiposDao().GetEquiposFromUser(c.Param("id_user"), idGrupo)
+	equipos := []models.Equipos{}
+	copier.Copy(&equipos, &equiposGorm)
+	return c.JSON(http.StatusOK, equipos)
+}
+
+func GetPlantel(c echo.Context) error {
+	idEquipo, err := strconv.Atoi(c.Param("id_equipo"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	equiposGorm := daos.GetEquiposDao().GetPlantel(idEquipo)
+	equipos := []models.JugadoresPlantel{}
+	copier.Copy(&equipos, &equiposGorm)
+	return c.JSON(http.StatusOK, equipos)
 }
 
 func SaveEquipos(c echo.Context) error {

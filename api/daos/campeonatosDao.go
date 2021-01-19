@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
@@ -21,6 +22,68 @@ func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 	}
 
 	rows, err := db.Query("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin from campeonatos")
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	var campeonatos []gorms.CampeonatosGorm
+	for rows.Next() {
+		campeonato := gorms.CampeonatosGorm{}
+		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		campeonatos = append(campeonatos, campeonato)
+	}
+	return campeonatos
+}
+
+func (ed *CampeonatosDaoImpl) GetCampeonatoForUser(idUser string, idGrupo int) []gorms.CampeonatosGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	//IdGrupo is Admin
+	query := ""
+	switch idGrupo {
+	case 1: //ADMINISTRADOR
+		query = " select c.id_campeonato, c.id_liga, c.id_modelo, c.descripcion, c.fecha_inicio, c.fecha_fin " +
+			" from campeonatos c "
+		break
+	case 2: //DELEGADOS
+		query = "select c.id_campeonato, c.id_liga, c.id_modelo, c.descripcion, c.fecha_inicio, c.fecha_fin " +
+			"from campeonatos c " +
+			"inner join campeonatos_equipos ce on ce.id_campeonato = c.id_campeonato " +
+			"inner join asistentes a on a.id_campeonato = ce.id_campeonato " +
+			"inner join personas p on p.id_persona = a.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	case 3: //JUGADORES
+		query = "select c.id_campeonato, c.id_liga, c.id_modelo, c.descripcion, c.fecha_inicio, c.fecha_fin " +
+			"from campeonatos c " +
+			"inner join campeonatos_equipos ce on ce.id_campeonato = c.id_campeonato " +
+			"inner join jugadores j on j.id_equipo = ce.id_equipo " +
+			"inner join personas p on p.id_persona = j.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	case 4: //ARBITROS
+		query = "select c.id_campeonato, c.id_liga, c.id_modelo, c.descripcion, c.fecha_inicio, c.fecha_fin " +
+			"from campeonatos c " +
+			"inner join campeonatos_equipos ce on ce.id_campeonato = c.id_campeonato " +
+			"inner join arbitros a on a.id_campeonato = ce.id_campeonato " +
+			"inner join personas p on p.id_persona = a.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	}
+
+	fmt.Println(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		log.Println(err)
 		panic(err)

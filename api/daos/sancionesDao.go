@@ -43,7 +43,7 @@ func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []gorms
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select p.apellido_nombre, e.nombre as e_nombre, "+
+	rows, err := db.Query("select p.nombre as p_nombre, p.apellido as p_apellido, e.nombre as e_nombre, "+
 		" 	(case when sj.id_sancion = 1 then count(sj.id_sancion) else 0 end ) as c_rojas, "+
 		" 	(case when sj.id_sancion = 2 then count(sj.id_sancion) else 0 end ) as c_amarillas, "+
 		" 	(case when sj.id_sancion = 3 then count(sj.id_sancion) else 0 end ) as c_azules "+
@@ -52,15 +52,15 @@ func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []gorms
 		" inner join equipos e on e.id_equipo = j.id_equipo "+
 		" inner join personas p on p.id_persona = j.id_persona "+
 		" where sj.id_campeonato = ? "+
-		" group by p.apellido_nombre, e.nombre, sj.id_sancion "+
-		" order by p.apellido_nombre asc", idCampeonato)
+		" group by p.nombre, p.apellido, e.nombre, sj.id_sancion "+
+		" order by p.apellido asc, p.nombre asc", idCampeonato)
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
 	var sancionesJugadores []gorms.SancionesJugadoresFromCampeonatoGorm
 	for rows.Next() {
 		sancion := gorms.SancionesJugadoresFromCampeonatoGorm{}
-		error := rows.Scan(&sancion.ApellidoNombre, &sancion.ENombre, &sancion.CRojas, &sancion.CAmarillas, &sancion.CAzules)
+		error := rows.Scan(&sancion.Nombre, &sancion.Apellido, &sancion.ENombre, &sancion.CRojas, &sancion.CAmarillas, &sancion.CAzules)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)

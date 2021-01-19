@@ -25,6 +25,7 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.POST("/api/campeonatos", SaveCampeonato)
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
 	e.GET("/api/campeonatos/fixture/:id_campeonato", GetFixture)
+	e.GET("/api/campeonatos/user/:id_user/:id_grupo", GetCampeonatosForUserID)
 	e.GET("/api/campeonatos/table/:id_campeonato", GetTablePosition)
 	e.GET("/api/campeonatos/sanciones/:id_campeonato", GetJugadoresSanciones)
 	e.POST("/api/campeonatos/fixture/generate/:id_liga/:id_campeonato", GenerateFixture)
@@ -117,6 +118,19 @@ func GetFixture(c echo.Context) error {
 	partidosFromDate := []models.PartidosFromDate{}
 	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
 	return c.JSON(http.StatusOK, partidosFromDate)
+}
+
+func GetCampeonatosForUserID(c echo.Context) error {
+	idGrupo, err := strconv.Atoi(c.Param("id_grupo"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	campeonatosGorm := daos.GetCampeonatosDao().GetCampeonatoForUser(c.Param("id_user"), idGrupo)
+	campeonatos := []models.Campeonatos{}
+	copier.Copy(&campeonatos, &campeonatosGorm)
+	return c.JSON(http.StatusOK, campeonatos)
 }
 
 func GetTablePosition(c echo.Context) error {

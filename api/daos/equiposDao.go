@@ -2,7 +2,9 @@ package daos
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
@@ -38,6 +40,104 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 		equipos = append(equipos, equipo)
 	}
 	return equipos
+}
+
+func (ed *EquiposDaoImpl) GetEquiposFromUser(idUser string, idGrupo int) []gorms.EquiposGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	//IdGrupo is Admin
+	query := ""
+	switch idGrupo {
+	case 1: //ADMINISTRADOR
+		query = " select e.id_equipo, e.nombre, e.habilitado, e.foto " +
+			" from equipos e "
+		break
+	case 2: //DELEGADOS
+		query = "select e.id_equipo, e.nombre, e.habilitado, e.foto  " +
+			"from equipos e " +
+			"inner join campeonatos_equipos ce on ce.id_equipo = e.id_equipo " +
+			"inner join asistentes a on a.id_campeonato = ce.id_campeonato " +
+			"inner join personas p on p.id_persona = a.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	case 3: //JUGADORES
+		query = "select e.id_equipo, e.nombre, e.habilitado, e.foto  " +
+			"from equipos e " +
+			"inner join campeonatos_equipos ce on ce.id_equipo = e.id_equipo " +
+			"inner join jugadores j on j.id_equipo = ce.id_equipo " +
+			"inner join personas p on p.id_persona = j.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	case 4: //ARBITROS
+		query = "select e.id_equipo, e.nombre, e.habilitado, e.foto  " +
+			"from equipos e " +
+			"inner join campeonatos_equipos ce on ce.id_equipo = e.id_equipo " +
+			"inner join arbitros a on a.id_campeonato = ce.id_campeonato " +
+			"inner join personas p on p.id_persona = a.id_persona " +
+			"where p.id_user= '" + idUser + "' and p.idgrupo = " + strconv.Itoa(idGrupo)
+		break
+	}
+
+	fmt.Println(query)
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	var equipos []gorms.EquiposGorm
+	for rows.Next() {
+		equipo := gorms.EquiposGorm{}
+		error := rows.Scan(&equipo.IDEquipo, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+
+		equipos = append(equipos, equipo)
+	}
+	return equipos
+}
+
+func (ed *EquiposDaoImpl) GetPlantel(idEquipo int) []gorms.JugadoresPlantelGorm {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query(
+		"select j.id_jugadores, p.apellido, p.nombre, j.nro_camiseta  "+
+			"from jugadores j "+
+			"inner join personas p on j.id_persona = p.id_persona "+
+			"where p.apellido is not null and p.nombre is not null and j.id_equipo = ? "+
+			"order by p.apellido asc, p.nombre asc", idEquipo,
+	)
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	var jugadores []gorms.JugadoresPlantelGorm
+	for rows.Next() {
+		jugador := gorms.JugadoresPlantelGorm{}
+		error := rows.Scan(&jugador.IDJugador, &jugador.Apellido, &jugador.Nombre, &jugador.NroCamiseta)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+
+		jugadores = append(jugadores, jugador)
+	}
+	return jugadores
 }
 
 func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDLiga int, IDCampeonato int) []gorms.EquiposGorm {

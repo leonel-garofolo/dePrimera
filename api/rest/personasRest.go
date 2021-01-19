@@ -20,6 +20,7 @@ import (
 func RouterPersonas(e *echo.Echo) {
 	e.GET("/api/personas", GetPersonas)
 	e.GET("/api/personas/:id", GetPersona)
+	e.GET("/api/personas/user/:idUser", GetPersonaFromUser)
 	e.POST("/api/personas", SavePersona)
 	e.DELETE("/api/personas/:id", DeletePersona)
 	e.GET("/api/personas/info", InfoPersonas)
@@ -46,6 +47,13 @@ func GetPersona(c echo.Context) error {
 
 	daos := daos.NewDePrimeraDaos()
 	personaGorm := daos.GetPersonasDao().Get(id)
+	persona := parseGson(personaGorm)
+	return c.JSON(http.StatusOK, persona)
+}
+
+func GetPersonaFromUser(c echo.Context) error {
+	daos := daos.NewDePrimeraDaos()
+	personaGorm := daos.GetPersonasDao().GetPersonasFromUser(c.Param("idUser"))
 	persona := parseGson(personaGorm)
 	return c.JSON(http.StatusOK, persona)
 }
@@ -103,8 +111,9 @@ func InfoPersonas(c echo.Context) error {
 
 func parseJson(json *models.Personas) *gorms.PersonasGorm {
 	return &gorms.PersonasGorm{
-		IDPersona:      json.IDPersona,
-		ApellidoNombre: json.ApellidoNombre,
+		IDPersona: json.IDPersona,
+		Nombre:    json.Nombre,
+		Apellido:  json.Apellido,
 		Domicilio: sql.NullString{
 			String: json.Domicilio,
 			Valid:  false,
@@ -123,14 +132,15 @@ func parseJson(json *models.Personas) *gorms.PersonasGorm {
 
 func parseGson(dto gorms.PersonasGorm) models.Personas {
 	return models.Personas{
-		IDPersona:      dto.IDPersona,
-		ApellidoNombre: dto.ApellidoNombre,
-		Domicilio:      dto.Domicilio.String,
-		Edad:           dto.Edad.Int64,
-		Localidad:      dto.Localidad,
-		IDPais:         dto.IDPais,
-		IDProvincia:    dto.IDProvincia,
-		IDTipoDoc:      dto.IDTipoDoc,
-		NroDoc:         dto.NroDoc,
+		IDPersona:   dto.IDPersona,
+		Nombre:      dto.Nombre,
+		Apellido:    dto.Apellido,
+		Domicilio:   dto.Domicilio.String,
+		Edad:        dto.Edad.Int64,
+		Localidad:   dto.Localidad,
+		IDPais:      dto.IDPais,
+		IDProvincia: dto.IDProvincia,
+		IDTipoDoc:   dto.IDTipoDoc,
+		NroDoc:      dto.NroDoc,
 	}
 }

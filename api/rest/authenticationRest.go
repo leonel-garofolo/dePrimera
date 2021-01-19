@@ -17,6 +17,8 @@ func RouterAuthentication(e *echo.Echo) {
 	e.POST("/api/authentication/register", Register)
 	e.POST("/api/authentication/forgot", Forgot)
 	e.POST("/api/authentication/reset", ResetPassword)
+	e.GET("/api/authentication/permiso/:user", GetUserAppGrupos)
+
 }
 
 func Login(c echo.Context) error {
@@ -25,9 +27,7 @@ func Login(c echo.Context) error {
 
 	daos := daos.NewDePrimeraDaos()
 	userGorm := daos.GetAuthenticationDao().Login(user.UserID, user.Password)
-	user.UserID = userGorm.IDUser
-	user.Nombre = userGorm.Nombre
-	user.Apellido = userGorm.Apellido
+	user.UserID = userGorm.UserID
 	user.Telefono = userGorm.Telefono.String
 	user.Habilitado = userGorm.Habilitado
 
@@ -64,4 +64,15 @@ func ResetPassword(c echo.Context) error {
 	id := daos.GetAuthenticationDao().ResetPassword(user.Email, user.OldPassword, user.NewPassword)
 	fmt.Println(id)
 	return c.JSON(http.StatusOK, "reset password")
+}
+
+func GetUserAppGrupos(c echo.Context) error {
+	userId := c.Param("user")
+	daos := daos.NewDePrimeraDaos()
+	gruposGorms := daos.GetAppGruposDao().GetUserAppGrupos(userId)
+
+	grupos := models.AppGrupos{}
+	copier.Copy(&grupos, &gruposGorms)
+
+	return c.JSON(http.StatusOK, grupos)
 }

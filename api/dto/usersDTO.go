@@ -3,8 +3,6 @@ package models
 type Users struct {
 	UserID     string `json:"id_user"`
 	Password   string `json:"password"`
-	Nombre     string `json:"nombre"`
-	Apellido   string `json:"apellido"`
 	Telefono   string `json:"telefono"`
 	Habilitado bool   `json:"habilitado"`
 }
