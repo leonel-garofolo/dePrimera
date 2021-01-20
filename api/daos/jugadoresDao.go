@@ -25,7 +25,7 @@ func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
 	jugadores := []gorms.JugadoresGorm{}
 	for rows.Next() {
 		jugador := gorms.JugadoresGorm{}
-		error := rows.Scan(&jugador.IDJugador, &jugador.IDPersona, &jugador.IDEquipo)
+		error := rows.Scan(&jugador.IDJugador, &jugador.IDPersona, &jugador.IDEquipo, &jugador.NroCamiseta)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)

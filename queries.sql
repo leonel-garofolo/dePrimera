@@ -197,5 +197,7 @@ where p.id_user= 'arb1' and p.idgrupo = 4;
 select j.id_jugadores, p.apellido, p.nombre, j.nro_camiseta 
 from jugadores j
 inner join personas p on j.id_persona = p.id_persona
-where p.apelllido != null and p.nombre != null and j.id_equipo = 2
+where p.apellido is not null and p.nombre is not null and j.id_equipo = 2
 order by p.apellido asc, p.nombre asc;
+
+select * from jugadores;

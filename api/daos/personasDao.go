@@ -17,21 +17,23 @@ func (ed *PersonasDaoImpl) GetAll() []gorms.PersonasGorm {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select id_persona, apellido_nombre, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas")
+	rows, err := db.Query("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas")
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}
 
+	apellido := sql.NullString{}
 	personas := []gorms.PersonasGorm{}
 	for rows.Next() {
 		persona := gorms.PersonasGorm{}
-		error := rows.Scan(&persona.IDPersona, &persona.Nombre, &persona.Apellido, &persona.Domicilio, &persona.Edad, &persona.Localidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
+		error := rows.Scan(&persona.IDPersona, &persona.Nombre, &apellido, &persona.Domicilio, &persona.Edad, &persona.Localidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
 				panic(error)
 			}
 		}
+		persona.Apellido = apellido.String
 		personas = append(personas, persona)
 	}
 	return personas
