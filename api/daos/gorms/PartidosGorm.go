@@ -19,6 +19,22 @@ type PartidosGorm struct {
 	ResultadoLocal     int64          `gorm:"column:resultado_local"`
 	ResultadoVisitante int64          `gorm:"column:resultado_visitante"`
 	Suspendido         string         `gorm:"column:suspendido"`
+	Iniciado           bool           `gorm:"column:iniciado"`
+	Finalizado         bool           `gorm:"column:finalizado"`
+}
+
+type PartidoResultGorm struct {
+	IDPartidos                int64  `gorm:"column:id_partidos"`
+	ResultadoLocal            int64  `gorm:"column:resultado_local"`
+	SancionAmarillasLocal     string `gorm:"column:amarillas_local"`
+	SancionRojasLocal         string `gorm:"column:rojas_local"`
+	ResultadoVisitante        int64  `gorm:"column:resultado_visitante"`
+	SancionAmarillasVisitante string `gorm:"column:amarillas_visitante"`
+	SancionRojasVisitante     string `gorm:"column:rojas_visitante"`
+	Iniciado                  bool   `gorm:"column:iniciado"`
+	Finalizado                bool   `gorm:"column:finalizado"`
+	Suspendido                bool   `gorm:"column:suspendido"`
+	Motivo                    string `gorm:"column:motivo_suspencion"`
 }
 
 // TableName sets the insert table name for this struct type
@@ -35,5 +51,8 @@ type PartidosFromDateGorm struct {
 	EVisitName         string    `gorm:"column:e_visit_name"`
 	ResultadoLocal     int64     `gorm:"column:resultado_local"`
 	ResultadoVisitante int64     `gorm:"column:resultado_visitante"`
-	Suspendido         string    `gorm:"column:suspendido"`
+	Suspendido         bool      `gorm:"column:suspendido"`
+	Iniciado           bool      `gorm:"column:iniciado"`
+	Finalizado         bool      `gorm:"column:finalizado"`
+	Motivo             string    `gorm:"column:motivo_suspencion"`
 }

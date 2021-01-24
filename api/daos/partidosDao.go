@@ -29,7 +29,7 @@ func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 	var partidos []gorms.PartidosGorm
 	for rows.Next() {
 		partido := gorms.PartidosGorm{}
-		error := rows.Scan(&partido.IDPartidos, &partido.IDLiga, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDArbitro, &partido.IDAsistente, &partido.FechaEncuentro, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido, &partido.MotivoSuspencion, &partido.Observacion)
+		error := rows.Scan(&partido.IDPartidos, &partido.IDLiga, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDArbitro, &partido.IDAsistente, &partido.FechaEncuentro, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido, &partido.MotivoSuspencion, &partido.Observacion, &partido.Iniciado, &partido.Finalizado)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)
@@ -52,7 +52,7 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDa
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido "+
+		" p.suspendido, p.iniciado, p.finalizado, p.motivo_suspencion "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -65,6 +65,7 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDa
 		log.Fatalln("Failed to query")
 	}
 
+	motivo := sql.NullString{}
 	var partidos []gorms.PartidosFromDateGorm
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
@@ -78,6 +79,9 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDa
 			&partido.ResultadoLocal,
 			&partido.ResultadoVisitante,
 			&partido.Suspendido,
+			&partido.Iniciado,
+			&partido.Finalizado,
+			&motivo,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -85,6 +89,8 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDa
 				panic(error)
 			}
 		}
+
+		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
 	return partidos
@@ -101,7 +107,7 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido "+
+		" p.suspendido, p.iniciado, p.finalizado, p.motivo_suspencion "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -114,6 +120,7 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		log.Fatalln("Failed to query")
 	}
 
+	motivo := sql.NullString{}
 	var partidos []gorms.PartidosFromDateGorm
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
@@ -127,6 +134,9 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 			&partido.ResultadoLocal,
 			&partido.ResultadoVisitante,
 			&partido.Suspendido,
+			&partido.Iniciado,
+			&partido.Finalizado,
+			&motivo,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -134,6 +144,7 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 				panic(error)
 			}
 		}
+		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
 	return partidos
@@ -150,7 +161,7 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido "+
+		" p.suspendido,  p.iniciado, p.finalizado, p.motivo_suspencion "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -164,6 +175,7 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 		log.Fatalln("Failed to query")
 	}
 
+	motivo := sql.NullString{}
 	var partidos []gorms.PartidosFromDateGorm
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
@@ -177,6 +189,9 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 			&partido.ResultadoLocal,
 			&partido.ResultadoVisitante,
 			&partido.Suspendido,
+			&partido.Iniciado,
+			&partido.Finalizado,
+			&motivo,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -184,6 +199,7 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 				panic(error)
 			}
 		}
+		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
 	return partidos
@@ -277,6 +293,26 @@ func (ed *PartidosDaoImpl) Save(e *gorms.PartidosGorm) int64 {
 			panic(error)
 		}
 		e.IDPartidos, _ = res.LastInsertId()
+	}
+	return e.IDPartidos
+}
+
+func (ed *PartidosDaoImpl) SaveResult(e *gorms.PartidoResultGorm) int64 {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	if e.IDPartidos > 0 {
+		_, error := db.Exec("update partidos"+
+			" set resultado_local=?, resultado_visitante=?, iniciado =?, finalizado =?, suspendido =?, motivo_suspencion =? "+
+			" where id_partidos = ?", e.ResultadoLocal, e.ResultadoVisitante, e.Iniciado, e.Finalizado, e.Suspendido, e.Motivo, e.IDPartidos)
+
+		if error != nil {
+			log.Println(error)
+			panic(error)
+		}
 	}
 	return e.IDPartidos
 }

@@ -18,19 +18,37 @@ type Partidos struct {
 	ResultadoLocal     int64     `json:"resultado_local"`
 	ResultadoVisitante int64     `json:"resultado_visitante"`
 	Suspendido         bool      `json:"suspendido"`
+	Iniciado           bool      `json:"iniciado"`
+	Finalizado         bool      `json:"finalizado"`
 }
 
+type PartidosFromDate struct {
+	IDPartidos         int64     `json:"id_partidos"`
+	FechaEncuentro     time.Time `json:"fecha_encuentro"`
+	LigaName           string    `json:"liga_name"`
+	CampeonatoName     string    `json:"campeonato_name"`
+	ELocalName         string    `json:"e_local_name"`
+	EVisitName         string    `json:"e_visit_name"`
+	ResultadoLocal     int64     `json:"resultado_local"`
+	ResultadoVisitante int64     `json:"resultado_visitante"`
+	Suspendido         bool      `json:"suspendido"`
+	Iniciado           bool      `json:"iniciado"`
+	Finalizado         bool      `json:"finalizado"`
+	Motivo             string    `json:"motivo"`
+}
 
-type PartidosFromDate struct {	
-	IDPartidos         int64          `json:"id_partidos"`
-	FechaEncuentro     time.Time      `json:"fecha_encuentro"`	
-	LigaName           string         `json:"liga_name"`
-	CampeonatoName     string 		  `json:"campeonato_name"`
-	ELocalName         string         `json:"e_local_name"`
-	EVisitName         string         `json:"e_visit_name"`
-	ResultadoLocal     int64 		  `json:"resultado_local"`
-	ResultadoVisitante int64  		  `json:"resultado_visitante"`
-	Suspendido         string 		  `json:"suspendido"`
+type PartidoResult struct {
+	IDPartidos                int64  `json:"id_partidos"`
+	ResultadoLocal            int64  `json:"resultado_local"`
+	SancionAmarillasLocal     string `json:"sancion_amarillos_local"`
+	SancionRojasLocal         string `json:"sancion_rojos_local"`
+	ResultadoVisitante        int64  `json:"resultado_visitante"`
+	SancionAmarillasVisitante string `json:"sancion_amarillos_visitantes"`
+	SancionRojasVisitante     string `json:"sancion_rojos_visitantes"`
+	Iniciado                  bool   `json:"iniciado"`
+	Finalizado                bool   `json:"finalizado"`
+	Suspendido                bool   `json:"suspendido"`
+	Motivo                    string `json:"motivo"`
 }
 
 // TableName sets the insert table name for this struct type

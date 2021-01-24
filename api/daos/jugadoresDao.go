@@ -46,7 +46,7 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 
 	isDelete, _ := ed.Delete(e.IDPersona, e.IDEquipo)
 	if isDelete == true {
-		_, error := db.Exec("insert into jugadores (id_persona, id_equipo) values(?,?)", e.IDPersona, e.IDEquipo)
+		_, error := db.Exec("insert into jugadores (id_persona, id_equipo, nro_camiseta) values(?,?, ?)", e.IDPersona, e.IDEquipo, e.NroCamiseta)
 
 		if error != nil {
 			log.Println(error)

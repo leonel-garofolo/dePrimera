@@ -95,9 +95,8 @@ func (ed *PersonasDaoImpl) Save(e *gorms.PersonasGorm) int64 {
 		}
 	} else {
 		res, error := db.Exec("insert into personas"+
-			" (id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc) "+
+			" (nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc) "+
 			" values(?,?,?,?,?,?,?,?,?)",
-			e.IDPersona,
 			e.Nombre,
 			e.Apellido,
 			e.Domicilio,
@@ -108,13 +107,17 @@ func (ed *PersonasDaoImpl) Save(e *gorms.PersonasGorm) int64 {
 			e.IDTipoDoc,
 			e.NroDoc)
 
-		IDPersona, error := res.LastInsertId()
-
 		if error != nil {
 			log.Println(error)
 			panic(error)
+		} else {
+			IDPersona, _ := res.LastInsertId()
+			if error != nil {
+				log.Println(error)
+				panic(error)
+			}
+			e.IDPersona = IDPersona
 		}
-		e.IDPersona = IDPersona
 	}
 	return e.IDPersona
 }

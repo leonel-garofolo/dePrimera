@@ -21,6 +21,7 @@ func RouterPartidos(e *echo.Echo) {
 	e.GET("/api/partidos", GetPartidos)
 	e.GET("/api/partidos/date/:date", GetPartidosFromDate)
 	e.GET("/api/partidos/equipo/:id_equipo", GetPartidosFromEquipo)
+	e.POST("/api/partidos/result", SaveResult)
 	e.GET("/api/partidos/:id", GetPartido)
 	e.POST("/api/partidos", SavePartido)
 	e.DELETE("/api/partidos/:id", DeletePartido)
@@ -81,6 +82,27 @@ func SavePartido(c echo.Context) error {
 	id := daos.GetPartidosDao().Save(partidosGorm)
 
 	log.Println(id)
+	return c.String(http.StatusOK, "insertado")
+}
+
+func SaveResult(c echo.Context) error {
+	partidos := &models.PartidoResult{}
+	c.Bind(partidos)
+
+	partidosGorm := &gorms.PartidoResultGorm{}
+	copier.Copy(&partidosGorm, &partidos)
+
+	daos := daos.NewDePrimeraDaos()
+	id := daos.GetPartidosDao().SaveResult(partidosGorm)
+
+	log.Println(id)
+	if id > 0 {
+		updated, error := daos.GetSancionesDao().SavePartido(partidosGorm.IDPartidos, partidosGorm.SancionAmarillasLocal, partidosGorm.SancionRojasLocal, partidosGorm.SancionAmarillasVisitante, partidosGorm.SancionRojasVisitante)
+		if error != nil && updated {
+			daos.GetSancionesDao().SavePartidoFinalizado(partidosGorm.IDPartidos, partidosGorm.Finalizado)
+		}
+
+	}
 	return c.String(http.StatusOK, "insertado")
 }
 

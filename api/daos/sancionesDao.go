@@ -2,7 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
@@ -48,10 +51,11 @@ func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []gorms
 		" 	(case when sj.id_sancion = 2 then count(sj.id_sancion) else 0 end ) as c_amarillas, "+
 		" 	(case when sj.id_sancion = 3 then count(sj.id_sancion) else 0 end ) as c_azules "+
 		" from sanciones_jugadores sj "+
+		" inner join partidos partido on partido.id_partidos = sj.id_partidos "+
 		" inner join jugadores j on j.id_jugadores = sj.id_jugador "+
 		" inner join equipos e on e.id_equipo = j.id_equipo "+
 		" inner join personas p on p.id_persona = j.id_persona "+
-		" where sj.id_campeonato = ? "+
+		" where partido.id_campeonato = ? "+
 		" group by p.nombre, p.apellido, e.nombre, sj.id_sancion "+
 		" order by p.apellido asc, p.nombre asc", idCampeonato)
 	if err != nil {
@@ -136,4 +140,93 @@ func (ed *SancionesDaoImpl) Delete(id int) (bool, error) {
 		return false, error
 	}
 	return true, nil
+}
+
+func (ed *SancionesDaoImpl) SavePartido(idPartido int64, amarillasLocal string, rojasLocal string, amarillasVisitante string, rojasVisitante string) (bool, error) {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	_, error := db.Exec("delete from sanciones_jugadores where id_partidos = ?", idPartido)
+	if error != nil {
+		log.Println(error)
+		return false, error
+	}
+
+	rows, err := db.Query("select  "+
+		"	jlocal.id_jugadores as jug_local, jlocal.nro_camiseta as nro_camiseta_local, "+
+		"	jvisit.id_jugadores as jug_visit, jvisit.nro_camiseta as nro_camiseta_visit  "+
+		"from partidos p "+
+		"left join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local "+
+		"left join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante "+
+		"where id_partidos = ?", idPartido)
+	if err != nil {
+		log.Fatalln("Failed to query")
+	}
+
+	var idJugLocal sql.NullInt64
+	var nroCamLocal sql.NullInt64
+	var idJugVisit sql.NullInt64
+	var nroCamVisit sql.NullInt64
+	for rows.Next() {
+		error := rows.Scan(&idJugLocal, &nroCamLocal, &idJugVisit, &nroCamVisit)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		//Amarillas local
+		saveSancionForTeam(db, idPartido, idJugLocal, nroCamLocal, amarillasLocal, 2)
+
+		//Rojas Local
+		saveSancionForTeam(db, idPartido, idJugLocal, nroCamLocal, rojasLocal, 1)
+
+		//Amarillas Visitante
+		saveSancionForTeam(db, idPartido, idJugVisit, nroCamVisit, amarillasVisitante, 2)
+
+		//Rojas Visitante
+		saveSancionForTeam(db, idPartido, idJugVisit, nroCamVisit, rojasVisitante, 1)
+	}
+
+	return true, nil
+}
+
+func (ed *SancionesDaoImpl) SavePartidoFinalizado(idPartido int64, finalizado bool) (bool, error) {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	if finalizado {
+		_, error := db.Exec("update partidos set finalizado = 1 where id_partidos = ?", idPartido)
+		if error != nil {
+			log.Println(error)
+			return false, error
+		}
+	}
+
+	return true, nil
+}
+
+func saveSancionForTeam(db *sql.DB, idPartido int64, idJugador sql.NullInt64, nroCamDb sql.NullInt64, card string, idSancion int64) {
+	if card == "" && idJugador.Valid && nroCamDb.Valid {
+		return
+	}
+
+	list := strings.Split(card, " ")
+	for i, s := range list {
+		fmt.Println(i, s)
+		nroCam, _ := strconv.Atoi(s)
+		if nroCam == int(nroCamDb.Int64) {
+			_, error := db.Exec("insert into sanciones_jugadores(id_sancion, id_jugador, id_partidos) values(?,?,?) ", idSancion, idJugador, idPartido)
+			if error != nil {
+				log.Println(error)
+				continue
+			}
+		}
+	}
 }

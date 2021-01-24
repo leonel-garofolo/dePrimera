@@ -30,7 +30,7 @@ select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-    p.suspendido
+    p.suspendido, p.iniciado, p.finalizado
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
@@ -45,7 +45,7 @@ select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-    p.suspendido
+    p.suspendido, p.iniciado, p.finalizado
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
@@ -60,7 +60,7 @@ select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-    p.suspendido
+   p.suspendido, p.iniciado, p.finalizado
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
@@ -87,10 +87,11 @@ select p.nombre as p_nombre, p.apellido as p_apellido, e.nombre as e_nombre,
     (case when sj.id_sancion = 2 then count(sj.id_sancion) else 0 end ) as c_amarillas,
     (case when sj.id_sancion = 3 then count(sj.id_sancion) else 0 end ) as c_azules
 from sanciones_jugadores sj
+inner join partidos partido on partido.id_partidos = sj.id_partidos
 inner join jugadores j on j.id_jugadores = sj.id_jugador
 inner join equipos e on e.id_equipo = j.id_equipo
 inner join personas p on p.id_persona = j.id_persona
-where sj.id_campeonato = 1
+where partido.id_campeonato = 1
 group by p.nombre, p.apellido, e.nombre, sj.id_sancion
 order by p.apellido asc, p.nombre asc ;
 
@@ -200,4 +201,27 @@ inner join personas p on j.id_persona = p.id_persona
 where p.apellido is not null and p.nombre is not null and j.id_equipo = 2
 order by p.apellido asc, p.nombre asc;
 
-select * from jugadores;
+-- get jugadores of the equipos local and visit
+select p.id_partidos, 
+	jlocal.id_jugadores as jug_local, jlocal.nro_camiseta as nro_camiseta_local, 
+    jvisit.id_jugadores as jug_visit, jvisit.nro_camiseta as nro_camiseta_visit
+from partidos p
+inner join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local
+inner join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante
+where id_partidos = 964;
+
+
+
+
+
+select c.id_liga,  c.id_campeonato, p.id_partidos, p.id_equipo_local, p.resultado_local, p.id_equipo_visitante, p.resultado_visitante
+from partidos p
+inner join campeonatos c on c.id_campeonato = p.id_campeonato
+where p.id_partidos = 965 ;
+
+select id_partidos, resultado_local, resultado_visitante, finalizado 
+from partidos 
+where id_partidos = 966
+order by id_partidos asc;
+
+update partidos set finalizado = 1 where id_partidos = 966;
