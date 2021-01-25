@@ -26,9 +26,11 @@ type PartidosGorm struct {
 type PartidoResultGorm struct {
 	IDPartidos                int64  `gorm:"column:id_partidos"`
 	ResultadoLocal            int64  `gorm:"column:resultado_local"`
+	GoleadorLocal             int64  `gorm:"column:goleador_local"`
 	SancionAmarillasLocal     string `gorm:"column:amarillas_local"`
 	SancionRojasLocal         string `gorm:"column:rojas_local"`
 	ResultadoVisitante        int64  `gorm:"column:resultado_visitante"`
+	GoleadorVisitante         int64  `gorm:"column:goleador_visitante"`
 	SancionAmarillasVisitante string `gorm:"column:amarillas_visitante"`
 	SancionRojasVisitante     string `gorm:"column:rojas_visitante"`
 	Iniciado                  bool   `gorm:"column:iniciado"`

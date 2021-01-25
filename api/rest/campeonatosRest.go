@@ -25,6 +25,7 @@ func RouterCampeonatos(e *echo.Echo) {
 	e.POST("/api/campeonatos", SaveCampeonato)
 	e.DELETE("/api/campeonatos/:id", DeleteCampeonato)
 	e.GET("/api/campeonatos/fixture/:id_campeonato", GetFixture)
+	e.GET("/api/campeonatos/goleadores/:id_campeonato", GetGoleadores)
 	e.GET("/api/campeonatos/user/:id_user/:id_grupo", GetCampeonatosForUserID)
 	e.GET("/api/campeonatos/table/:id_campeonato", GetTablePosition)
 	e.GET("/api/campeonatos/sanciones/:id_campeonato", GetJugadoresSanciones)
@@ -64,6 +65,12 @@ func SaveCampeonato(c echo.Context) error {
 	id := daos.GetCampeonatosDao().Save(campeonatosGorm)
 
 	log.Println(id)
+	if id > 0 {
+		if campeonatos.GenFixture && !campeonatos.GenFixtureFinish {
+			error := generateFixture(c, campeonatos.IDLiga, int(campeonatos.IDCampeonato))
+			fmt.Println(error)
+		}
+	}
 	return c.String(http.StatusOK, "insertado")
 }
 
@@ -175,6 +182,10 @@ func GenerateFixture(c echo.Context) error {
 	}
 	fmt.Println("id_liga: " + c.Param("id_liga") + " | id_campeonato: " + c.Param("id_campeonato"))
 
+	return generateFixture(c, idLiga, idTorneo)
+}
+
+func generateFixture(c echo.Context, idLiga int, idTorneo int) error {
 	daos := daos.NewDePrimeraDaos()
 	equiposGorm := daos.GetEquiposDao().GetAllFromCampeonato(idLiga, idTorneo)
 
@@ -184,6 +195,19 @@ func GenerateFixture(c echo.Context) error {
 	daos.GetEquiposDao().UpdateNro(idLiga, idTorneo)
 
 	daos.GetPartidosDao().SaveFixture(idLiga, idTorneo, time.Now(), fixture)
+	daos.GetPartidosDao().FinishFixtureGen(idLiga, idTorneo)
 
 	return c.JSON(http.StatusOK, fixture)
+}
+
+func GetGoleadores(c echo.Context) error {
+	idTorneo, err := strconv.Atoi(c.Param("id_campeonato"))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	daos := daos.NewDePrimeraDaos()
+	goleadores := daos.GetCampeonatosDao().GetGoleadores(idTorneo)
+
+	return c.JSON(http.StatusOK, goleadores)
 }

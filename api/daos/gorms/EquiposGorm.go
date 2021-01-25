@@ -1,11 +1,12 @@
 package gorms
 
 type EquiposGorm struct {
-	Foto       []byte `gorm:"column:foto"`
-	Habilitado bool   `gorm:"column:habilitado"`
-	IDEquipo   int64  `gorm:"column:id_equipo;primary_key"`
-	Nombre     string `gorm:"column:nombre"`
-	NroEquipo  int64  `gorm:"column:nro_equipo"`
+	Foto         []byte `gorm:"column:foto"`
+	Habilitado   bool   `gorm:"column:habilitado"`
+	IDEquipo     int64  `gorm:"column:id_equipo;primary_key"`
+	Nombre       string `gorm:"column:nombre"`
+	NroEquipo    int64  `gorm:"column:nro_equipo"`
+	IDCampeonato int64  `gorm:"column:id_campeonato"`
 }
 
 type EquiposTablePosGorm struct {

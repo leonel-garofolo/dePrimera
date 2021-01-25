@@ -456,6 +456,21 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 	}
 }
 
+func (ed *PartidosDaoImpl) FinishFixtureGen(idLiga int, idCampeonato int) bool {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	_, errorDelete := db.Exec("update campeonato set gen_fixture =1 where id_liga = ? and id_campeonato = ?", idLiga, idCampeonato)
+	if errorDelete != nil {
+		fmt.Println(errorDelete)
+		return false
+	}
+	return true
+}
+
 func (ed *PartidosDaoImpl) FinalizarPartido(idLiga int64, idCampeonato int64, idEquipoLocal int64, idEquipoVisit int64, statusResult string) {
 	db, err := application.GetDB()
 	defer db.Close()

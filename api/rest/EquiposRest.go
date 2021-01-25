@@ -80,6 +80,9 @@ func SaveEquipos(c echo.Context) error {
 
 	daos := daos.NewDePrimeraDaos()
 	id := daos.GetEquiposDao().Save(equiposGorm)
+	if id > 0 {
+		daos.GetEquiposDao().SaveEquiposCampeonatos(equiposGorm.IDCampeonato, id)
+	}
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

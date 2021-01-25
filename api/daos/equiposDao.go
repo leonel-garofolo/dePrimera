@@ -36,9 +36,16 @@ func (ed *EquiposDaoImpl) GetAll() []gorms.EquiposGorm {
 				panic(error)
 			}
 		}
-
+		row := db.QueryRow("select id_campeonato from campeonatos_equipos where id_equipo=? limit 1", &equipo.IDEquipo)
+		errorCamp := row.Scan(&equipo.IDCampeonato)
+		if errorCamp != nil {
+			if errorCamp != sql.ErrNoRows {
+				log.Println(errorCamp)
+			}
+		}
 		equipos = append(equipos, equipo)
 	}
+
 	return equipos
 }
 
@@ -241,7 +248,7 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into equipos"+
 			" (id_equipo, nombre, foto) "+
-			" values(?,?,?,?)", e.IDEquipo, e.Nombre, e.Foto)
+			" values(?,?,?)", e.IDEquipo, e.Nombre, e.Foto)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -249,6 +256,28 @@ func (ed *EquiposDaoImpl) Save(e *gorms.EquiposGorm) int64 {
 		e.IDEquipo, _ = res.LastInsertId()
 	}
 	return e.IDEquipo
+}
+
+func (ed *EquiposDaoImpl) SaveEquiposCampeonatos(idCampeonato int64, idEquipo int64) bool {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	_, error := db.Exec("insert IGNORE into campeonatos_equipos "+
+		"select c.id_liga, c.id_campeonato, ?, (select count(*) + 1 from campeonatos_equipos aux where aux.id_campeonato = ?) as nro_equipo, "+
+		"	0 as p_gan, "+
+		"	0 as p_emp, "+
+		"	0 as p_per, "+
+		"	0 as puntos "+
+		"from campeonatos c "+
+		"where c.id_campeonato = ?", idEquipo, idCampeonato, idCampeonato)
+	if error != nil {
+		log.Println(error)
+		return false
+	}
+	return true
 }
 
 // Delete equipos

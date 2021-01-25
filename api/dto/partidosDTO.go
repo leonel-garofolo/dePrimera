@@ -40,9 +40,11 @@ type PartidosFromDate struct {
 type PartidoResult struct {
 	IDPartidos                int64  `json:"id_partidos"`
 	ResultadoLocal            int64  `json:"resultado_local"`
+	GoleadoresLocal           string `json:"goleadores_local"`
 	SancionAmarillasLocal     string `json:"sancion_amarillos_local"`
 	SancionRojasLocal         string `json:"sancion_rojos_local"`
 	ResultadoVisitante        int64  `json:"resultado_visitante"`
+	GoleadoresVisitante       string `json:"goleadores_visitante"`
 	SancionAmarillasVisitante string `json:"sancion_amarillos_visitantes"`
 	SancionRojasVisitante     string `json:"sancion_rojos_visitantes"`
 	Iniciado                  bool   `json:"iniciado"`

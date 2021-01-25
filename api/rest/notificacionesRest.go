@@ -1,15 +1,16 @@
 package services
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
-	"github.com/jinzhu/copier"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jinzhu/copier"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,8 +24,12 @@ func RouterNotificaciones(e *echo.Echo) {
 
 func GetNotificaciones(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitros := daos.GetNotificacionesDao().GetAll()
-	return c.JSON(http.StatusOK, arbitros)
+	notificacionesGorm := daos.GetNotificacionesDao().GetAll()
+
+	notificaciones := []models.Notificaciones{}
+	copier.Copy(&notificaciones, &notificacionesGorm)
+
+	return c.JSON(http.StatusOK, notificaciones)
 }
 
 func SaveNotificacion(c echo.Context) error {

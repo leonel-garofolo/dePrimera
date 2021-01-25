@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 type NotificacionesDaoImpl struct{}
@@ -24,7 +25,7 @@ func (ed *NotificacionesDaoImpl) GetAll() []gorms.NotificacionesGorm {
 	notificaciones := []gorms.NotificacionesGorm{}
 	for rows.Next() {
 		notificacion := gorms.NotificacionesGorm{}
-		error := rows.Scan(&notificacion.IDNotificacion, &notificacion.Titulo, &notificacion.Texto, &notificacion.IDGrupo)
+		error := rows.Scan(&notificacion.IDNotificacion, &notificacion.IDGrupo, &notificacion.Titulo, &notificacion.Texto)
 		if error != nil {
 			if error != sql.ErrNoRows {
 				log.Println(error)

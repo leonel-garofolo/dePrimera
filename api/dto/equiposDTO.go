@@ -1,11 +1,12 @@
 package models
 
 type Equipos struct {
-	Foto       []byte `json:"foto"`
-	Habilitado bool   `json:"habilitado" copier:"nopanic"`
-	IDEquipo   int64  `json:"id_equipo"`
-	Nombre     string `json:"nombre"`
-	NroEquipo  int64  `json:"nro_equipo"`
+	Foto         []byte `json:"foto"`
+	Habilitado   bool   `json:"habilitado" copier:"nopanic"`
+	IDEquipo     int64  `json:"id_equipo"`
+	Nombre       string `json:"nombre"`
+	NroEquipo    int64  `json:"nro_equipo"`
+	IDCampeonato int64  `json:"id_campeonato"`
 }
 
 type EquiposTablePos struct {

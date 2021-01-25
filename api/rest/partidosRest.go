@@ -98,8 +98,22 @@ func SaveResult(c echo.Context) error {
 	log.Println(id)
 	if id > 0 {
 		updated, error := daos.GetSancionesDao().SavePartido(partidosGorm.IDPartidos, partidosGorm.SancionAmarillasLocal, partidosGorm.SancionRojasLocal, partidosGorm.SancionAmarillasVisitante, partidosGorm.SancionRojasVisitante)
-		if error != nil && updated {
-			daos.GetSancionesDao().SavePartidoFinalizado(partidosGorm.IDPartidos, partidosGorm.Finalizado)
+		if error == nil && updated {
+			status, error := daos.GetSancionesDao().SavePartidoFinalizado(partidosGorm.IDPartidos, partidosGorm.Finalizado)
+			fmt.Println("finalizado")
+			fmt.Println(status)
+			if error != nil {
+				fmt.Println(error)
+			}
+
+			status, error = daos.GetCampeonatosDao().SaveCampeonatosGoleadores(partidosGorm.IDPartidos, partidos.GoleadoresLocal, partidos.GoleadoresVisitante)
+			fmt.Println("goleadores")
+			fmt.Println(status)
+			if error != nil {
+				fmt.Println(error)
+			}
+		} else {
+			fmt.Println(error)
 		}
 
 	}
