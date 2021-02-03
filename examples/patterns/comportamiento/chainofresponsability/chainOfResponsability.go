@@ -1,4 +1,4 @@
-package main
+package chainofresponsability
 
 // Interface is ...
 type Receptor interface {
