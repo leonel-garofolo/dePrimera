@@ -38,5 +38,5 @@ func main() {
 	})
 
 	router.NewRouter(e)
-	e.Logger.Fatal(e.Start(":8000"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
