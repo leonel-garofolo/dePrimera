@@ -13,12 +13,12 @@ import (
 )
 
 func main() {
-	viper.SetConfigFile("enviroment.yaml")
+	viper.SetConfigFile("./enviroment.yaml")
 	if os.Args != nil && len(os.Args) > 1 {
 		env := os.Args[1]
 		test := "test"
 		if env == test {
-			viper.SetConfigFile("enviroment-local.yaml")
+			viper.SetConfigFile("./enviroment-local.yaml")
 		}
 
 	}
