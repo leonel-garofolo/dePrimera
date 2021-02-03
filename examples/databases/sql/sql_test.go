@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func createConn() sql.DB {
+func createConn() *sql.DB {
 	user := "root"
 	pass := "root"
 	database := "de_primera_app"

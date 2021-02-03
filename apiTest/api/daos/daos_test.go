@@ -1,9 +1,10 @@
 package daos
 
 import (
-	"deprimera/api/daos"
 	"log"
 	"testing"
+
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
 )
 
 func Test(t *testing.T) {

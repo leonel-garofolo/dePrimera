@@ -1,11 +1,11 @@
 package gorm
 
 import (
-	"deprimera/api/application"
 	"log"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 )
 
 func TestMensajeAltaPrioridad(t *testing.T) {
@@ -18,7 +18,7 @@ func TestMensajeAltaPrioridad(t *testing.T) {
 	//dbSelect(db)
 	//dbSelectOne(db)
 	//dbInsert(db)
-	dbInsertRecord(db)
+	//dbInsertRecord(db)
 	//dbUpdate(db)
 	//dbDelete(db)
 

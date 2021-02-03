@@ -2,12 +2,12 @@ package gorm
 
 import (
 	"database/sql"
-	"deprimera/api/models"
 	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 func dbSelect(db *gorm.DB) {
@@ -41,7 +41,6 @@ func dbSelectOne(db *gorm.DB) {
 
 func dbInsert(db *gorm.DB) { //verificar como atrapar el error del insert
 	equipo := models.Equipos{
-		IDLiga: 2,
 		Nombre: "test",
 	}
 
@@ -50,7 +49,6 @@ func dbInsert(db *gorm.DB) { //verificar como atrapar el error del insert
 
 func dbInsertRecord(db *gorm.DB) {
 	equipo := models.Equipos{
-		IDLiga:     2,
 		Nombre:     "test 2 ",
 		Habilitado: true,
 	}
@@ -62,7 +60,6 @@ func dbInsertRecord(db *gorm.DB) {
 func dbUpdate(db *gorm.DB) {
 	equipo := models.Equipos{
 		IDEquipo: 5,
-		IDLiga:   2,
 		Nombre:   "test 2",
 	}
 
@@ -73,11 +70,13 @@ func dbDelete(db *gorm.DB) {
 	idEquipo := 2
 	equipo := models.Equipos{}
 	db.Where("id_equipo = ?", idEquipo).First(&equipo)
-	if equipo.IDLiga > 0 {
-		db.Where("id_equipo=?", idEquipo).Delete(&models.Equipos{})
-		fmt.Println("delete ID is:", idEquipo)
-	} else {
-		fmt.Println("no exist ID:", idEquipo)
-	}
+	/*
+		if equipo.IDLiga > 0 {
+			db.Where("id_equipo=?", idEquipo).Delete(&models.Equipos{})
+			fmt.Println("delete ID is:", idEquipo)
+		} else {
+			fmt.Println("no exist ID:", idEquipo)
+		}
+	*/
 
 }
