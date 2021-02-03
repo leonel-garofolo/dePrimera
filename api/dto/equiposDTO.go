@@ -5,8 +5,8 @@ type Equipos struct {
 	Habilitado   bool   `json:"habilitado" copier:"nopanic"`
 	IDEquipo     int64  `json:"id_equipo"`
 	Nombre       string `json:"nombre"`
-	NroEquipo    int64  `json:"nro_equipo"`
-	IDCampeonato int64  `json:"id_campeonato"`
+	NroEquipo    int64  `json:"nro_equipo" copier:"nopanic"`
+	IDCampeonato int64  `json:"id_campeonato" copier:"nopanic"`
 }
 
 type EquiposTablePos struct {

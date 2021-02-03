@@ -18,7 +18,7 @@ func (ed *SancionesEquiposDaoImpl) Save(e *gorms.SancionesEquiposGorm) int64 {
 
 	isDelete := ed.Delete(e.IDEquipo, e.IDSanciones, e.IDCampeonato)
 	if isDelete == true {
-		_, error := db.Exec("insert into sanciones_equipos (id_equipos, id_sanciones, id_campeonato) values(?,?, ?)",
+		_, error := db.Exec("insert into sanciones_equipos (id_equipos, id_sanciones, id_campeonato) values($1,$2, $3)",
 			e.IDEquipo, e.IDSanciones, e.IDCampeonato)
 
 		if error != nil {
@@ -35,7 +35,7 @@ func (ed *SancionesEquiposDaoImpl) Delete(IDEquipo int64, IDSanciones int64, IDC
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from sanciones_equipos where id_equipos = ? and id_sanciones = ?",
+	_, error := db.Exec("delete from sanciones_equipos where id_equipos = $1 and id_sanciones = $2",
 		IDEquipo, IDSanciones, IDCampeonato)
 	if error != nil {
 		panic(error)

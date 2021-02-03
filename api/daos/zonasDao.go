@@ -19,7 +19,9 @@ func (ed *ZonasDaoImpl) GetAll() []gorms.ZonasGorm {
 
 	rows, err := db.Query("select * from zonas")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var zonas []gorms.ZonasGorm
@@ -44,7 +46,7 @@ func (ed *ZonasDaoImpl) Get(id int) gorms.ZonasGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from zonas where id_zona = ?", id)
+	row := db.QueryRow("select * from zonas where id_zona = $1", id)
 	zona := gorms.ZonasGorm{}
 	error := row.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)
 	if error != nil {
@@ -65,8 +67,8 @@ func (ed *ZonasDaoImpl) Save(e *gorms.ZonasGorm) int64 {
 
 	if e.IDZona > 0 {
 		_, error := db.Exec("update zonas"+
-			" set id_campeonato=?, nombre=?"+
-			" where id_zona = ?", e.IDCampeonato, e.Nombre, e.IDZona)
+			" set id_campeonato=$1, nombre=$2"+
+			" where id_zona = $3", e.IDCampeonato, e.Nombre, e.IDZona)
 
 		if error != nil {
 			log.Println(error)
@@ -75,7 +77,7 @@ func (ed *ZonasDaoImpl) Save(e *gorms.ZonasGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into zonas"+
 			" (id_zona, id_campeonato, nombre) "+
-			" values(?,?,?)", e.IDZona, e.IDCampeonato, e.Nombre)
+			" values($1,$2,$3)", e.IDZona, e.IDCampeonato, e.Nombre)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -92,7 +94,7 @@ func (ed *ZonasDaoImpl) Delete(id int) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from zonas where id_zona = ?", id)
+	_, error := db.Exec("delete from zonas where id_zona = $1", id)
 	if error != nil {
 		log.Println(error)
 		return false, error

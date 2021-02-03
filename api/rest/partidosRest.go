@@ -52,9 +52,7 @@ func GetPartidosFromEquipo(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	partidosFromDateGorm := daos.GetPartidosDao().GetAllFromEquipo(idEquipo)
-	partidosFromDate := []models.PartidosFromDate{}
-	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
+	partidosFromDate := daos.GetPartidosDao().GetAllFromEquipo(idEquipo)
 	return c.JSON(http.StatusOK, partidosFromDate)
 }
 

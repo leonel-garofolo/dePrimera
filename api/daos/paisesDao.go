@@ -5,12 +5,12 @@ import (
 	"log"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 type PaisesDaoImpl struct{}
 
-func (ed *PaisesDaoImpl) GetAll() []gorms.PaisesGorm {
+func (ed *PaisesDaoImpl) GetAll() []models.Paises {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -19,12 +19,14 @@ func (ed *PaisesDaoImpl) GetAll() []gorms.PaisesGorm {
 
 	rows, err := db.Query("select * from app_paises")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
-	var paises []gorms.PaisesGorm
+	var paises []models.Paises
 	for rows.Next() {
-		pais := gorms.PaisesGorm{}
+		pais := models.Paises{}
 		error := rows.Scan(&pais.IDPais, &pais.Nombre)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -37,15 +39,15 @@ func (ed *PaisesDaoImpl) GetAll() []gorms.PaisesGorm {
 	return paises
 }
 
-func (ed *PaisesDaoImpl) Get(id int) gorms.PaisesGorm {
+func (ed *PaisesDaoImpl) Get(id int) models.Paises {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from app_paises where id_pais = ?", id)
-	pais := gorms.PaisesGorm{}
+	row := db.QueryRow("select * from app_paises where id_pais = $1", id)
+	pais := models.Paises{}
 	error := row.Scan(&pais.IDPais, &pais.Nombre)
 	if error != nil {
 		if error != sql.ErrNoRows {

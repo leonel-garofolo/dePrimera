@@ -19,7 +19,9 @@ func (ed *NotificacionesDaoImpl) GetAll() []gorms.NotificacionesGorm {
 
 	rows, err := db.Query("select * from notificaciones")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	notificaciones := []gorms.NotificacionesGorm{}
@@ -46,8 +48,8 @@ func (ed *NotificacionesDaoImpl) Save(e *gorms.NotificacionesGorm) int64 {
 
 	if e.IDNotificacion > 0 {
 		_, error := db.Exec("update notificaciones"+
-			" set titulo=?, texto=?, id_grupo=?"+
-			" where id_notificacion = ?", e.Titulo, e.Texto, e.IDGrupo, e.IDNotificacion)
+			" set titulo=$1, texto=$2, id_grupo=$3"+
+			" where id_notificacion = $4", e.Titulo, e.Texto, e.IDGrupo, e.IDNotificacion)
 
 		if error != nil {
 			log.Println(error)
@@ -56,7 +58,7 @@ func (ed *NotificacionesDaoImpl) Save(e *gorms.NotificacionesGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into notificaciones"+
 			" (id_notificacion, titulo, texto, id_grupo) "+
-			" values(?,?,?,?)", e.IDNotificacion, e.Titulo, e.Texto, e.IDGrupo)
+			" values($1,$2,$3,$4)", e.IDNotificacion, e.Titulo, e.Texto, e.IDGrupo)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -73,7 +75,7 @@ func (ed *NotificacionesDaoImpl) Delete(IDNotificacion int64) bool {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from notificaciones where id_notificacion = ?", IDNotificacion)
+	_, error := db.Exec("delete from notificaciones where id_notificacion = $1", IDNotificacion)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)

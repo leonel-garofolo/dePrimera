@@ -22,7 +22,7 @@ func dbSelect(db *sql.DB) {
 func dbSelectOne(db *sql.DB) {
 	//Get all the tables from Database
 	id := 6
-	row := db.QueryRow("select nombre from ligas where id_liga = ?", id)
+	row := db.QueryRow("select nombre from ligas where id_liga = %1", id)
 	var nombre string
 	err := row.Scan(&nombre)
 	if err != nil {

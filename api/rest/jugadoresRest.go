@@ -8,9 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto/response"
 
@@ -26,9 +24,7 @@ func RouterJugadores(e *echo.Echo) {
 
 func GetJugadores(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	jugadoresGorm := daos.GetJugadoresDao().GetAll()
-	jugadores := []models.Jugadores{}
-	copier.Copy(&jugadores, &jugadoresGorm)
+	jugadores := daos.GetJugadoresDao().GetAll()
 	return c.JSON(http.StatusOK, jugadores)
 }
 
@@ -36,11 +32,8 @@ func SaveJugador(c echo.Context) error {
 	jugadores := &models.Jugadores{}
 	c.Bind(jugadores)
 
-	jugadoresGorm := &gorms.JugadoresGorm{}
-	copier.Copy(&jugadoresGorm, &jugadores)
-
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetJugadoresDao().Save(jugadoresGorm)
+	id := daos.GetJugadoresDao().Save(jugadores)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

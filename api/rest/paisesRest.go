@@ -19,10 +19,8 @@ func RouterPaises(e *echo.Echo) {
 
 func GetPaises(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	PaisesGorm := daos.GetPaisesDao().GetAll()
-	Paises := []models.Paises{}
-	copier.Copy(&Paises, &PaisesGorm)
-	return c.JSON(http.StatusOK, Paises)
+	paises := daos.GetPaisesDao().GetAll()
+	return c.JSON(http.StatusOK, paises)
 }
 
 func GetPais(c echo.Context) error {

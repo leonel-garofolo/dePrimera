@@ -121,9 +121,7 @@ func GetFixture(c echo.Context) error {
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
-	partidosFromDateGorm := daos.GetPartidosDao().GetAllFromCampeonato(idTorneo)
-	partidosFromDate := []models.PartidosFromDate{}
-	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
+	partidosFromDate := daos.GetPartidosDao().GetAllFromCampeonato(idTorneo)
 	return c.JSON(http.StatusOK, partidosFromDate)
 }
 
@@ -134,9 +132,7 @@ func GetCampeonatosForUserID(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	campeonatosGorm := daos.GetCampeonatosDao().GetCampeonatoForUser(c.Param("id_user"), idGrupo)
-	campeonatos := []models.Campeonatos{}
-	copier.Copy(&campeonatos, &campeonatosGorm)
+	campeonatos := daos.GetCampeonatosDao().GetCampeonatoForUser(c.Param("id_user"), idGrupo)
 	return c.JSON(http.StatusOK, campeonatos)
 }
 
@@ -149,9 +145,7 @@ func GetTablePosition(c echo.Context) error {
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
-	equiposTablePosGorm := daos.GetPartidosDao().GetTablePosition(idTorneo)
-	equiposTablePos := []models.EquiposTablePos{}
-	copier.Copy(&equiposTablePos, &equiposTablePosGorm)
+	equiposTablePos := daos.GetPartidosDao().GetTablePosition(idTorneo)
 	return c.JSON(http.StatusOK, equiposTablePos)
 }
 
@@ -164,9 +158,7 @@ func GetJugadoresSanciones(c echo.Context) error {
 	fmt.Println(idTorneo)
 
 	daos := daos.NewDePrimeraDaos()
-	sancionesJugadoresFromCampeonatoGorm := daos.GetSancionesDao().GetSancionesFromCampeonato(idTorneo)
-	sancionesJugadoresFromCampeonato := []models.SancionesJugadoresFromCampeonato{}
-	copier.Copy(&sancionesJugadoresFromCampeonato, &sancionesJugadoresFromCampeonatoGorm)
+	sancionesJugadoresFromCampeonato := daos.GetSancionesDao().GetSancionesFromCampeonato(idTorneo)
 	return c.JSON(http.StatusOK, sancionesJugadoresFromCampeonato)
 }
 

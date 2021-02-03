@@ -5,12 +5,12 @@ import (
 	"log"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 type ProvinciasDaoImpl struct{}
 
-func (ed *ProvinciasDaoImpl) GetAll() []gorms.ProvinciasGorm {
+func (ed *ProvinciasDaoImpl) GetAll() []models.Provincias {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -19,12 +19,14 @@ func (ed *ProvinciasDaoImpl) GetAll() []gorms.ProvinciasGorm {
 
 	rows, err := db.Query("select * from app_provincias")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
-	var provincias []gorms.ProvinciasGorm
+	var provincias []models.Provincias
 	for rows.Next() {
-		provincia := gorms.ProvinciasGorm{}
+		provincia := models.Provincias{}
 		error := rows.Scan(&provincia.IDProvincia, &provincia.Nombre, &provincia.IDPais)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -37,15 +39,15 @@ func (ed *ProvinciasDaoImpl) GetAll() []gorms.ProvinciasGorm {
 	return provincias
 }
 
-func (ed *ProvinciasDaoImpl) Get(idPais int, idProvincia int) gorms.ProvinciasGorm {
+func (ed *ProvinciasDaoImpl) Get(idPais int, idProvincia int) models.Provincias {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from app_provincias where id_pais = ? and id_provincia = ?", idPais, idProvincia)
-	pais := gorms.ProvinciasGorm{}
+	row := db.QueryRow("select * from app_provincias where id_pais = $1 and id_provincia = $2", idPais, idProvincia)
+	pais := models.Provincias{}
 	error := row.Scan(&pais.IDPais, &pais.Nombre)
 	if error != nil {
 		if error != sql.ErrNoRows {

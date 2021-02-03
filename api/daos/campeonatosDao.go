@@ -44,7 +44,7 @@ func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 	return campeonatos
 }
 
-func (ed *CampeonatosDaoImpl) GetCampeonatoForUser(idUser string, idGrupo int) []gorms.CampeonatosGorm {
+func (ed *CampeonatosDaoImpl) GetCampeonatoForUser(idUser string, idGrupo int) []models.Campeonatos {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -87,13 +87,14 @@ func (ed *CampeonatosDaoImpl) GetCampeonatoForUser(idUser string, idGrupo int) [
 	fmt.Println(query)
 	rows, err := db.Query(query)
 	if err != nil {
+		log.Println("query: " + query)
 		log.Println(err)
 		panic(err)
 	}
 
-	var campeonatos []gorms.CampeonatosGorm
+	var campeonatos []models.Campeonatos
 	for rows.Next() {
-		campeonato := gorms.CampeonatosGorm{}
+		campeonato := models.Campeonatos{}
 		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin, &campeonato.GenFixture, &campeonato.GenFixtureFinish)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -114,7 +115,7 @@ func (ed *CampeonatosDaoImpl) Get(id int) gorms.CampeonatosGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin, gen_fixture, get_fixture_finish from campeonatos where id_campeonato = ?", id)
+	row := db.QueryRow("select id_campeonato, id_liga, id_modelo, descripcion, fecha_inicio, fecha_fin, gen_fixture, get_fixture_finish from campeonatos where id_campeonato = $1", id)
 	campeonato := gorms.CampeonatosGorm{}
 	error := row.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin, &campeonato.GenFixture, &campeonato.GenFixtureFinish)
 	if error != nil {
@@ -144,7 +145,7 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	log.Println(fechaFin)
 	if e.IDCampeonato > 0 {
 
-		_, error := db.Exec("update campeonatos set descripcion=?, fecha_fin=?, fecha_inicio=?, id_liga=?, id_modelo=?, gen_fixture =? where id_campeonato = ?",
+		_, error := db.Exec("update campeonatos set descripcion=$1, fecha_fin=$2, fecha_inicio=$3, id_liga=$4, id_modelo=$5, gen_fixture =$6 where id_campeonato = $7",
 			e.Descripcion, fechaFin, fechaInicio, e.IDLiga, e.IDModelo, e.GenFixture, e.IDCampeonato)
 
 		if error != nil {
@@ -154,7 +155,7 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	} else {
 		res, error := db.Exec(
 			"insert into campeonatos (descripcion, fecha_fin, fecha_inicio, id_campeonato, id_liga, id_modelo) "+
-				" values(?,?,?,?,?,?)", e.Descripcion, fechaFin, fechaInicio, e.IDCampeonato, e.IDLiga, e.IDModelo)
+				" values($1,$2,$3,$4,$5,$6)", e.Descripcion, fechaFin, fechaInicio, e.IDCampeonato, e.IDLiga, e.IDModelo)
 		IDCampeonato, error := res.LastInsertId()
 
 		if error != nil {
@@ -174,7 +175,7 @@ func (ed *CampeonatosDaoImpl) Delete(id int64) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from campeonatos where id_campeonato = ?", id)
+	_, error := db.Exec("delete from campeonatos where id_campeonato = $1", id)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)
@@ -198,9 +199,11 @@ func (ed *CampeonatosDaoImpl) SaveCampeonatosGoleadores(idPartido int64, Goleado
 		"from partidos p "+
 		"left join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local "+
 		"left join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante "+
-		"where id_partidos = ?", idPartido)
+		"where id_partidos = $1", idPartido)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var idJugLocal sql.NullInt64
@@ -236,7 +239,7 @@ func saveGoles(db *sql.DB, idPartido int64, idJugador sql.NullInt64, nroCamDb sq
 		nroCam, _ := strconv.Atoi(s)
 		if nroCam == int(nroCamDb.Int64) {
 			_, error := db.Exec(
-				"insert into campeonatos_goleadores(id_partido, id_jugadores, goles) values(?,?,1) on DUPLICATE KEY UPDATE goles = goles + 1",
+				"insert into campeonatos_goleadores(id_partido, id_jugadores, goles) values($1,$2,1) on DUPLICATE KEY UPDATE goles = goles + 1",
 				idPartido,
 				idJugador)
 			if error != nil {
@@ -260,7 +263,7 @@ func (ed *CampeonatosDaoImpl) GetGoleadores(idCampeonato int) []models.Campeonat
 		"inner join jugadores j on j.id_jugadores = cg.id_jugadores "+
 		"inner join personas per on per.id_persona = j.id_persona "+
 		"inner join equipos e on e.id_equipo = j.id_equipo "+
-		"where p.id_campeonato = ? "+
+		"where p.id_campeonato = $1 "+
 		"group by cg.id_jugadores, e.nombre, per.nombre, per.apellido", idCampeonato)
 	if err != nil {
 		log.Fatalln("Failed to query")

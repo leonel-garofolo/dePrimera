@@ -20,7 +20,7 @@ func (ed *AuthenticationDaoImpl) Login(user string, pass string) gorms.UsersGorm
 	}
 
 	userGorm := gorms.UsersGorm{}
-	row := db.QueryRow("select * from app_users where id_user = ? and clave = ?", user, pass)
+	row := db.QueryRow("select * from app_users where id_user = $1 and clave = $2;", user, pass)
 	error := row.Scan(&userGorm.UserID, &userGorm.Password, &userGorm.Habilitado, &userGorm.Telefono)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -40,7 +40,7 @@ func (ed *AuthenticationDaoImpl) Register(user *gorms.UsersGorm) string {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("insert into app_users (id_user, clave, habilitado, telefono) values(?,?,?,?,?,?)",
+	_, error := db.Exec("insert into app_users (id_user, clave, habilitado, telefono) values($1,$2,$3,$4,$5,$6)",
 		user.UserID, user.Password, user.Habilitado, user.Telefono)
 	if error != nil {
 		log.Println(error)
@@ -57,7 +57,7 @@ func (ed *AuthenticationDaoImpl) ResetPassword(idUser string, oldPassword string
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("update app_users set clave =? where id_user =? and clave=?", newPassword, idUser, oldPassword)
+	_, error := db.Exec("update app_users set clave =$1 where id_user =$2 and clave=$3", newPassword, idUser, oldPassword)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)

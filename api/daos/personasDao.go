@@ -19,7 +19,9 @@ func (ed *PersonasDaoImpl) GetAll() []gorms.PersonasGorm {
 
 	rows, err := db.Query("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	apellido := sql.NullString{}
@@ -46,7 +48,7 @@ func (ed *PersonasDaoImpl) Get(id int) gorms.PersonasGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas where id_persona = ?", id)
+	row := db.QueryRow("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas where id_persona = $1", id)
 	persona := gorms.PersonasGorm{}
 	error := row.Scan(&persona.IDPersona, &persona.Nombre, &persona.Apellido, &persona.Domicilio, &persona.Edad, &persona.Localidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 	if error != nil {
@@ -65,7 +67,7 @@ func (ed *PersonasDaoImpl) GetPersonasFromUser(idUser string) gorms.PersonasGorm
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas where id_user = ?", idUser)
+	row := db.QueryRow("select id_persona, nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc from personas where id_user = $1", idUser)
 	persona := gorms.PersonasGorm{}
 	error := row.Scan(&persona.IDPersona, &persona.Nombre, &persona.Apellido, &persona.Domicilio, &persona.Edad, &persona.Localidad, &persona.IDPais, &persona.IDProvincia, &persona.IDTipoDoc, &persona.NroDoc)
 	if error != nil {
@@ -86,8 +88,8 @@ func (ed *PersonasDaoImpl) Save(e *gorms.PersonasGorm) int64 {
 
 	if e.IDPersona > 0 {
 		_, error := db.Exec("update personas"+
-			" set nombre=?, apellido=?, domicilio=?, edad=?, localidad=?, id_pais=?, id_provincia=?, id_tipo_doc=?, nro_doc=? "+
-			" where id_persona = ?", e.Nombre, e.Apellido, e.Domicilio, e.Edad, e.Localidad, e.IDPais, e.IDProvincia, e.IDTipoDoc, e.NroDoc, e.IDPersona)
+			" set nombre=$1, apellido=$2, domicilio=$3, edad=$4, localidad=$5, id_pais=$6, id_provincia=$7, id_tipo_doc=$8, nro_doc=$9 "+
+			" where id_persona = $10", e.Nombre, e.Apellido, e.Domicilio, e.Edad, e.Localidad, e.IDPais, e.IDProvincia, e.IDTipoDoc, e.NroDoc, e.IDPersona)
 
 		if error != nil {
 			log.Println(error)
@@ -96,7 +98,7 @@ func (ed *PersonasDaoImpl) Save(e *gorms.PersonasGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into personas"+
 			" (nombre, apellido, domicilio, edad, localidad, id_pais, id_provincia, id_tipo_doc, nro_doc) "+
-			" values(?,?,?,?,?,?,?,?,?)",
+			" values($1,$2,$3,$4,$5,$6,$7,$8,$9)",
 			e.Nombre,
 			e.Apellido,
 			e.Domicilio,
@@ -129,7 +131,7 @@ func (ed *PersonasDaoImpl) Delete(id int) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from personas where id_persona = ?", id)
+	_, error := db.Exec("delete from personas where id_persona = $1", id)
 	if error != nil {
 		log.Println(error)
 		return false, error

@@ -9,6 +9,7 @@ import (
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/help"
 )
 
@@ -23,7 +24,9 @@ func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 
 	rows, err := db.Query("select * from partidos")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var partidos []gorms.PartidosGorm
@@ -41,7 +44,7 @@ func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 	return partidos
 }
 
-func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDateGorm {
+func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromDate {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -60,15 +63,17 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []gorms.PartidosFromDa
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
 		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
 		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
-		" where e_local.id_equipo = ? or e_visit.id_equipo = ?", idEquipo, idEquipo)
+		" where e_local.id_equipo = $1 or e_visit.id_equipo = $2", idEquipo, idEquipo)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	motivo := sql.NullString{}
-	var partidos []gorms.PartidosFromDateGorm
+	var partidos []models.PartidosFromDate
 	for rows.Next() {
-		partido := gorms.PartidosFromDateGorm{}
+		partido := models.PartidosFromDate{}
 		error := rows.Scan(
 			&partido.IDPartidos,
 			&partido.FechaEncuentro,
@@ -115,9 +120,11 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
 		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
 		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
-		" where fecha_encuentro like ?", datePartidos+"%")
+		" where fecha_encuentro = $1", datePartidos+"%")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	motivo := sql.NullString{}
@@ -150,7 +157,7 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 	return partidos
 }
 
-func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFromDateGorm {
+func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosFromDate {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -169,16 +176,18 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
 		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
 		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
-		" where c.id_campeonato = ?"+
+		" where c.id_campeonato = $1"+
 		" order by fecha_encuentro asc", idTorneo)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	motivo := sql.NullString{}
-	var partidos []gorms.PartidosFromDateGorm
+	var partidos []models.PartidosFromDate
 	for rows.Next() {
-		partido := gorms.PartidosFromDateGorm{}
+		partido := models.PartidosFromDate{}
 		error := rows.Scan(
 			&partido.IDPartidos,
 			&partido.FechaEncuentro,
@@ -206,7 +215,7 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []gorms.PartidosFr
 }
 
 // Nombre Equipo, Pts, PG, PE, PP
-func (ed *PartidosDaoImpl) GetTablePosition(idTorneo int) []gorms.EquiposTablePosGorm {
+func (ed *PartidosDaoImpl) GetTablePosition(idTorneo int) []models.EquiposTablePos {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -219,15 +228,17 @@ func (ed *PartidosDaoImpl) GetTablePosition(idTorneo int) []gorms.EquiposTablePo
 		" from campeonatos_equipos ce "+
 		" inner join campeonatos c on c.id_campeonato = ce.id_campeonato "+
 		" inner join equipos e on e.id_equipo = ce.id_equipo "+
-		" where c.id_campeonato = ? "+
+		" where c.id_campeonato = $1 "+
 		" order by ce.puntos desc", idTorneo)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
-	var equiposPos []gorms.EquiposTablePosGorm
+	var equiposPos []models.EquiposTablePos
 	for rows.Next() {
-		partido := gorms.EquiposTablePosGorm{}
+		partido := models.EquiposTablePos{}
 		error := rows.Scan(
 			&partido.IDCampeonato,
 			&partido.IDEquipo,
@@ -256,7 +267,7 @@ func (ed *PartidosDaoImpl) Get(id int) gorms.PartidosGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from partidos where id_partidos = ?", id)
+	row := db.QueryRow("select * from partidos where id_partidos = $1", id)
 	partido := gorms.PartidosGorm{}
 	error := row.Scan(&partido.IDPartidos, &partido.IDArbitro, &partido.IDAsistente, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDLiga, &partido.MotivoSuspencion, &partido.Observacion, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido)
 	if error != nil {
@@ -277,8 +288,8 @@ func (ed *PartidosDaoImpl) Save(e *gorms.PartidosGorm) int64 {
 
 	if e.IDPartidos > 0 {
 		_, error := db.Exec("update partidos"+
-			" set id_arbitro=?, id_asistente=?, id_campeonato=?, id_equipo_local=?, id_equipo_visitante=?, id_liga=?, motivo_suspencion=?, observacion=?, resultado_local=?, resultado_visitante=?, suspendido, fecha_encuentro= ? "+
-			" where id_partidos = ?", e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.FechaEncuentro, e.IDPartidos)
+			" set id_arbitro=$1, id_asistente=$2, id_campeonato=$3, id_equipo_local=$4, id_equipo_visitante=$5, id_liga=$6, motivo_suspencion=$7, observacion=$8, resultado_local=$9, resultado_visitante=$10, suspendido=$11, fecha_encuentro= $12 "+
+			" where id_partidos = $13", e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.FechaEncuentro, e.IDPartidos)
 
 		if error != nil {
 			log.Println(error)
@@ -287,7 +298,7 @@ func (ed *PartidosDaoImpl) Save(e *gorms.PartidosGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into partidos"+
 			" (id_partidos, id_arbitro, id_asistente, id_campeonato, id_equipo_local, id_equipo_visitante, id_liga, motivo_suspencion, observacion, resultado_local, resultado_visitante, suspendido, fecha_encuentro) "+
-			" values(?,?,?,?,?,?,?,?,?,?,?,?,?)", e.IDPartidos, e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.Suspendido, e.FechaEncuentro)
+			" values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)", e.IDPartidos, e.IDArbitro, e.IDAsistente, e.IDCampeonato, e.IDEquipoLocal, e.IDEquipoVisitante, e.IDLiga, e.MotivoSuspencion, e.Observacion, e.ResultadoLocal, e.ResultadoVisitante, e.Suspendido, e.FechaEncuentro)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -306,8 +317,8 @@ func (ed *PartidosDaoImpl) SaveResult(e *gorms.PartidoResultGorm) int64 {
 
 	if e.IDPartidos > 0 {
 		_, error := db.Exec("update partidos"+
-			" set resultado_local=?, resultado_visitante=?, iniciado =?, finalizado =?, suspendido =?, motivo_suspencion =? "+
-			" where id_partidos = ?", e.ResultadoLocal, e.ResultadoVisitante, e.Iniciado, e.Finalizado, e.Suspendido, e.Motivo, e.IDPartidos)
+			" set resultado_local=$1, resultado_visitante=$2, iniciado =$3, finalizado =$4, suspendido =$5, motivo_suspencion =$6 "+
+			" where id_partidos = $7", e.ResultadoLocal, e.ResultadoVisitante, e.Iniciado, e.Finalizado, e.Suspendido, e.Motivo, e.IDPartidos)
 
 		if error != nil {
 			log.Println(error)
@@ -324,7 +335,7 @@ func (ed *PartidosDaoImpl) Delete(id int) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from partidos where id_partidos = ?", id)
+	_, error := db.Exec("delete from partidos where id_partidos = $1", id)
 	if error != nil {
 		return false, error
 	}
@@ -351,9 +362,11 @@ func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
 		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
 		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
-		" where id_equipo_local = ? or id_equipo_visitante = ?", id, id)
+		" where id_equipo_local = $1 or id_equipo_visitante = $2", id, id)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var partidos []gorms.PartidosFromDateGorm
@@ -390,7 +403,7 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 		log.Println(err.Error())
 	}
 
-	_, errorDelete := db.Exec("delete from partidos where id_liga = ? and id_campeonato = ?", idLiga, idCampeonato)
+	_, errorDelete := db.Exec("delete from partidos where id_liga = $1 and id_campeonato = $2", idLiga, idCampeonato)
 	if errorDelete != nil {
 		fmt.Println(errorDelete)
 		panic(errorDelete)
@@ -405,11 +418,11 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 
 			_, error := db.Exec("insert into partidos(id_liga, id_campeonato, id_equipo_local, id_equipo_visitante, fecha_encuentro ) "+
 				"values ( "+
-				"?, "+
-				"?, "+
-				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
-				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
-				"? "+
+				"$1, "+
+				"$2, "+
+				"(select id_equipo from campeonatos_equipos where id_liga =$3 and id_campeonato = $4 and nro_equipo = $5), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =$6 and id_campeonato = $7 and nro_equipo = $8), "+
+				"$9 "+
 				")",
 				idLiga,
 				idCampeonato,
@@ -435,11 +448,11 @@ func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom ti
 
 			_, error := db.Exec("insert into partidos(id_liga, id_campeonato, id_equipo_local, id_equipo_visitante, fecha_encuentro ) "+
 				"values ( "+
-				"?, "+
-				"?, "+
-				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
-				"(select id_equipo from campeonatos_equipos where id_liga =? and id_campeonato = ? and nro_equipo = ?), "+
-				"? "+
+				"$1, "+
+				"$2, "+
+				"(select id_equipo from campeonatos_equipos where id_liga =$3 and id_campeonato = $4 and nro_equipo = $5), "+
+				"(select id_equipo from campeonatos_equipos where id_liga =$6 and id_campeonato = $7 and nro_equipo = $8), "+
+				"$9 "+
 				")",
 				idLiga,
 				idCampeonato,
@@ -463,7 +476,7 @@ func (ed *PartidosDaoImpl) FinishFixtureGen(idLiga int, idCampeonato int) bool {
 		log.Println(err.Error())
 	}
 
-	_, errorDelete := db.Exec("update campeonato set gen_fixture =1 where id_liga = ? and id_campeonato = ?", idLiga, idCampeonato)
+	_, errorDelete := db.Exec("update campeonato set gen_fixture =1 where id_liga = $1 and id_campeonato = $2", idLiga, idCampeonato)
 	if errorDelete != nil {
 		fmt.Println(errorDelete)
 		return false
@@ -480,33 +493,33 @@ func (ed *PartidosDaoImpl) FinalizarPartido(idLiga int64, idCampeonato int64, id
 
 	switch statusResult {
 	case "GL":
-		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoLocal)
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = $1 and id_campeonato = $2 and id_equipo =$3", idLiga, idCampeonato, idEquipoLocal)
 		if errorUpdateGan != nil {
 			fmt.Println(errorUpdateGan)
 			panic(errorUpdateGan)
 		}
 
-		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoVisit)
+		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = $1 and id_campeonato = $2 and id_equipo =$3", idLiga, idCampeonato, idEquipoVisit)
 		if errorUpdatePer != nil {
 			fmt.Println(errorUpdatePer)
 			panic(errorUpdatePer)
 		}
 
 	case "GV":
-		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoVisit)
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 3), p_gan =(p_gan + 1) where id_liga = $1 and id_campeonato = $2 and id_equipo =$3", idLiga, idCampeonato, idEquipoVisit)
 		if errorUpdateGan != nil {
 			fmt.Println(errorUpdateGan)
 			panic(errorUpdateGan)
 		}
 
-		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = ? and id_campeonato = ? and id_equipo =?", idLiga, idCampeonato, idEquipoLocal)
+		_, errorUpdatePer := db.Exec("update campeonatos_equipos set p_per =(p_per + 1) where id_liga = $1 and id_campeonato = $2 and id_equipo =$3", idLiga, idCampeonato, idEquipoLocal)
 		if errorUpdatePer != nil {
 			fmt.Println(errorUpdatePer)
 			panic(errorUpdatePer)
 		}
 
 	case "E":
-		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 1), p_emp =(p_emp + 1) where id_liga = ? and id_campeonato = ? and id_equipo in (?,)", idLiga, idCampeonato, idEquipoLocal, idEquipoVisit)
+		_, errorUpdateGan := db.Exec("update campeonatos_equipos set puntos=(puntos + 1), p_emp =(p_emp + 1) where id_liga = $1 and id_campeonato = $2 and id_equipo in ($3, $4)", idLiga, idCampeonato, idEquipoLocal, idEquipoVisit)
 		if errorUpdateGan != nil {
 			fmt.Println(errorUpdateGan)
 			panic(errorUpdateGan)

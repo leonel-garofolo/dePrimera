@@ -21,7 +21,9 @@ func (ed *AppGruposDaoImpl) GetAll() []gorms.AppGruposGorm {
 
 	rows, err := db.Query("select * from app_grupos")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	grupos := []gorms.AppGruposGorm{}
@@ -50,7 +52,7 @@ func (ed *AppGruposDaoImpl) GetUserAppGrupos(idUser string) gorms.AppGruposGorm 
 	rows, err := db.Query("select p.idgrupo, ag.descripcion "+
 		" from personas p "+
 		" inner join app_grupos ag on p.idgrupo = ag.idgrupo "+
-		" where p.id_user = ?", idUser)
+		" where p.id_user = $1", idUser)
 	if err != nil {
 		log.Fatalln("Failed to query")
 	}

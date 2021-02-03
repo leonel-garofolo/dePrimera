@@ -28,9 +28,7 @@ func RouterEquipos(e *echo.Echo) {
 
 func GetEquipos(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	equiposGorm := daos.GetEquiposDao().GetAll()
-	equipos := []models.Equipos{}
-	copier.Copy(&equipos, &equiposGorm)
+	equipos := daos.GetEquiposDao().GetAll()
 	return c.JSON(http.StatusOK, equipos)
 }
 
@@ -52,9 +50,7 @@ func GetEquiposFromUser(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	equiposGorm := daos.GetEquiposDao().GetEquiposFromUser(c.Param("id_user"), idGrupo)
-	equipos := []models.Equipos{}
-	copier.Copy(&equipos, &equiposGorm)
+	equipos := daos.GetEquiposDao().GetEquiposFromUser(c.Param("id_user"), idGrupo)
 	return c.JSON(http.StatusOK, equipos)
 }
 
@@ -65,9 +61,7 @@ func GetPlantel(c echo.Context) error {
 	}
 
 	daos := daos.NewDePrimeraDaos()
-	equiposGorm := daos.GetEquiposDao().GetPlantel(idEquipo)
-	equipos := []models.JugadoresPlantel{}
-	copier.Copy(&equipos, &equiposGorm)
+	equipos := daos.GetEquiposDao().GetPlantel(idEquipo)
 	return c.JSON(http.StatusOK, equipos)
 }
 

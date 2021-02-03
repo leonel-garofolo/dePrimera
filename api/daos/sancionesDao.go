@@ -9,6 +9,7 @@ import (
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 type SancionesDaoImpl struct{}
@@ -22,7 +23,9 @@ func (ed *SancionesDaoImpl) GetAll() []gorms.SancionesGorm {
 
 	rows, err := db.Query("select * from sanciones")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 	var sanciones []gorms.SancionesGorm
 	for rows.Next() {
@@ -39,7 +42,7 @@ func (ed *SancionesDaoImpl) GetAll() []gorms.SancionesGorm {
 	return sanciones
 }
 
-func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []gorms.SancionesJugadoresFromCampeonatoGorm {
+func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []models.SancionesJugadoresFromCampeonato {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -55,15 +58,17 @@ func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []gorms
 		" inner join jugadores j on j.id_jugadores = sj.id_jugador "+
 		" inner join equipos e on e.id_equipo = j.id_equipo "+
 		" inner join personas p on p.id_persona = j.id_persona "+
-		" where partido.id_campeonato = ? "+
+		" where partido.id_campeonato = $1 "+
 		" group by p.nombre, p.apellido, e.nombre, sj.id_sancion "+
 		" order by p.apellido asc, p.nombre asc", idCampeonato)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
-	var sancionesJugadores []gorms.SancionesJugadoresFromCampeonatoGorm
+	var sancionesJugadores []models.SancionesJugadoresFromCampeonato
 	for rows.Next() {
-		sancion := gorms.SancionesJugadoresFromCampeonatoGorm{}
+		sancion := models.SancionesJugadoresFromCampeonato{}
 		error := rows.Scan(&sancion.Nombre, &sancion.Apellido, &sancion.ENombre, &sancion.CRojas, &sancion.CAmarillas, &sancion.CAzules)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -83,9 +88,11 @@ func (ed *SancionesDaoImpl) Get(id int) gorms.SancionesGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from sanciones where id_sancion = ?", id)
+	row := db.QueryRow("select * from sanciones where id_sancion = $1", id)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 	sancion := gorms.SancionesGorm{}
 	error := row.Scan(&sancion.IDSanciones, &sancion.Descripcion, &sancion.Observaciones)
@@ -107,8 +114,8 @@ func (ed *SancionesDaoImpl) Save(e *gorms.SancionesGorm) int64 {
 
 	if e.IDSanciones > 0 {
 		_, error := db.Exec("update sanciones"+
-			" set  id_ligas=?, descripcion=?, observaciones=? "+
-			" where id_sanciones=?", e.Descripcion, e.Observaciones, e.IDSanciones)
+			" set  id_ligas=$1, descripcion=$2, observaciones=$3 "+
+			" where id_sanciones=$4", e.Descripcion, e.Observaciones, e.IDSanciones)
 
 		if error != nil {
 			log.Println(error)
@@ -117,7 +124,7 @@ func (ed *SancionesDaoImpl) Save(e *gorms.SancionesGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into sanciones"+
 			" (id_sanciones, id_ligas, descripcion, observaciones) "+
-			" values(?,?,?,?)", e.IDSanciones, e.Descripcion, e.Observaciones)
+			" values($1,$2,$3,$4)", e.IDSanciones, e.Descripcion, e.Observaciones)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -134,7 +141,7 @@ func (ed *SancionesDaoImpl) Delete(id int) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from sanciones where id_sancion = ?", id)
+	_, error := db.Exec("delete from sanciones where id_sancion = $1", id)
 	if error != nil {
 		log.Println(error)
 		return false, error
@@ -149,7 +156,7 @@ func (ed *SancionesDaoImpl) SavePartido(idPartido int64, amarillasLocal string, 
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from sanciones_jugadores where id_partidos = ?", idPartido)
+	_, error := db.Exec("delete from sanciones_jugadores where id_partidos = $1", idPartido)
 	if error != nil {
 		log.Println(error)
 		return false, error
@@ -161,9 +168,11 @@ func (ed *SancionesDaoImpl) SavePartido(idPartido int64, amarillasLocal string, 
 		"from partidos p "+
 		"left join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local "+
 		"left join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante "+
-		"where id_partidos = ?", idPartido)
+		"where id_partidos = $1", idPartido)
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	var idJugLocal sql.NullInt64
@@ -202,7 +211,7 @@ func (ed *SancionesDaoImpl) SavePartidoFinalizado(idPartido int64, finalizado bo
 	}
 
 	if finalizado {
-		_, error := db.Exec("update partidos set finalizado = 1 where id_partidos = ?", idPartido)
+		_, error := db.Exec("update partidos set finalizado = 1 where id_partidos = $1", idPartido)
 		if error != nil {
 			log.Println(error)
 			return false, error
@@ -222,7 +231,7 @@ func saveSancionForTeam(db *sql.DB, idPartido int64, idJugador sql.NullInt64, nr
 		fmt.Println(i, s)
 		nroCam, _ := strconv.Atoi(s)
 		if nroCam == int(nroCamDb.Int64) {
-			_, error := db.Exec("insert into sanciones_jugadores(id_sancion, id_jugador, id_partidos) values(?,?,?) ", idSancion, idJugador, idPartido)
+			_, error := db.Exec("insert into sanciones_jugadores(id_sancion, id_jugador, id_partidos) values($1,$2,$3) ", idSancion, idJugador, idPartido)
 			if error != nil {
 				log.Println(error)
 				continue

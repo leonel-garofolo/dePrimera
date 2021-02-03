@@ -8,9 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/dto/response"
 
@@ -26,11 +24,7 @@ func RouterArbitros(e *echo.Echo) {
 
 func GetArbitros(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	arbitrosGorm := daos.GetArbitrosDao().GetAll()
-
-	arbitros := []models.Arbitros{}
-	copier.Copy(&arbitros, &arbitrosGorm)
-
+	arbitros := daos.GetArbitrosDao().GetAll()
 	return c.JSON(http.StatusOK, arbitros)
 }
 
@@ -38,11 +32,8 @@ func SaveArbitro(c echo.Context) error {
 	arbitros := &models.Arbitros{}
 	c.Bind(arbitros)
 
-	arbitrosGorm := &gorms.ArbitrosGorm{}
-	copier.Copy(&arbitrosGorm, &arbitros)
-
 	daos := daos.NewDePrimeraDaos()
-	id := daos.GetArbitrosDao().Save(arbitrosGorm)
+	id := daos.GetArbitrosDao().Save(arbitros)
 
 	log.Println(id)
 	return c.String(http.StatusOK, "insertado")

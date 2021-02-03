@@ -18,8 +18,8 @@ func (ed *ComentariosDaoImpl) Save(e *models.Comentarios) int64 {
 
 	if e.IDComentario > 0 {
 		_, error := db.Exec("update comentarios"+
-			" set mail=?, puntaje=?, comentario=?"+
-			" where id_comentario = ?", e.Mail, e.Puntaje, e.Comentario, e.IDComentario)
+			" set mail=$1, puntaje=$2, comentario=$3"+
+			" where id_comentario = $4", e.Mail, e.Puntaje, e.Comentario, e.IDComentario)
 
 		if error != nil {
 			log.Println(error)
@@ -28,7 +28,7 @@ func (ed *ComentariosDaoImpl) Save(e *models.Comentarios) int64 {
 	} else {
 		res, error := db.Exec("insert into comentarios"+
 			" (mail, puntaje, comentario) "+
-			" values(?,?,?)", e.Mail, e.Puntaje, e.Comentario)
+			" values($1,$2,$3)", e.Mail, e.Puntaje, e.Comentario)
 		if error != nil {
 			log.Println(error)
 			panic(error)

@@ -19,9 +19,7 @@ func RouterProvincias(e *echo.Echo) {
 
 func GetProvincias(c echo.Context) error {
 	daos := daos.NewDePrimeraDaos()
-	provinciasGorm := daos.GetProvinciasDao().GetAll()
-	provincias := []models.Provincias{}
-	copier.Copy(&provincias, &provinciasGorm)
+	provincias := daos.GetProvinciasDao().GetAll()
 	return c.JSON(http.StatusOK, provincias)
 }
 

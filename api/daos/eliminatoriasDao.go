@@ -2,9 +2,10 @@ package daos
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
-	"log"
 )
 
 // EliminatoriasDaoImpl struct
@@ -20,7 +21,9 @@ func (ed *EliminatoriasDaoImpl) GetAll() []gorms.EliminatoriasGorm {
 
 	rows, err := db.Query("select * from eliminatorias")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 	var eliminatorias []gorms.EliminatoriasGorm
 	for rows.Next() {
@@ -45,7 +48,7 @@ func (ed *EliminatoriasDaoImpl) Get(id int) gorms.EliminatoriasGorm {
 		log.Println(err.Error())
 	}
 
-	row := db.QueryRow("select * from eliminatorias where id_eliminatoria = ?", id)
+	row := db.QueryRow("select * from eliminatorias where id_eliminatoria = $1", id)
 	eliminatoria := gorms.EliminatoriasGorm{}
 	error := row.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)
 	if error != nil {
@@ -67,8 +70,8 @@ func (ed *EliminatoriasDaoImpl) Save(e *gorms.EliminatoriasGorm) int64 {
 
 	if e.IDEliminatoria > 0 {
 		_, error := db.Exec("update eliminatorias"+
-			" set id_campeonato=?, id_partido=?, nro_llave=? "+
-			" where id_eliminatoria=?", e.IDCampeonato, e.IDPartido, e.NroLlave, e.IDEliminatoria)
+			" set id_campeonato=$1, id_partido=$2, nro_llave=$3 "+
+			" where id_eliminatoria=$4", e.IDCampeonato, e.IDPartido, e.NroLlave, e.IDEliminatoria)
 
 		if error != nil {
 			log.Println(error)
@@ -77,7 +80,7 @@ func (ed *EliminatoriasDaoImpl) Save(e *gorms.EliminatoriasGorm) int64 {
 	} else {
 		res, error := db.Exec("insert into eliminatorias"+
 			" (id_eliminatoria, id_campeonato, id_partido, nro_llave) "+
-			" values(?,?,?,?)", e.IDEliminatoria, e.IDCampeonato, e.IDPartido, e.NroLlave)
+			" values($1,$2,$3,$4)", e.IDEliminatoria, e.IDCampeonato, e.IDPartido, e.NroLlave)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -94,7 +97,7 @@ func (ed *EliminatoriasDaoImpl) Delete(id int) bool {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	_, error := db.Exec("delete from eliminatorias where id_eliminatoria = ?", id)
+	_, error := db.Exec("delete from eliminatorias where id_eliminatoria = $1", id)
 	if error != nil {
 		log.Println(error)
 		panic(error)

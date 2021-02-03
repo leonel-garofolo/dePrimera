@@ -20,7 +20,7 @@ func dbSelect(db *gorm.DB) {
 func dbSelectOne(db *gorm.DB) {
 	//Get all the tables from Database
 	id := 2
-	rows, err := db.Raw("select nombre from ligas where id_liga = ?", id).Rows()
+	rows, err := db.Raw("select nombre from ligas where id_liga = $1", id).Rows()
 	defer rows.Close()
 	var nombre string
 	if err != nil {

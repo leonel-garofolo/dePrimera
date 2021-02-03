@@ -5,12 +5,12 @@ import (
 	"log"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 type JugadoresDaoImpl struct{}
 
-func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
+func (ed *JugadoresDaoImpl) GetAll() []models.Jugadores {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -19,12 +19,14 @@ func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
 
 	rows, err := db.Query("select * from jugadores")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
-	jugadores := []gorms.JugadoresGorm{}
+	jugadores := []models.Jugadores{}
 	for rows.Next() {
-		jugador := gorms.JugadoresGorm{}
+		jugador := models.Jugadores{}
 		error := rows.Scan(&jugador.IDJugador, &jugador.IDPersona, &jugador.IDEquipo, &jugador.NroCamiseta)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -37,7 +39,7 @@ func (ed *JugadoresDaoImpl) GetAll() []gorms.JugadoresGorm {
 	return jugadores
 }
 
-func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
+func (ed *JugadoresDaoImpl) Save(e *models.Jugadores) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -46,7 +48,7 @@ func (ed *JugadoresDaoImpl) Save(e *gorms.JugadoresGorm) int64 {
 
 	isDelete, _ := ed.Delete(e.IDPersona, e.IDEquipo)
 	if isDelete == true {
-		_, error := db.Exec("insert into jugadores (id_persona, id_equipo, nro_camiseta) values(?,?, ?)", e.IDPersona, e.IDEquipo, e.NroCamiseta)
+		_, error := db.Exec("insert into jugadores (id_persona, id_equipo, nro_camiseta) values($1,$2, $3)", e.IDPersona, e.IDEquipo, e.NroCamiseta)
 
 		if error != nil {
 			log.Println(error)
@@ -63,7 +65,7 @@ func (ed *JugadoresDaoImpl) Delete(IDPersona int64, IDEquipo int64) (bool, error
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from jugadores where id_persona = ? and id_equipo = ?", IDPersona, IDEquipo)
+	_, error := db.Exec("delete from jugadores where id_persona = $1 and id_equipo = $2", IDPersona, IDEquipo)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)

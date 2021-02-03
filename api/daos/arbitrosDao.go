@@ -5,14 +5,14 @@ import (
 	"log"
 
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
+	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )
 
 // ArbitrosDaoImpl struct
 type ArbitrosDaoImpl struct{}
 
 // GetAll arbritros
-func (ed *ArbitrosDaoImpl) GetAll() []gorms.ArbitrosGorm {
+func (ed *ArbitrosDaoImpl) GetAll() []models.Arbitros {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -21,12 +21,14 @@ func (ed *ArbitrosDaoImpl) GetAll() []gorms.ArbitrosGorm {
 
 	rows, err := db.Query("select * from arbitros")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
-	arbitros := []gorms.ArbitrosGorm{}
+	arbitros := []models.Arbitros{}
 	for rows.Next() {
-		arbitro := gorms.ArbitrosGorm{}
+		arbitro := models.Arbitros{}
 		error := rows.Scan(&arbitro.IDArbitro, &arbitro.IDPersona, &arbitro.IDCampeonato)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -39,15 +41,15 @@ func (ed *ArbitrosDaoImpl) GetAll() []gorms.ArbitrosGorm {
 	return arbitros
 }
 
-func (ed *ArbitrosDaoImpl) Get(id int) gorms.ArbitrosGorm {
+func (ed *ArbitrosDaoImpl) Get(id int) models.Arbitros {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	arbitro := gorms.ArbitrosGorm{}
-	row := db.QueryRow("select * from arbitros where id_arbitro = ?", id)
+	arbitro := models.Arbitros{}
+	row := db.QueryRow("select * from arbitros where id_arbitro = $1", id)
 	error := row.Scan(&arbitro.IDArbitro, &arbitro.IDPersona, &arbitro.IDCampeonato)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -59,7 +61,7 @@ func (ed *ArbitrosDaoImpl) Get(id int) gorms.ArbitrosGorm {
 }
 
 // Save arbritros
-func (ed *ArbitrosDaoImpl) Save(e *gorms.ArbitrosGorm) int64 {
+func (ed *ArbitrosDaoImpl) Save(e *models.Arbitros) int64 {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -72,7 +74,7 @@ func (ed *ArbitrosDaoImpl) Save(e *gorms.ArbitrosGorm) int64 {
 	}
 
 	if isDelete == true {
-		_, error := db.Exec("insert into arbitros (id_arbitro, id_persona, id_campeonato) values(?,?,?)",
+		_, error := db.Exec("insert into arbitros (id_arbitro, id_persona, id_campeonato) values($1,$2,$3)",
 			e.IDArbitro,
 			e.IDPersona,
 			e.IDCampeonato,
@@ -93,7 +95,7 @@ func (ed *ArbitrosDaoImpl) Delete(IDArbitro int64, IDPersona int64, IDCampeonato
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from arbitros where id_arbitro = ? and id_persona = ? and id_campeonato", IDArbitro, IDPersona, IDCampeonato)
+	_, error := db.Exec("delete from arbitros where id_arbitro = $1 and id_persona = $2 and id_campeonato = $3", IDArbitro, IDPersona, IDCampeonato)
 	if error != nil {
 		if error != sql.ErrNoRows {
 			log.Println(error)

@@ -19,7 +19,9 @@ func (ed *LigasDaoImpl) GetAll() []gorms.LigasGorm {
 
 	rows, err := db.Query("select * from ligas")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		//log.Fatalln("Failed to query")
+		log.Println(err)
+		panic(err)
 	}
 
 	ligas := []gorms.LigasGorm{}
@@ -45,7 +47,7 @@ func (ed *LigasDaoImpl) Get(id int) gorms.LigasGorm {
 	}
 
 	liga := gorms.LigasGorm{}
-	row := db.QueryRow("select * from ligas where id_liga = ?", id)
+	row := db.QueryRow("select * from ligas where id_liga = $1", id)
 	error := row.Scan(&liga.IDLiga, &liga.Cuit, &liga.Domicilio, &liga.MailContacto, &liga.Nombre, &liga.NombreContacto, &liga.Telefono, &liga.TelefonoContacto)
 	if error != nil {
 		if error != sql.ErrNoRows {
@@ -65,8 +67,8 @@ func (ed *LigasDaoImpl) Save(e *gorms.LigasGorm) int64 {
 
 	if e.IDLiga > 0 {
 		_, error := db.Exec("update ligas"+
-			" set cuit=?, domicilio=?, mail_contacto=?, nombre=?, nombre_contacto=?, telefono=?, telefono_contacto=? "+
-			" where id_liga = ?", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto, e.IDLiga)
+			" set cuit=$1, domicilio=$2, mail_contacto=$3, nombre=$4, nombre_contacto=$5, telefono=$6, telefono_contacto=$7 "+
+			" where id_liga = $8", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto, e.IDLiga)
 
 		if error != nil {
 			log.Println(error)
@@ -74,7 +76,7 @@ func (ed *LigasDaoImpl) Save(e *gorms.LigasGorm) int64 {
 		}
 	} else {
 		res, error := db.Exec("insert into ligas (cuit, domicilio, mail_contacto, nombre, nombre_contacto, telefono, telefono_contacto) "+
-			" values(?,?,?,?,?,?,?)", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto)
+			" values($1,$2,$3,$4,$5,$6,$7)", e.Cuit, e.Domicilio, e.MailContacto, e.Nombre, e.NombreContacto, e.Telefono, e.TelefonoContacto)
 		if error != nil {
 			log.Println(error)
 			panic(error)
@@ -91,7 +93,7 @@ func (ed *LigasDaoImpl) Delete(id int) (bool, error) {
 		log.Println(err.Error())
 	}
 
-	_, error := db.Exec("delete from ligas where id_liga = ?", id)
+	_, error := db.Exec("delete from ligas where id_liga = $1", id)
 	if error != nil {
 		return false, error
 	}
