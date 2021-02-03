@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -13,20 +12,21 @@ import (
 )
 
 func main() {
-	viper.SetConfigFile("./enviroment.yaml")
+	viper.SetConfigFile("enviroment.yaml")
 	if os.Args != nil && len(os.Args) > 1 {
 		env := os.Args[1]
 		test := "test"
 		if env == test {
-			viper.SetConfigFile("./enviroment-local.yaml")
+			viper.SetConfigFile("enviroment-local.yaml")
 		}
 
 	}
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
-	}
+	/*
+		err := viper.ReadInConfig()
+		if err != nil {
+			log.Fatalf("Error while reading config file %s", err)
+		}
+	*/
 
 	e := echo.New()
 	e.Use(middleware.Logger())
