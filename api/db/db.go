@@ -2,7 +2,6 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 type DB struct {
@@ -25,7 +24,7 @@ func (d *DB) Close() error {
 }
 
 func get(connStr string) (*gorm.DB, error) {
-	db, err := gorm.Open("mysql", connStr)
+	db, err := gorm.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}

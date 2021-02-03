@@ -4,7 +4,6 @@ import (
 	"log"
 	"testing"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 )
 

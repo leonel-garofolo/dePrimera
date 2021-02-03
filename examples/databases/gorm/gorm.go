@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
 )

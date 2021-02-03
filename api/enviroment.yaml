@@ -3,8 +3,8 @@ main: ./api
 
 database:
   type: unix
-  host: "/cloudsql/de-primera-app"
+  host: "ec2-54-221-220-82.compute-1.amazonaws.com"
   port: "3306"
-  name: "de_primera_app"
-  user: "root"
-  pass: "30121DePrimera"  
+  name: "d6afam55njg5u6"
+  user: "kfaneklolueulx"
+  pass: "838051822695796f4ba0a1764a70c02cca4a71abeda6a08af177389f260966c3"  

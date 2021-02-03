@@ -5,17 +5,15 @@ import (
 	"log"
 	"testing"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func createConn() *sql.DB {
-	user := "root"
-	pass := "root"
-	database := "de_primera_app"
 
-	db, err := sql.Open("mysql", user+":"+pass+"@/"+database+"?charset=utf8&parseTime=True&loc=Local")
+	//db, err := sql.Open("postgres", user+":"+pass+"@/"+database+"?charset=utf8&parseTime=True&loc=Local")
+	db, err := sql.Open("postgres", "postgres://kfaneklolueulx:838051822695796f4ba0a1764a70c02cca4a71abeda6a08af177389f260966c3@ec2-54-221-220-82.compute-1.amazonaws.com:5432/d6afam55njg5u6")
 	if err != nil {
-		log.Fatalln("Failed to connect database")
+		log.Fatalln(err)
 	}
 
 	return db

@@ -4,19 +4,17 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func dbSelect(db *sql.DB) {
 	//Get all the tables from Database
-	rows, err := db.Query("SHOW TABLES")
+	rows, err := db.Query("select 1")
 	if err != nil {
-		log.Fatalln("Failed to query")
+		log.Fatalln(err)
 	}
 	for rows.Next() {
 		var tables string
-		rows.Scan(&tables)
+		//rows.Scan(&tables)
 		log.Println(tables)
 	}
 }
@@ -55,14 +53,19 @@ func dbInsertRecord(db *sql.DB) {
 	idLiga := 2
 	nombre := "leonel"
 
-	stmt, error := db.Prepare("insert into equipos(id_liga, nombre) values(?,?)")
-	res, error := stmt.Exec(idLiga, nombre)
-	idEquipo, error := res.LastInsertId()
+	fmt.Println(idLiga)
+	fmt.Println(nombre)
 
-	if error != nil {
-		panic(error)
-	}
-	fmt.Println("New record equipo ID is:", idEquipo)
+	/*
+		stmt, error := db.Prepare("insert into equipos(id_liga, nombre) values(?,?)")
+		res, error := stmt.Exec(idLiga, nombre)
+		idEquipo, error := res.LastInsertId()
+
+		if error != nil {
+			panic(error)
+		}
+		fmt.Println("New record equipo ID is:", idEquipo)
+	*/
 }
 
 func dbUpdate(db *sql.DB) {
