@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/leonel-garofolo/dePrimeraApiRest/api/router"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/router"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -37,5 +38,5 @@ func main() {
 	})
 
 	router.NewRouter(e)
-	e.Logger.Fatal(e.Start(":8081"))
+	e.Logger.Fatal(e.Start(":8000"))
 }
