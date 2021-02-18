@@ -10,6 +10,7 @@ import (
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/application"
 	"github.com/leonel-garofolo/dePrimeraApiRest/api/daos/gorms"
 	models "github.com/leonel-garofolo/dePrimeraApiRest/api/dto"
+	"github.com/leonel-garofolo/dePrimeraApiRest/api/utils"
 )
 
 // CampeonatosDaoImpl struct
@@ -146,7 +147,7 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 	if e.IDCampeonato > 0 {
 
 		_, error := db.Exec("update campeonatos set descripcion=$1, fecha_fin=$2, fecha_inicio=$3, id_liga=$4, id_modelo=$5, gen_fixture =$6 where id_campeonato = $7",
-			e.Descripcion, fechaFin, fechaInicio, e.IDLiga, e.IDModelo, e.GenFixture, e.IDCampeonato)
+			e.Descripcion, fechaFin, fechaInicio, e.IDLiga, e.IDModelo, utils.CheckBitSetVar(e.GenFixture), e.IDCampeonato)
 
 		if error != nil {
 			log.Println(error)
