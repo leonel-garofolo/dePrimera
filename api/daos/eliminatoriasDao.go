@@ -25,7 +25,7 @@ func (ed *EliminatoriasDaoImpl) GetAll() []gorms.EliminatoriasGorm {
 		log.Println(err)
 		panic(err)
 	}
-	var eliminatorias []gorms.EliminatoriasGorm
+	eliminatorias := []gorms.EliminatoriasGorm{}
 	for rows.Next() {
 		eliminatoria := gorms.EliminatoriasGorm{}
 		error := rows.Scan(&eliminatoria.IDEliminatoria, &eliminatoria.IDCampeonato, &eliminatoria.IDPartido, &eliminatoria.NroLlave)

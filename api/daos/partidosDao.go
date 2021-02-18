@@ -29,7 +29,7 @@ func (ed *PartidosDaoImpl) GetAll() []gorms.PartidosGorm {
 		panic(err)
 	}
 
-	var partidos []gorms.PartidosGorm
+	partidos := []gorms.PartidosGorm{}
 	for rows.Next() {
 		partido := gorms.PartidosGorm{}
 		error := rows.Scan(&partido.IDPartidos, &partido.IDLiga, &partido.IDCampeonato, &partido.IDEquipoLocal, &partido.IDEquipoVisitante, &partido.IDArbitro, &partido.IDAsistente, &partido.FechaEncuentro, &partido.ResultadoLocal, &partido.ResultadoVisitante, &partido.Suspendido, &partido.MotivoSuspencion, &partido.Observacion, &partido.Iniciado, &partido.Finalizado)
@@ -71,7 +71,7 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 	}
 
 	motivo := sql.NullString{}
-	var partidos []models.PartidosFromDate
+	partidos := []models.PartidosFromDate{}
 	for rows.Next() {
 		partido := models.PartidosFromDate{}
 		error := rows.Scan(
@@ -128,7 +128,7 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 	}
 
 	motivo := sql.NullString{}
-	var partidos []gorms.PartidosFromDateGorm
+	partidos := []gorms.PartidosFromDateGorm{}
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
 		error := rows.Scan(
@@ -185,7 +185,7 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 	}
 
 	motivo := sql.NullString{}
-	var partidos []models.PartidosFromDate
+	partidos := []models.PartidosFromDate{}
 	for rows.Next() {
 		partido := models.PartidosFromDate{}
 		error := rows.Scan(
@@ -236,7 +236,7 @@ func (ed *PartidosDaoImpl) GetTablePosition(idTorneo int) []models.EquiposTableP
 		panic(err)
 	}
 
-	var equiposPos []models.EquiposTablePos
+	equiposPos := []models.EquiposTablePos{}
 	for rows.Next() {
 		partido := models.EquiposTablePos{}
 		error := rows.Scan(
@@ -369,7 +369,7 @@ func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
 		panic(err)
 	}
 
-	var partidos []gorms.PartidosFromDateGorm
+	partidos := []gorms.PartidosFromDateGorm{}
 	for rows.Next() {
 		partido := gorms.PartidosFromDateGorm{}
 		error := rows.Scan(

@@ -24,7 +24,7 @@ func (ed *ZonasDaoImpl) GetAll() []gorms.ZonasGorm {
 		panic(err)
 	}
 
-	var zonas []gorms.ZonasGorm
+	zonas := []gorms.ZonasGorm{}
 	for rows.Next() {
 		zona := gorms.ZonasGorm{}
 		error := rows.Scan(&zona.IDZona, &zona.IDCampeonato, &zona.Nombre)

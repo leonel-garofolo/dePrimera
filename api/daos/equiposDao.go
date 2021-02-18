@@ -31,7 +31,7 @@ func (ed *EquiposDaoImpl) GetAll() []models.Equipos {
 		panic(err)
 	}
 
-	var equipos []models.Equipos
+	equipos := []models.Equipos{}
 	for rows.Next() {
 		equipo := models.Equipos{}
 		error := rows.Scan(&equipo.IDEquipo, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto, &equipo.IDCampeonato, &equipo.NroEquipo)
@@ -103,7 +103,7 @@ func (ed *EquiposDaoImpl) GetEquiposFromUser(idUser string, idGrupo int) []model
 		panic(err)
 	}
 
-	var equipos []models.Equipos
+	equipos := []models.Equipos{}
 	for rows.Next() {
 		equipo := models.Equipos{}
 		error := rows.Scan(&equipo.IDEquipo, &equipo.Nombre, &equipo.Habilitado, &equipo.Foto, &equipo.IDCampeonato, &equipo.NroEquipo)
@@ -138,7 +138,7 @@ func (ed *EquiposDaoImpl) GetPlantel(idEquipo int) []models.JugadoresPlantel {
 		panic(err)
 	}
 
-	var jugadores []models.JugadoresPlantel
+	jugadores := []models.JugadoresPlantel{}
 	for rows.Next() {
 		jugador := models.JugadoresPlantel{}
 		error := rows.Scan(&jugador.IDJugador, &jugador.Apellido, &jugador.Nombre, &jugador.NroCamiseta)
@@ -166,7 +166,7 @@ func (ed *EquiposDaoImpl) GetAllFromCampeonato(IDLiga int, IDCampeonato int) []g
 		log.Fatalln("Failed to query")
 	}
 
-	var equipos []gorms.EquiposGorm
+	equipos := []gorms.EquiposGorm{}
 	for rows.Next() {
 		equipo := gorms.EquiposGorm{}
 		error := rows.Scan(&equipo.IDEquipo)

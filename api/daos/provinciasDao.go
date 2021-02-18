@@ -24,7 +24,7 @@ func (ed *ProvinciasDaoImpl) GetAll() []models.Provincias {
 		panic(err)
 	}
 
-	var provincias []models.Provincias
+	provincias := []models.Provincias{}
 	for rows.Next() {
 		provincia := models.Provincias{}
 		error := rows.Scan(&provincia.IDProvincia, &provincia.Nombre, &provincia.IDPais)

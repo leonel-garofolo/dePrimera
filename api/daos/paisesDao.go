@@ -24,7 +24,7 @@ func (ed *PaisesDaoImpl) GetAll() []models.Paises {
 		panic(err)
 	}
 
-	var paises []models.Paises
+	paises := []models.Paises{}
 	for rows.Next() {
 		pais := models.Paises{}
 		error := rows.Scan(&pais.IDPais, &pais.Nombre)

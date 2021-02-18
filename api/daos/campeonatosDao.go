@@ -29,7 +29,7 @@ func (ed *CampeonatosDaoImpl) GetAll() []gorms.CampeonatosGorm {
 		panic(err)
 	}
 
-	var campeonatos []gorms.CampeonatosGorm
+	campeonatos := []gorms.CampeonatosGorm{}
 	for rows.Next() {
 		campeonato := gorms.CampeonatosGorm{}
 		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin, &campeonato.GenFixture, &campeonato.GenFixtureFinish)
@@ -92,7 +92,7 @@ func (ed *CampeonatosDaoImpl) GetCampeonatoForUser(idUser string, idGrupo int) [
 		panic(err)
 	}
 
-	var campeonatos []models.Campeonatos
+	campeonatos := []models.Campeonatos{}
 	for rows.Next() {
 		campeonato := models.Campeonatos{}
 		error := rows.Scan(&campeonato.IDCampeonato, &campeonato.IDLiga, &campeonato.IDModelo, &campeonato.Descripcion, &campeonato.FechaInicio, &campeonato.FechaFin, &campeonato.GenFixture, &campeonato.GenFixtureFinish)
@@ -269,7 +269,7 @@ func (ed *CampeonatosDaoImpl) GetGoleadores(idCampeonato int) []models.Campeonat
 		log.Fatalln("Failed to query")
 	}
 
-	var goleadores []models.CampeonatosGoleadores
+	goleadores := []models.CampeonatosGoleadores{}
 	for rows.Next() {
 		goleador := models.CampeonatosGoleadores{}
 		error := rows.Scan(&goleador.IDJugador, &goleador.Equipo, &goleador.Nombre, &goleador.Apellido, &goleador.Goles)

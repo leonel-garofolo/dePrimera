@@ -38,7 +38,7 @@ inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
-where fecha_encuentro like "2020-12-26%";
+where fecha_encuentro = '2020-12-26%';
 
 -- query for get all partidos from Equipo.
 select p.id_partidos, p.fecha_encuentro,
@@ -68,8 +68,12 @@ inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
-where c.id_campeonato = 1
+where c.id_campeonato = 2
 order by fecha_encuentro asc;
+
+select count(*) from partidos p ;
+
+select * from campeonatos c ;
 
 -- get Table Position
 select e.nombre, 

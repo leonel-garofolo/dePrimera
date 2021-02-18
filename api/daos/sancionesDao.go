@@ -27,7 +27,7 @@ func (ed *SancionesDaoImpl) GetAll() []gorms.SancionesGorm {
 		log.Println(err)
 		panic(err)
 	}
-	var sanciones []gorms.SancionesGorm
+	sanciones := []gorms.SancionesGorm{}
 	for rows.Next() {
 		sancion := gorms.SancionesGorm{}
 		error := rows.Scan(&sancion.IDSanciones, &sancion.Descripcion, &sancion.Observaciones)
@@ -66,7 +66,7 @@ func (ed *SancionesDaoImpl) GetSancionesFromCampeonato(idCampeonato int) []model
 		log.Println(err)
 		panic(err)
 	}
-	var sancionesJugadores []models.SancionesJugadoresFromCampeonato
+	sancionesJugadores := []models.SancionesJugadoresFromCampeonato{}
 	for rows.Next() {
 		sancion := models.SancionesJugadoresFromCampeonato{}
 		error := rows.Scan(&sancion.Nombre, &sancion.Apellido, &sancion.ENombre, &sancion.CRojas, &sancion.CAmarillas, &sancion.CAzules)
