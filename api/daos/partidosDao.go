@@ -331,8 +331,8 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 		partido.GoleadoresVisit = goleadoresVisit.String
 		partido.SancLocalAmar = sancLocalAmar.String
 		partido.SancLocalRojas = sancLocalRojas.String
-		partido.SancVisitAmar = sancLocalAmar.String
-		partido.SancVisitRojas = sancLocalRojas.String
+		partido.SancVisitAmar = sancVisitAmar.String
+		partido.SancVisitRojas = sancVisitRojas.String
 		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
