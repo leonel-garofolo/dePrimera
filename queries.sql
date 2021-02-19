@@ -30,7 +30,31 @@ select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-    p.suspendido, p.iniciado, p.finalizado
+    p.suspendido, p.iniciado, p.finalizado,   
+    (select string_agg(aux_jug.nro_camiseta::text, ' ') 
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_local,
+     (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_visit ,
+	(select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas    
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
@@ -38,7 +62,7 @@ inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
-where fecha_encuentro = '2020-12-26%';
+where fecha_encuentro = '2020-08-07%';
 
 -- query for get all partidos from Equipo.
 select p.id_partidos, p.fecha_encuentro,
@@ -55,12 +79,16 @@ left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
 where e_local.id_equipo = 2 or e_visit.id_equipo = 2;
 
--- get FIXTURE
+select array_to_string(array[1,2,3,4], ' ');
 select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-   p.suspendido, p.iniciado, p.finalizado
+    p.suspendido, p.iniciado, p.finalizado,   
+    (select array_to_string(array(aux_jug.nro_camiseta), ' ')
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_local    
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato
@@ -68,12 +96,55 @@ inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
-where c.id_campeonato = 2
+where c.id_campeonato = 1
 order by fecha_encuentro asc;
 
-select count(*) from partidos p ;
 
-select * from campeonatos c ;
+select string_agg(aux_jug.nro_camiseta::text, ',') 
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = 1
+        where aux_cg.id_partido = 1;
+
+-- get FIXTURE
+select p.id_partidos, p.fecha_encuentro,
+	l.nombre as ligaName, c.descripcion as campeonatoName, 
+    e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
+    p.resultado_local, p.resultado_visitante,
+    p.suspendido, p.iniciado, p.finalizado,   
+    (select string_agg(aux_jug.nro_camiseta::text, ' ') 
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_local,
+     (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_visit ,
+	(select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas,
+    (select string_agg(aux_jug.nro_camiseta::text, ' ')
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas    
+from partidos p
+inner join ligas l on l.id_liga = p.id_liga
+inner join campeonatos c on c.id_campeonato = p.id_campeonato
+inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
+inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
+left join arbitros a on a.id_arbitro = p.id_arbitro
+left join asistentes asis on asis.id_asistente = p.id_asistente
+where c.id_campeonato = 1
+order by fecha_encuentro asc;
+
 
 -- get Table Position
 select e.nombre, 
@@ -210,59 +281,22 @@ select p.id_partidos,
 	jlocal.id_jugadores as jug_local, jlocal.nro_camiseta as nro_camiseta_local, 
     jvisit.id_jugadores as jug_visit, jvisit.nro_camiseta as nro_camiseta_visit
 from partidos p
-left join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local
-left join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante
-where id_partidos = 1050;
+inner join jugadores jlocal on jlocal.id_equipo = p.id_equipo_local
+inner join jugadores jvisit on jvisit.id_equipo = p.id_equipo_visitante
+where id_partidos = 964;
 
--- insert campeonatos_equipos
-insert IGNORE into campeonatos_equipos
-select c.id_liga, c.id_campeonato, 29, (select count(*) + 1 from campeonatos_equipos aux where aux.id_campeonato = 1) as nro_equipo, 
-	0 as p_gan, 
-	0 as p_emp, 
-	0 as p_per, 
-	0 as puntos
-from campeonatos c 
-where c.id_campeonato = 1;
+-- get fecha de partidos proximos.
+select fecha_encuentro from partidos p where p.fecha_encuentro > current_date group by fecha_encuentro  order by fecha_encuentro asc;
 
 
-select id_campeonato from campeonatos_equipos where id_equipo = 28 limit 1;
-select * from campeonatos_goleadores;
-select * from partidos;
-
-insert IGNORE into campeonatos_equipos
-select c.id_liga, c.id_campeonato, 29, (select count(*) + 1 from campeonatos_equipos aux where aux.id_campeonato = 1) as nro_equipo, 
-	0 as p_gan, 
-	0 as p_emp, 
-	0 as p_per, 
-	0 as puntos
-from campeonatos c 
-where c.id_campeonato = 1;
-
-
-select p.id_liga, p.id_campeonato, p.id_partidos, 1 as id_jugadores, 1 as goles
-from partidos p 
-where p.id_partidos = 963;
-select * from partidos;
-
-select cg.id_jugadores, nro, e.nombre, per.nombre, per.apellido, sum(goles) as goles
-from partidos p 
-inner join campeonatos_goleadores cg on p.id_partidos = cg.id_partido 
-inner join jugadores j on j.id_jugadores = cg.id_jugadores
-inner join personas per on per.id_persona = j.id_persona
-inner join equipos e on e.id_equipo = j.id_equipo
-where p.id_campeonato = 1
-group by cg.id_jugadores, e.nombre, per.nombre, per.apellido;
-
-
-select * 
+select c.id_liga,  c.id_campeonato, p.id_partidos, p.id_equipo_local, p.resultado_local, p.id_equipo_visitante, p.resultado_visitante
 from partidos p
-inner join campeonatos_goleadores cg on p.id_partidos = cg.id_partido 
-where id_campeonato = 1;
-select * from campeonatos_equipos;
+inner join campeonatos c on c.id_campeonato = p.id_campeonato
+where p.id_partidos = 965 ;
 
+select id_partidos, resultado_local, resultado_visitante, finalizado 
+from partidos 
+where id_partidos = 966
+order by id_partidos asc;
 
-
-select * from campeonatos_goleadores;
-
-
-
+update partidos set finalizado = 1 where id_partidos = 966;
