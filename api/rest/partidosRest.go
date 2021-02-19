@@ -27,6 +27,7 @@ func RouterPartidos(e *echo.Echo) {
 	e.DELETE("/api/partidos/:id", DeletePartido)
 	e.GET("/api/partidos/info", InfoPartidos)
 	e.GET("/api/partidos/history/:date", HistoryPartido)
+	e.GET("/api/partidos/dates", GetFutureDatesPartidos)
 }
 
 func GetPartidos(c echo.Context) error {
@@ -192,4 +193,10 @@ func HistoryPartido(c echo.Context) error {
 	copier.Copy(&partidosFromDate, &partidosFromDateGorm)
 
 	return c.JSON(http.StatusOK, partidosFromDate)
+}
+
+func GetFutureDatesPartidos(c echo.Context) error {
+	daos := daos.NewDePrimeraDaos()
+	datesPartidos := daos.GetPartidosDao().GetFuturePartidos()
+	return c.JSON(http.StatusOK, datesPartidos)
 }

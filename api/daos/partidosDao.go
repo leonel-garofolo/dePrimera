@@ -519,6 +519,36 @@ func (ed *PartidosDaoImpl) HistoryPlays(id int) []gorms.PartidosFromDateGorm {
 	return partidos
 }
 
+func (ed *PartidosDaoImpl) GetFuturePartidos() []string {
+	db, err := application.GetDB()
+	defer db.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	rows, err := db.Query("select fecha_encuentro from partidos p where p.fecha_encuentro > current_date group by fecha_encuentro")
+	if err != nil {
+		log.Println(err)
+		panic(err)
+	}
+
+	datesPartidos := []string{}
+	for rows.Next() {
+		datePartido := ""
+		error := rows.Scan(
+			&datePartido,
+		)
+		if error != nil {
+			if error != sql.ErrNoRows {
+				log.Println(error)
+				panic(error)
+			}
+		}
+		datesPartidos = append(datesPartidos, datePartido)
+	}
+	return datesPartidos
+}
+
 var dateFormat = "2006-01-02"
 
 func (ed *PartidosDaoImpl) SaveFixture(idLiga int, idCampeonato int, dateFrom time.Time, rondas [][]help.Partido) {
