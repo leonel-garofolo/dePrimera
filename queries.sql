@@ -79,7 +79,6 @@ left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
 where e_local.id_equipo = 2 or e_visit.id_equipo = 2;
 
-select array_to_string(array[1,2,3,4], ' ');
 select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
