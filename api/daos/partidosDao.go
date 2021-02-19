@@ -185,7 +185,8 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []models.Partidos
 		" inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante "+
 		" left join arbitros a on a.id_arbitro = p.id_arbitro "+
 		" left join asistentes asis on asis.id_asistente = p.id_asistente "+
-		" where fecha_encuentro between $1 and $2", datePartidos+" 00:00:01", datePartidos+" 23:59:59")
+		" where fecha_encuentro between $1 and $2"+
+		" order by fecha_encuentro asc", datePartidos+" 00:00:01", datePartidos+" 23:59:59")
 	if err != nil {
 		//log.Fatalln("Failed to query")
 		log.Println(err)
