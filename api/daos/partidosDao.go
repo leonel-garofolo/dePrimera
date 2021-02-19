@@ -67,19 +67,19 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
+		" 	where aux_sj.id_sancion=2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
+		" 	where aux_sj.id_sancion=1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
+		" 	where aux_sj.id_sancion=2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
+		" 	where aux_sj.id_sancion=1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -165,19 +165,19 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []models.Partidos
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
+		" 	where aux_sj.id_sancion=2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
+		" 	where aux_sj.id_sancion=1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
+		" 	where aux_sj.id_sancion=2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
 		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
 		" 	from sanciones_jugadores aux_sj  "+
 		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
-		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
+		" 	where aux_sj.id_sancion=1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
