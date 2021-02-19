@@ -527,7 +527,7 @@ func (ed *PartidosDaoImpl) GetFuturePartidos() []string {
 		log.Println(err.Error())
 	}
 
-	rows, err := db.Query("select fecha_encuentro from partidos p where p.fecha_encuentro >= current_date order by fecha_encuentro asc")
+	rows, err := db.Query("select fecha_encuentro from partidos p where p.fecha_encuentro >= current_date group by fecha_encuentro order by fecha_encuentro asc")
 	if err != nil {
 		log.Println(err)
 		panic(err)

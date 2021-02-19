@@ -62,7 +62,12 @@ inner join equipos e_local on e_local.id_equipo = p.id_equipo_local
 inner join equipos e_visit on e_visit.id_equipo = p.id_equipo_visitante
 left join arbitros a on a.id_arbitro = p.id_arbitro
 left join asistentes asis on asis.id_asistente = p.id_asistente
-where fecha_encuentro = '2020-08-07%';
+where fecha_encuentro between '2020-08-07 00:00:01' and '2020-08-07 23:59:59';
+
+select fecha_encuentro from partidos p where p.fecha_encuentro >= current_date
+group by fecha_encuentro 
+order by fecha_encuentro asc;
+
 
 -- query for get all partidos from Equipo.
 select p.id_partidos, p.fecha_encuentro,
