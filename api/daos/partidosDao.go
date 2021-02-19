@@ -55,7 +55,31 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido, p.iniciado, p.finalizado, p.motivo_suspencion "+
+		" p.suspendido,  p.iniciado, p.finalizado, p.motivo_suspencion, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_local, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_visit , "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -70,6 +94,12 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 		panic(err)
 	}
 
+	goleadoresLocal := sql.NullString{}
+	goleadoresVisit := sql.NullString{}
+	sancLocalAmar := sql.NullString{}
+	sancLocalRojas := sql.NullString{}
+	sancVisitAmar := sql.NullString{}
+	sancVisitRojas := sql.NullString{}
 	motivo := sql.NullString{}
 	partidos := []models.PartidosFromDate{}
 	for rows.Next() {
@@ -87,6 +117,12 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 			&partido.Iniciado,
 			&partido.Finalizado,
 			&motivo,
+			&goleadoresLocal,
+			&goleadoresVisit,
+			&sancLocalAmar,
+			&sancLocalRojas,
+			&sancVisitAmar,
+			&sancVisitRojas,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -94,14 +130,19 @@ func (ed *PartidosDaoImpl) GetAllFromEquipo(idEquipo int) []models.PartidosFromD
 				panic(error)
 			}
 		}
-
+		partido.GoleadoresLocal = goleadoresLocal.String
+		partido.GoleadoresVisit = goleadoresVisit.String
+		partido.SancLocalAmar = sancLocalAmar.String
+		partido.SancLocalRojas = sancLocalRojas.String
+		partido.SancVisitAmar = sancLocalAmar.String
+		partido.SancVisitRojas = sancLocalRojas.String
 		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
 	return partidos
 }
 
-func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosFromDateGorm {
+func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []models.PartidosFromDate {
 	db, err := application.GetDB()
 	defer db.Close()
 	if err != nil {
@@ -112,7 +153,31 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido, p.iniciado, p.finalizado, p.motivo_suspencion "+
+		" p.suspendido,  p.iniciado, p.finalizado, p.motivo_suspencion, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_local, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_visit , "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion=id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -127,10 +192,16 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 		panic(err)
 	}
 
+	goleadoresLocal := sql.NullString{}
+	goleadoresVisit := sql.NullString{}
+	sancLocalAmar := sql.NullString{}
+	sancLocalRojas := sql.NullString{}
+	sancVisitAmar := sql.NullString{}
+	sancVisitRojas := sql.NullString{}
 	motivo := sql.NullString{}
-	partidos := []gorms.PartidosFromDateGorm{}
+	partidos := []models.PartidosFromDate{}
 	for rows.Next() {
-		partido := gorms.PartidosFromDateGorm{}
+		partido := models.PartidosFromDate{}
 		error := rows.Scan(
 			&partido.IDPartidos,
 			&partido.FechaEncuentro,
@@ -144,6 +215,12 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 			&partido.Iniciado,
 			&partido.Finalizado,
 			&motivo,
+			&goleadoresLocal,
+			&goleadoresVisit,
+			&sancLocalAmar,
+			&sancLocalRojas,
+			&sancVisitAmar,
+			&sancVisitRojas,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -151,6 +228,12 @@ func (ed *PartidosDaoImpl) GetAllFromDate(datePartidos string) []gorms.PartidosF
 				panic(error)
 			}
 		}
+		partido.GoleadoresLocal = goleadoresLocal.String
+		partido.GoleadoresVisit = goleadoresVisit.String
+		partido.SancLocalAmar = sancLocalAmar.String
+		partido.SancLocalRojas = sancLocalRojas.String
+		partido.SancVisitAmar = sancLocalAmar.String
+		partido.SancVisitRojas = sancLocalRojas.String
 		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}
@@ -168,7 +251,31 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 		" l.nombre as liga_name, c.descripcion as campeonato_name, "+
 		" e_local.nombre as e_local_name, e_visit.nombre as e_visit_name, "+
 		" p.resultado_local, p.resultado_visitante, "+
-		" p.suspendido,  p.iniciado, p.finalizado, p.motivo_suspencion "+
+		" p.suspendido,  p.iniciado, p.finalizado, p.motivo_suspencion, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_local, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from campeonatos_goleadores aux_cg  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_cg.id_partido = p.id_partidos) as goleadores_visit , "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo "+
+		" 	where aux_sj.id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion = 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas, "+
+		" (select string_agg(aux_jug.nro_camiseta::text, ' ')  "+
+		" 	from sanciones_jugadores aux_sj  "+
+		" 	inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo "+
+		" 	where aux_sj.id_sancion = 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas  "+
 		" from partidos p "+
 		" inner join ligas l on l.id_liga = p.id_liga "+
 		" inner join campeonatos c on c.id_campeonato = p.id_campeonato "+
@@ -184,6 +291,12 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 		panic(err)
 	}
 
+	goleadoresLocal := sql.NullString{}
+	goleadoresVisit := sql.NullString{}
+	sancLocalAmar := sql.NullString{}
+	sancLocalRojas := sql.NullString{}
+	sancVisitAmar := sql.NullString{}
+	sancVisitRojas := sql.NullString{}
 	motivo := sql.NullString{}
 	partidos := []models.PartidosFromDate{}
 	for rows.Next() {
@@ -201,6 +314,12 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 			&partido.Iniciado,
 			&partido.Finalizado,
 			&motivo,
+			&goleadoresLocal,
+			&goleadoresVisit,
+			&sancLocalAmar,
+			&sancLocalRojas,
+			&sancVisitAmar,
+			&sancVisitRojas,
 		)
 		if error != nil {
 			if error != sql.ErrNoRows {
@@ -208,6 +327,12 @@ func (ed *PartidosDaoImpl) GetAllFromCampeonato(idTorneo int) []models.PartidosF
 				panic(error)
 			}
 		}
+		partido.GoleadoresLocal = goleadoresLocal.String
+		partido.GoleadoresVisit = goleadoresVisit.String
+		partido.SancLocalAmar = sancLocalAmar.String
+		partido.SancLocalRojas = sancLocalRojas.String
+		partido.SancVisitAmar = sancLocalAmar.String
+		partido.SancVisitRojas = sancLocalRojas.String
 		partido.Motivo = motivo.String
 		partidos = append(partidos, partido)
 	}

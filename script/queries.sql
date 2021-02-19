@@ -60,7 +60,31 @@ select p.id_partidos, p.fecha_encuentro,
 	l.nombre as ligaName, c.descripcion as campeonatoName, 
     e_local.nombre as eLocalName, e_visit.nombre as eVisitName, 
     p.resultado_local, p.resultado_visitante,
-   p.suspendido, p.iniciado, p.finalizado
+    p.suspendido, p.iniciado, p.finalizado,   
+    (select format(' ', aux_jug.nro_camiseta)
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_local.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_local,
+     (select format(' ', aux_jug.nro_camiseta)
+		from campeonatos_goleadores aux_cg 
+        inner join jugadores aux_jug on aux_jug.id_jugadores = aux_cg.id_jugadores and aux_jug.id_equipo = e_visit.id_equipo
+        where aux_cg.id_partido = p.id_partidos) as goleadores_visit ,
+	(select format(' ', aux_jug.nro_camiseta)
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_amarillas,
+    (select format(' ', aux_jug.nro_camiseta)
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_local.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_local_rojas,
+    (select format(' ', aux_jug.nro_camiseta)
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 2 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_amarillas,
+    (select format(' ', aux_jug.nro_camiseta)
+		from sanciones_jugadores aux_sj 
+		inner join jugadores aux_jug on aux_jug.id_jugadores = aux_sj.id_jugador and aux_jug.id_equipo = e_visit.id_equipo
+		where aux_sj.id_sancion= 1 and aux_sj.id_partidos = p.id_partidos) as sanciones_visit_rojas    
 from partidos p
 inner join ligas l on l.id_liga = p.id_liga
 inner join campeonatos c on c.id_campeonato = p.id_campeonato

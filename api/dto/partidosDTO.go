@@ -35,6 +35,12 @@ type PartidosFromDate struct {
 	Iniciado           bool      `json:"iniciado"`
 	Finalizado         bool      `json:"finalizado"`
 	Motivo             string    `json:"motivo"`
+	GoleadoresLocal    string    `json:"goleadores_local"`
+	GoleadoresVisit    string    `json:"goleadores_visit"`
+	SancLocalAmar      string    `json:"sanc_local_amar"`
+	SancLocalRojas     string    `json:"sanc_local_rojas"`
+	SancVisitAmar      string    `json:"sanc_visit_amar"`
+	SancVisitRojas     string    `json:"sanc_visit_rojas"`
 }
 
 type PartidoResult struct {
