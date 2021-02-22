@@ -154,16 +154,20 @@ func (ed *CampeonatosDaoImpl) Save(e *gorms.CampeonatosGorm) int64 {
 			panic(error)
 		}
 	} else {
-		res, error := db.Exec(
+		_, error := db.Exec(
 			"insert into campeonatos (descripcion, fecha_fin, fecha_inicio, id_campeonato, id_liga, id_modelo) "+
 				" values($1,$2,$3,$4,$5,$6)", e.Descripcion, fechaFin, fechaInicio, e.IDCampeonato, e.IDLiga, e.IDModelo)
-		IDCampeonato, error := res.LastInsertId()
-
 		if error != nil {
 			log.Println(error)
 			panic(error)
 		}
-		e.IDCampeonato = IDCampeonato
+
+		row := db.QueryRow("select id_campeonato from campeonatos order by id_campeonato desc limit 1")
+		errorLastItem := row.Scan(&e.IDCampeonato)
+		if errorLastItem != nil {
+			log.Println(errorLastItem)
+			panic(errorLastItem)
+		}
 	}
 	return e.IDCampeonato
 }
